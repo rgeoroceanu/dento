@@ -8,10 +8,6 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Scope;
 import org.springframework.context.support.ReloadableResourceBundleMessageSource;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
-import org.springframework.data.rest.core.config.RepositoryRestConfiguration;
-import org.springframework.data.rest.core.mapping.RepositoryDetectionStrategy.RepositoryDetectionStrategies;
-import org.springframework.data.rest.webmvc.config.RepositoryRestConfigurer;
-import org.springframework.data.rest.webmvc.config.RepositoryRestConfigurerAdapter;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 import org.springframework.web.servlet.DispatcherServlet;
 
@@ -34,18 +30,6 @@ public class ApplicationConfiguration {
 		ServletRegistrationBean registration = new ServletRegistrationBean(dispatcherServlet);
 		registration.addUrlMappings( "/*");
 		return registration;
-	}
-
-	@Bean
-	public RepositoryRestConfigurer repositoryRestConfigurer() {
-
-		return new RepositoryRestConfigurerAdapter() {
-
-			@Override
-			public void configureRepositoryRestConfiguration(RepositoryRestConfiguration config) {
-				config.setRepositoryDetectionStrategy(RepositoryDetectionStrategies.ANNOTATED);
-			}
-		};
 	}
 
 	@Bean
