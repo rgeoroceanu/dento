@@ -11,6 +11,8 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import com.company.dento.model.type.Role;
 import com.company.dento.ui.localization.Localizable;
 import com.company.dento.ui.page.ErrorPage;
+import com.company.dento.ui.page.ProcedurePage;
+import com.company.dento.ui.page.ProceduresPage;
 import com.company.dento.ui.page.StartPage;
 import com.vaadin.annotations.Theme;
 import com.vaadin.annotations.Widgetset;
@@ -37,15 +39,21 @@ public class DentoUI extends UI implements Localizable {
 	/**
 	 * View identifier of the start page.
 	 */
-	private static final String START_PAGE_NAV_NAME = "start";
+	public static final String START_PAGE_NAV_NAME = "start";
+	public static final String PROCEDURES_PAGE_NAV_NAME = "procedures";
+	public static final String PROCEDURE_PAGE_NAV_NAME = "procedure";
 	
 	/**
 	 * View identifier of the error page.
 	 */
-	private static final String ERROR_PAGE_NAV_NAME = "error";
-	private static final String LOGOUT_URL = "../logout";
+	public static final String ERROR_PAGE_NAV_NAME = "error";
+	public static final String LOGOUT_URL = "../logout";
 	@Autowired
 	private StartPage startPage;
+	@Autowired
+	private ProceduresPage proceduresPage;
+	@Autowired
+	private ProcedurePage procedurePage;
 	@Autowired
 	private ErrorPage errorPage;
 	private Navigator navigator;
@@ -54,6 +62,8 @@ public class DentoUI extends UI implements Localizable {
     protected void init(VaadinRequest vaadinRequest) {
 		navigator = new Navigator(this, this);
 		navigator.addView(START_PAGE_NAV_NAME, startPage);
+		navigator.addView(PROCEDURES_PAGE_NAV_NAME, proceduresPage);
+		navigator.addView(PROCEDURE_PAGE_NAV_NAME, procedurePage);
 		navigator.addView(ERROR_PAGE_NAV_NAME, errorPage);
 		navigator.navigateTo(START_PAGE_NAV_NAME);
 		navigator.setErrorView(errorPage);
@@ -71,6 +81,8 @@ public class DentoUI extends UI implements Localizable {
 	@Override
 	public void localize() {
 		localizeRecursive(startPage);
+		localizeRecursive(proceduresPage);
+		localizeRecursive(procedurePage);
 	}
 	
 	/**
@@ -78,6 +90,19 @@ public class DentoUI extends UI implements Localizable {
 	 */
 	public void navigateToStartPage() {
 		navigator.navigateTo(START_PAGE_NAV_NAME);
+	}
+	
+	public void navigateToProceduresPage() {
+		navigator.navigateTo(PROCEDURES_PAGE_NAV_NAME);
+	}
+	
+	public void navigateToProcedurePage(Long procedureId) {
+		final StringBuilder path = new StringBuilder(PROCEDURE_PAGE_NAV_NAME);
+		if (procedureId != null) {
+			path.append("/");
+			path.append(String.valueOf(procedureId));
+		}
+		navigator.navigateTo(path.toString());
 	}
 	
 	/**

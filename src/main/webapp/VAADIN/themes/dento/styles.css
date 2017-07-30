@@ -12226,11 +12226,22 @@ div.v-layout.v-horizontal.v-widget {
 
 .dento .titlemenubar .v-menubar-menuitem-button {
 	line-height: 80px;
-	color: #60afe8;
+	color: #DEEBFF;
 	background: transparent;
 	padding: 0 19px;
 	font-weight: bold;
 	min-width: 81px;
 	margin-right: 0px;
+	width: 150px;
+}
+
+.dento .navigation-bar {
+	background: #F4F5F7;
+}
+
+.dento .navigation-bar .v-button {
+	color: #42526E;
+	background: transparent;
+	text-align: left;
 	width: 150px;
 }

@@ -2,20 +2,24 @@ package com.company.dento.ui.layout;
 
 import java.util.Arrays;
 import java.util.Locale;
+import java.util.Map;
+import java.util.Map.Entry;
 
 import com.company.dento.ui.DentoUI;
+import com.company.dento.ui.component.common.NavigationBar;
 import com.company.dento.ui.localization.Localizable;
 import com.company.dento.ui.localization.Localizer;
+import com.vaadin.icons.VaadinIcons;
 import com.vaadin.shared.ui.ContentMode;
 import com.vaadin.ui.Alignment;
 import com.vaadin.ui.Button;
+import com.vaadin.ui.Button.ClickListener;
 import com.vaadin.ui.ComboBox;
 import com.vaadin.ui.Component;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Label;
 import com.vaadin.ui.MenuBar;
 import com.vaadin.ui.MenuBar.MenuItem;
-import com.vaadin.ui.Panel;
 import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.themes.ValoTheme;
 
@@ -37,11 +41,13 @@ public class PageLayout extends VerticalLayout implements Localizable {
 	private final MenuBar menuBar;
 	private final Button logoutButton;
 	private final MenuItem homeItem;
-	private final Panel contentPanel;
+	private final MenuItem proceduresItem;
 	private final Button contactButton;
 	private final Button helpButton;
 	private final Button aboutButton;
-	private Label titleLabel;
+	private final Label titleLabel;
+	private final NavigationBar navigationBar;
+	private final VerticalLayout contentLayout;
 	
 	public PageLayout() {
 		this.addStyleName(ValoTheme.UI_WITH_MENU);
@@ -49,16 +55,59 @@ public class PageLayout extends VerticalLayout implements Localizable {
 		this.languageSelect = initLanguageSelect();
 		this.logoutButton = initLogoutButton();
 		this.menuBar = new MenuBar();
-		this.homeItem = menuBar.addItem("", null, command -> DentoUI.getCurrent().navigateToStartPage());
+		this.homeItem = menuBar.addItem("", VaadinIcons.HOME, command -> 
+			DentoUI.getCurrent().navigateToStartPage());
+		
 		this.homeItem.setStyleName("button");
+		this.proceduresItem = menuBar.addItem("", VaadinIcons.TOOTH, command -> 
+			DentoUI.getCurrent().navigateToProceduresPage());
+		
+		this.proceduresItem.setStyleName("button");
 		this.menuBar.addStyleName("titlemenubar");
 		this.menuBar.addStyleName(ValoTheme.MENUBAR_BORDERLESS);
 		this.menuBar.setHeight(100, Unit.PERCENTAGE);
 		this.contactButton = initContactButton();
 		this.helpButton = initHelpButton();
 		this.aboutButton = initAboutButton();
-		contentPanel = new Panel();
+		this.navigationBar = new NavigationBar();
+		this.contentLayout = new VerticalLayout();
 		
+		initLayout();
+	}
+	
+	@Override
+	public void localize() {
+		// localize
+		logoutButton.setCaption(Localizer.getLocalizedString("logout"));
+		contactButton.setCaption(Localizer.getLocalizedString("contact"));
+		helpButton.setCaption(Localizer.getLocalizedString("help"));
+		aboutButton.setCaption(Localizer.getLocalizedString("about"));
+		homeItem.setText(Localizer.getLocalizedString("home"));
+		proceduresItem.setText(Localizer.getLocalizedString("procedures"));
+	}
+	
+	/**
+	 * Set the component that is displayed in the content section.
+	 * @param content component to be displayed.
+	 */
+	public void setContent(final Component content) {
+		if (this.contentLayout.getComponentCount() > 1) {
+			this.contentLayout.removeComponent(this.contentLayout.getComponent(1));
+		}
+		this.contentLayout.addComponent(content, 1);
+	}
+	
+	public void setNavigationItems(Map<String, ClickListener> navigationItems) {
+		for (Entry<String, ClickListener> e : navigationItems.entrySet()) {
+			navigationBar.addNavigationButton(e.getKey(), e.getValue());
+		}
+	}
+	
+	public void setContentWidth(int width, Unit unit) {
+		this.contentLayout.setWidth(width, unit);
+	}
+	
+	private void initLayout() {
 		HorizontalLayout headerLayout = new HorizontalLayout();
 		HorizontalLayout titleLayout = new HorizontalLayout();
 		titleLayout.addStyleName("title");
@@ -72,9 +121,10 @@ public class PageLayout extends VerticalLayout implements Localizable {
 		footerLayout.addComponent(contactButton);
 		footerLayout.addComponent(helpButton);
 		footerLayout.addComponent(aboutButton);
+		contentLayout.addComponent(navigationBar);
 		this.addComponent(headerLayout);
 		this.addComponent(titleLayout);
-		this.addComponent(contentPanel);
+		this.addComponent(contentLayout);
 		this.addComponent(footerLayout);
 		
 		// aligning
@@ -88,50 +138,10 @@ public class PageLayout extends VerticalLayout implements Localizable {
 		titleLayout.setWidth(100, Unit.PERCENTAGE);
 		titleLayout.setHeight(80, Unit.PIXELS);
 		footerLayout.setHeight(70, Unit.PIXELS);
+		this.setComponentAlignment(this.contentLayout, Alignment.TOP_CENTER);
 		this.setComponentAlignment(footerLayout, Alignment.BOTTOM_CENTER);
 		this.setWidth(100, Unit.PERCENTAGE);
 		this.setMargin(false);
-	}
-	
-	@Override
-	public void localize() {
-		// localize
-		logoutButton.setCaption(Localizer.getLocalizedString("logout"));
-		contactButton.setCaption(Localizer.getLocalizedString("contact"));
-		helpButton.setCaption(Localizer.getLocalizedString("help"));
-		aboutButton.setCaption(Localizer.getLocalizedString("about"));
-		homeItem.setText(Localizer.getLocalizedString("home"));
-	}
-	
-	/**
-	 * Set the component that is displayed in the content section.
-	 * @param content component to be displayed.
-	 */
-	public void setContent(final Component content) {
-		contentPanel.setContent(content);
-	}
-	
-	/**
-	 * Align content to the center of the page.
-	 */
-	public void alignCenterContent() {
-		this.setComponentAlignment(contentPanel, Alignment.TOP_CENTER);
-	}
-	
-	/**
-	 * Set width of the content section.
-	 * @param width value
-	 * @param unit for the width.
-	 */
-	public void setContentWidth(int width, Unit unit) {
-		contentPanel.setWidth(width, unit);
-	}
-	
-	/**
-	 * Removes border from the content section.
-	 */
-	public void setContentBorderless() {
-		contentPanel.addStyleName(ValoTheme.PANEL_BORDERLESS);
 	}
 	
 	private Label initTitleLabel() {

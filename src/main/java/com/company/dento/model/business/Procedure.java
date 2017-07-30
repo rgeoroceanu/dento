@@ -26,6 +26,8 @@ public class Procedure extends Base {
 	private Patient patient;
 	@ManyToOne(optional = false)
 	private ProcedureTemplate template;
+	@Column
+	private String description;
 	@ElementCollection
 	private List<Tooth> teeth = new ArrayList<>();
 	@Column

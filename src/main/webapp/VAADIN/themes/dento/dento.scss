@@ -62,12 +62,23 @@
 	
 	.titlemenubar .v-menubar-menuitem-button {
 		line-height: 80px;
-		color: #60afe8;
+		color: #DEEBFF;
 		background: rgba(0, 0, 0, 0);
 		padding: 0 19px;
 		font-weight: bold;
 		min-width: 81px;
 		margin-right: 0px;
+		width: 150px;
+	}
+	
+	.navigation-bar {
+		background: #F4F5F7;
+	}
+	
+	.navigation-bar .v-button {
+		color: #42526E;
+		background: rgba(0,0,0,0);
+		text-align: left;
 		width: 150px;
 	}
 }
