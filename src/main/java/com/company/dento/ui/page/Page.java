@@ -3,7 +3,6 @@ package com.company.dento.ui.page;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.company.dento.service.DataService;
-import com.company.dento.ui.DentoUI;
 import com.company.dento.ui.layout.PageLayout;
 import com.vaadin.navigator.Navigator;
 import com.vaadin.navigator.View;

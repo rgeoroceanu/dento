@@ -71,6 +71,8 @@ public class DataServiceImpl implements DataService {
 			User user = new User();
 			user.setFirstName("Test");
 			user.setLastName("User");
+			user.setUsername("user");
+			user.setPassword("user");
 			user.setRoles(new HashSet<>(Arrays.asList(Role.USER)));
 			saveEntity(user);
 			
@@ -123,6 +125,9 @@ public class DataServiceImpl implements DataService {
 			procedure.setTemplate(procedureTemplate);
 			procedure.setDeliveryDate(LocalDateTime.now());
 			procedure.getExecutions().add(execution);
+			procedure.setDoctor(doctor);
+			procedure.setPrice(111);
+			procedure.setPatient("Gheorghe");
 			saveEntity(procedure);
 		}
 	}

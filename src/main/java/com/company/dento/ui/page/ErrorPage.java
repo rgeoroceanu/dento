@@ -1,13 +1,12 @@
 package com.company.dento.ui.page;
 
-import org.springframework.stereotype.Component;
-
 import com.vaadin.navigator.View;
 import com.vaadin.navigator.ViewChangeListener.ViewChangeEvent;
 import com.vaadin.spring.annotation.SpringView;
 import com.vaadin.spring.annotation.UIScope;
 import com.vaadin.ui.Label;
 import com.vaadin.ui.VerticalLayout;
+import org.springframework.stereotype.Component;
 
 /**
  * Error view of the cms.
@@ -20,10 +19,13 @@ import com.vaadin.ui.VerticalLayout;
 @SpringView
 public class ErrorPage extends VerticalLayout implements View {
 
-	private static final long serialVersionUID = 1L;
-	private static final String DEFAULT_ERROR_MESSAGE = "Oops! An error occured! You may have navigated to an invalid page!";
+    private static final long serialVersionUID = 1L;
+    private static final String DEFAULT_ERROR_MESSAGE = "Oops! An error occured! You may have navigated to an invalid page!";
 	private final Label label;
 	
+	/**
+	 * 
+	 */
 	public ErrorPage() {
 		label = new Label();
 		label.setValue(DEFAULT_ERROR_MESSAGE);
@@ -31,7 +33,7 @@ public class ErrorPage extends VerticalLayout implements View {
 	}
 
 	@Override
-	public void enter(ViewChangeEvent event) {
+	public final void enter(final ViewChangeEvent event) {
 		final String message = event.getParameters();
 		if (message != null) {
 			label.setValue(message);

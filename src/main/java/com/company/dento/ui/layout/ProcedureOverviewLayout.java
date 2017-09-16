@@ -7,9 +7,11 @@ import com.company.dento.model.business.ProcedureTemplate;
 import com.company.dento.ui.component.form.Form;
 import com.company.dento.ui.localization.Localizable;
 import com.vaadin.ui.ComboBox;
-import com.vaadin.ui.DateField;
+import com.vaadin.ui.DateTimeField;
 import com.vaadin.ui.TextArea;
 import com.vaadin.ui.TextField;
+
+import lombok.Getter;
 
 /**
  * 
@@ -17,19 +19,20 @@ import com.vaadin.ui.TextField;
  *
  */
 @Component
+@Getter
 public class ProcedureOverviewLayout extends Form implements Localizable {
 
 	private static final long serialVersionUID = 1L;
 	
-	private final ComboBox<ProcedureTemplate> procedureType;
+	private final ComboBox<ProcedureTemplate> procedureTypeField;
 	private final TextField priceField;
 	private final ComboBox<Doctor> doctorField;
 	private final TextField patientField;
-	private final DateField deliveryDateField;
+	private final DateTimeField deliveryDateField;
 	private final TextArea descriptionField;
 	
 	public ProcedureOverviewLayout() {
-		procedureType = initProcedureTypeField();
+		procedureTypeField = initProcedureTypeField();
 		priceField = initPriceField();
 		doctorField = initDoctorField();
 		patientField = initPatientField();
@@ -42,7 +45,7 @@ public class ProcedureOverviewLayout extends Form implements Localizable {
 	@Override
 	public void localize() {
 		super.localize();
-		procedureType.setCaption("type");
+		procedureTypeField.setCaption("type");
 		priceField.setCaption("price");
 		doctorField.setCaption("doctor");
 		patientField.setCaption("patient");
@@ -51,7 +54,7 @@ public class ProcedureOverviewLayout extends Form implements Localizable {
 	}
 	
 	private void setupLayout() {
-		this.addComponent(procedureType);
+		this.addComponent(procedureTypeField);
 		this.addComponent(doctorField);
 		this.addComponent(patientField);
 		this.addComponent(deliveryDateField);
@@ -84,8 +87,8 @@ public class ProcedureOverviewLayout extends Form implements Localizable {
 		return patientField;
 	}
 	
-	private DateField initDeliveryDateField() {
-		DateField dateField = new DateField();
+	private DateTimeField initDeliveryDateField() {
+		DateTimeField dateField = new DateTimeField();
 		dateField.setWidth(10, Unit.EM);
 		return dateField;
 	}

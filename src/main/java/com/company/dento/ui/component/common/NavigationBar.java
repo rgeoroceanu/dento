@@ -21,6 +21,7 @@ public class NavigationBar extends CustomComponent implements Localizable {
 	
 	public NavigationBar() {
 		layout = new HorizontalLayout();
+		layout.setSpacing(false);
 		addHomeButton();
 		this.setCompositionRoot(layout);
 	}

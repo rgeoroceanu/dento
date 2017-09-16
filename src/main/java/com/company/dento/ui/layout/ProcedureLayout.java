@@ -2,6 +2,7 @@ package com.company.dento.ui.layout;
 
 import com.company.dento.ui.component.common.NavigationMenu;
 import com.vaadin.icons.VaadinIcons;
+import com.vaadin.ui.Button.ClickListener;
 import com.vaadin.ui.HorizontalLayout;
 
 public class ProcedureLayout extends PageLayout {
@@ -22,6 +23,18 @@ public class ProcedureLayout extends PageLayout {
 		layout = new HorizontalLayout();
 		
 		setupLayout();
+	}
+	
+	public void addSaveButtonListener(ClickListener listener) {
+		procedureOverviewLayout.addSaveButtonListener(listener);
+	}
+	
+	public void addRemoveButtonListener(ClickListener listener) {
+		procedureOverviewLayout.addRemoveButtonListener(listener);
+	}
+	
+	public ProcedureOverviewLayout getProcedureOverviewLayout() {
+		return procedureOverviewLayout;
 	}
 	
 	private void setupLayout() {

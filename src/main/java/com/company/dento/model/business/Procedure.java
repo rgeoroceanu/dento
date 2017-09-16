@@ -4,6 +4,7 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
@@ -22,10 +23,12 @@ public class Procedure extends Base {
 	
 	@OneToOne
 	private Doctor doctor;
-	@OneToOne
-	private Patient patient;
+	@Basic
+	private String patient;
 	@ManyToOne(optional = false)
 	private ProcedureTemplate template;
+	@Basic
+	private int price;
 	@Column
 	private String description;
 	@ElementCollection
