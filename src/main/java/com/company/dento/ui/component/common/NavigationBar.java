@@ -36,6 +36,12 @@ public class NavigationBar extends CustomComponent implements Localizable {
 		
 		layout.addComponent(button);
 		captionIds.put(button, captionId);
+		localize();
+	}
+	
+	public void clear() {
+		layout.removeAllComponents();
+		addHomeButton();
 	}
 	
 	private void addHomeButton() {

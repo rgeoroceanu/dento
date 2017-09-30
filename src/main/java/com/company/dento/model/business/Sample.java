@@ -5,6 +5,7 @@ import java.util.List;
 
 import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
@@ -19,7 +20,7 @@ public class Sample extends Base {
 	
 	@ManyToOne(optional = false)
 	private SampleTemplate template;
-	@ManyToOne
+	@ManyToOne(fetch = FetchType.EAGER)
 	private Procedure procedure;
 	@ElementCollection
 	private List<String> images = new ArrayList<>();

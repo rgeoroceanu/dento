@@ -38,7 +38,6 @@ public class ProcedureOverviewLayout extends Form implements Localizable {
 		patientField = initPatientField();
 		deliveryDateField = initDeliveryDateField();
 		descriptionField = initDescriptionField();
-		
 		setupLayout();
 	}
 	

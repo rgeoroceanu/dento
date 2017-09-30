@@ -98,6 +98,7 @@ public class PageLayout extends VerticalLayout implements Localizable {
 	}
 	
 	public void setNavigationItems(Map<String, ClickListener> navigationItems) {
+		navigationBar.clear();
 		for (Entry<String, ClickListener> e : navigationItems.entrySet()) {
 			navigationBar.addNavigationButton(e.getKey(), e.getValue());
 		}

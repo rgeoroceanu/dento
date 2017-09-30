@@ -13,7 +13,7 @@ import com.vaadin.ui.components.grid.ItemClickListener;
 import com.vaadin.ui.themes.ValoTheme;
 
 
-public class GridLayout<T extends Base> extends PageLayout implements Localizable {
+public class GridLayout<T extends Base> extends VerticalLayout implements Localizable {
 
 	private static final long serialVersionUID = 1L;
 	private final Grid<T> grid;
@@ -24,14 +24,10 @@ public class GridLayout<T extends Base> extends PageLayout implements Localizabl
 		this.itemClass = itemClass;
 		this.grid = initGrid();
 		this.addButton = initAddButton();
-		
-		final VerticalLayout layout = new VerticalLayout();
-		layout.addComponent(addButton);
-		layout.addComponent(grid);
-		layout.setSizeFull();
-		layout.setMargin(false);
-		this.setContentWidth(70, Unit.PERCENTAGE);
-		this.setContent(layout);
+		super.addComponent(addButton);
+		super.addComponent(grid);
+		super.setSizeFull();
+		super.setMargin(false);
 	}
 	
 	public void addAddButtonListener(ClickListener listener) {
@@ -46,7 +42,7 @@ public class GridLayout<T extends Base> extends PageLayout implements Localizabl
 		grid.setColumns(columns);
 	}
 	
-	public void addProcedureClickListener(final ItemClickListener<T> itemClickListener) {
+	public void addItemClickListener(final ItemClickListener<T> itemClickListener) {
 		grid.addItemClickListener(itemClickListener);
 	}
 	
@@ -64,7 +60,6 @@ public class GridLayout<T extends Base> extends PageLayout implements Localizabl
 	
 	@Override
 	public void localize() {
-		super.localize();
 		addButton.setCaption(Localizer.getLocalizedString("add"));
 	}
 }

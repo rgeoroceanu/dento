@@ -1,6 +1,6 @@
 package com.company.dento.ui.page;
 
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 import org.springframework.stereotype.Component;
@@ -25,18 +25,12 @@ import com.vaadin.ui.Notification;
 public class ProcedurePage extends Page {
 	
 	private static final long serialVersionUID = 1L;
-	private static final Map<String, ClickListener> navigationItems;
-    static
-    {
-    	navigationItems = new HashMap<String, ClickListener>();
-    	navigationItems.put("procedures", e -> DentoUI.getCurrent().navigateToProceduresPage());
-    }
+	private final Map<String, ClickListener> navigationItems = new LinkedHashMap<>();
 	private final ProcedureLayout procedureLayout;
 	private final Binder<Procedure> binder;
 	
 	public ProcedurePage() {
 		procedureLayout = new ProcedureLayout();
-		procedureLayout.setNavigationItems(navigationItems);
 		binder = new Binder<>(Procedure.class);
 		procedureLayout.addSaveButtonListener(e -> handleSave());
 		procedureLayout.addRemoveButtonListener(e -> handleRemove());
@@ -54,10 +48,16 @@ public class ProcedurePage extends Page {
 	}
 
 	private void open(Procedure procedure) {
+		initNavigationItems();
 		if (procedure == null) {
 			procedure = new Procedure();
+		} else {
+			navigationItems.put(procedure.getId().toString(), e -> {});
 		}
+		procedureLayout.setNavigationItems(navigationItems);
 		binder.setBean(procedure);
+		procedureLayout.getProcedureSamplesLayout().setItems(dataService.getProcedureSamples(procedure.getId()));
+		procedureLayout.getProcedureExecutionsLayout().setItems(dataService.getProcedureExecutions(procedure.getId()));
 	}
 
 	private void bindFields() {
@@ -78,7 +78,6 @@ public class ProcedurePage extends Page {
 			.bind(Procedure::getDescription, Procedure::setDescription);
 		binder.forField(procedureLayout.getProcedureOverviewLayout().getDeliveryDateField())
 			.bind(Procedure::getDeliveryDate, Procedure::setDeliveryDate);
-		
 	}
 	
 	private void handleSave() {
@@ -105,7 +104,12 @@ public class ProcedurePage extends Page {
 					});
 		}
 	}
-
+	
+	private void initNavigationItems() {
+		navigationItems.clear();
+		navigationItems.put("procedures", e -> DentoUI.getCurrent().navigateToProceduresPage());
+	}
+	
 	private void confirmRemove(final Procedure procedure) {
 		try {
 			// remove entity

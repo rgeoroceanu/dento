@@ -116,18 +116,25 @@ public class DataServiceImpl implements DataService {
 			doctor.setClinic(clinic);
 			saveEntity(doctor);
 			
-			Execution execution = new Execution();
-			execution.setTechnician(user);
-			execution.setTemplate(executionTemplate1);
-			saveEntity(execution);
-			
 			Procedure procedure = new Procedure();
 			procedure.setTemplate(procedureTemplate);
 			procedure.setDeliveryDate(LocalDateTime.now());
-			procedure.getExecutions().add(execution);
 			procedure.setDoctor(doctor);
 			procedure.setPrice(111);
 			procedure.setPatient("Gheorghe");
+			saveEntity(procedure);
+			
+			Execution execution = new Execution();
+			execution.setTechnician(user);
+			execution.setTemplate(executionTemplate1);
+			execution.setProcedure(procedure);
+			
+			Sample sample = new Sample();
+			sample.setTemplate(sampleTemplate1);
+			sample.setProcedure(procedure);
+			
+			procedure.getSamples().add(sample);
+			procedure.getExecutions().add(execution);
 			saveEntity(procedure);
 		}
 	}
@@ -144,6 +151,7 @@ public class DataServiceImpl implements DataService {
 	}
 
 	@Override
+	@Transactional
 	public <T extends Base> List<T> getAll(Class<T> entityClass) throws InvalidDataTypeException {
 		Preconditions.checkNotNull(entityClass, "Entity class cannot be null!");
 		LOG.info("Retrieving all entitities of type " + entityClass.getSimpleName());
@@ -154,6 +162,7 @@ public class DataServiceImpl implements DataService {
 	}
 
 	@Override
+	@Transactional
 	public <T extends Base> T getEntity(Long entityId, Class<T> entityClass) throws InvalidDataTypeException, DataDoesNotExistException {
 		Preconditions.checkNotNull(entityClass, "Entity class cannot be null!");
 		Preconditions.checkNotNull(entityId, "Entity id cannot be null!");
@@ -172,6 +181,7 @@ public class DataServiceImpl implements DataService {
 	}
 
 	@Override
+	@Transactional
 	public <T extends Base> void deleteEntity(Long entityId, Class<T> entityClass) throws InvalidDataTypeException, DataDoesNotExistException {
 		Preconditions.checkNotNull(entityClass, "Entity class cannot be null!");
 		Preconditions.checkNotNull(entityId, "Entity id cannot be null!");
@@ -206,5 +216,15 @@ public class DataServiceImpl implements DataService {
 		
 		LOG.warn("Invalid entity type " + entityClass.getSimpleName());
 		throw new InvalidDataTypeException("Invalid data type " + entityClass.getName());
+	}
+
+	@Override
+	public List<Sample> getProcedureSamples(Long procedureId) {
+		return sampleDao.findByProcedureId(procedureId);
+	}
+
+	@Override
+	public List<Execution> getProcedureExecutions(Long procedureId) {
+		return executionDao.findByProcedureId(procedureId);
 	}
 }

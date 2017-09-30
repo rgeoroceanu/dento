@@ -40,7 +40,6 @@ public class Form extends FormLayout implements Localizable {
 	@Override
 	public void addComponent(Component c) {
 		super.addComponent(c);
-		this.addComponent(buttonLayout, this.getComponentCount());
 	}
 	
 	public void addSaveButtonListener(final ClickListener listener) {

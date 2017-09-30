@@ -42,6 +42,10 @@ public class DentoUI extends UI implements Localizable {
 	public static final String START_PAGE_NAV_NAME = "start";
 	public static final String PROCEDURES_PAGE_NAV_NAME = "procedures";
 	public static final String PROCEDURE_PAGE_NAV_NAME = "procedure";
+	public static final String SAMPLES_PAGE_NAV_NAME = "samples";
+	public static final String SAMPLE_PAGE_NAV_NAME = "sample";
+	public static final String EXECUTIONS_PAGE_NAV_NAME = "executions";
+	public static final String EXECUTION_PAGE_NAV_NAME = "execution";
 	
 	/**
 	 * View identifier of the error page.
@@ -64,6 +68,10 @@ public class DentoUI extends UI implements Localizable {
 		navigator.addView(START_PAGE_NAV_NAME, startPage);
 		navigator.addView(PROCEDURES_PAGE_NAV_NAME, proceduresPage);
 		navigator.addView(PROCEDURE_PAGE_NAV_NAME, procedurePage);
+		//navigator.addView(SAMPLES_PAGE_NAV_NAME, samplesPage);
+		//navigator.addView(PROCEDURE_PAGE_NAV_NAME, samplePage);
+		//navigator.addView(EXECUTIONS_PAGE_NAV_NAME, executionsPage);
+		//navigator.addView(EXECUTION_PAGE_NAV_NAME, executionPage);
 		navigator.addView(ERROR_PAGE_NAV_NAME, errorPage);
 		navigator.navigateTo(START_PAGE_NAV_NAME);
 		navigator.setErrorView(errorPage);
@@ -94,6 +102,32 @@ public class DentoUI extends UI implements Localizable {
 	
 	public void navigateToProceduresPage() {
 		navigator.navigateTo(PROCEDURES_PAGE_NAV_NAME);
+	}
+	
+	public void navigateToSamplesPage() {
+		//navigator.navigateTo(SAMPLES_PAGE_NAV_NAME);
+	}
+	
+	public void navigateToSamplePage(Long sampleId) {
+//		final StringBuilder path = new StringBuilder(SAMPLE_PAGE_NAV_NAME);
+//		if (sampleId != null) {
+//			path.append("/");
+//			path.append(String.valueOf(sampleId));
+//		}
+//		navigator.navigateTo(path.toString());
+	}
+	
+	public void navigateToExecutionsPage() {
+		//navigator.navigateTo(EXECUTIONS_PAGE_NAV_NAME);
+	}
+	
+	public void navigateToExecutionPage(Long sampleId) {
+//		final StringBuilder path = new StringBuilder(EXECUTION_PAGE_NAV_NAME);
+//		if (executionId != null) {
+//			path.append("/");
+//			path.append(String.valueOf(executionId));
+//		}
+//		navigator.navigateTo(path.toString());
 	}
 	
 	public void navigateToProcedurePage(Long procedureId) {
