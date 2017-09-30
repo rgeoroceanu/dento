@@ -4,32 +4,32 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import com.company.dento.model.business.Execution;
+import com.company.dento.model.business.Sample;
 import com.company.dento.ui.DentoUI;
 import com.company.dento.ui.localization.Localizable;
 import com.vaadin.ui.Button.ClickListener;
 
-public class ExecutionsLayout extends PageLayout implements Localizable {
+public class SamplesLayout extends PageLayout implements Localizable {
 	
 	private static final long serialVersionUID = 1L;
-	private final GridLayout<Execution> gridLayout;
+	private final GridLayout<Sample> gridLayout;
 	private static final Map<String, ClickListener> navigationItems;
     static
     {
     	navigationItems = new HashMap<String, ClickListener>();
-    	navigationItems.put("executions", e -> DentoUI.getCurrent().navigateToExecutionsPage());
+    	navigationItems.put("samples", e -> DentoUI.getCurrent().navigateToSamplesPage());
     }
 	
-	public ExecutionsLayout() {
-		gridLayout = new GridLayout<Execution>(DentoUI.EXECUTIONS_PAGE_NAV_NAME, Execution.class);
-		gridLayout.setVisibleColumns("id", "template", "technician", "procedure", "progressPercentage", "created");
-		gridLayout.addItemClickListener(e -> DentoUI.getCurrent().navigateToExecutionPage(e.getItem().getId()));
+	public SamplesLayout() {
+		gridLayout = new GridLayout<Sample>(DentoUI.SAMPLES_PAGE_NAV_NAME, Sample.class);
+		gridLayout.setVisibleColumns("id", "template", "procedure", "created");
+		gridLayout.addItemClickListener(e -> DentoUI.getCurrent().navigateToSamplePage(e.getItem().getId()));
 		super.setNavigationItems(navigationItems);
 		this.setContentWidth(70, Unit.PERCENTAGE);
 		this.setContent(gridLayout);
 	}
 	
-	public void setItems(List<Execution> items) {
+	public void setItems(List<Sample> items) {
 		gridLayout.setItems(items);
 	}
 	

@@ -31,8 +31,8 @@ import com.vaadin.ui.themes.ValoTheme;
  */
 public class PageLayout extends VerticalLayout implements Localizable {
 	private static final long serialVersionUID = 1L;
-	private static final String TITLE = "Dento";
-	private static final String TITLE_STYLE = "'line-height:80px;margin-left:15px;margin-top:0px;"
+	private static final String TITLE = "Dentivo";
+	private static final String TITLE_STYLE = "'font-weight:bold;line-height:80px;margin-left:15px;margin-top:0px;"
 			+ "margin-bottom:0px;background-color:rgba(0,0,0,0);color:white;font-size:35px'";
 	private static final Locale ENGLISH_LOCALE = new Locale("en");
 	private static final Locale GERMAN_LOCALE = new Locale("de");
@@ -41,7 +41,18 @@ public class PageLayout extends VerticalLayout implements Localizable {
 	private final MenuBar menuBar;
 	private final Button logoutButton;
 	private final MenuItem homeItem;
+	private final MenuItem contentsItem;
 	private final MenuItem proceduresItem;
+	private final MenuItem executionsItem;
+	private final MenuItem samplesItem;
+	private final MenuItem manageItem;
+	private final MenuItem doctorsItem;
+	private final MenuItem techniciansItem;
+	private final MenuItem procedureTemplatesItem;
+	private final MenuItem executionTemplatesItem;
+	private final MenuItem sampleTemplatesItem;
+	private final MenuItem statisticsItem;
+	private final MenuItem calendarItem;
 	private final Button contactButton;
 	private final Button helpButton;
 	private final Button aboutButton;
@@ -55,14 +66,24 @@ public class PageLayout extends VerticalLayout implements Localizable {
 		this.languageSelect = initLanguageSelect();
 		this.logoutButton = initLogoutButton();
 		this.menuBar = new MenuBar();
-		this.homeItem = menuBar.addItem("", VaadinIcons.HOME, command -> 
-			DentoUI.getCurrent().navigateToStartPage());
-		
+		this.homeItem = menuBar.addItem("", VaadinIcons.HOME, command -> DentoUI.getCurrent().navigateToStartPage());
+		this.contentsItem = menuBar.addItem("", VaadinIcons.TOOTH, null);
+		this.proceduresItem = contentsItem.addItem("", command -> DentoUI.getCurrent().navigateToProceduresPage());
+		this.executionsItem = contentsItem.addItem("", command -> DentoUI.getCurrent().navigateToExecutionsPage());
+		this.samplesItem = contentsItem.addItem("", command -> DentoUI.getCurrent().navigateToSamplesPage());
+		this.calendarItem = menuBar.addItem("", VaadinIcons.CALENDAR, command -> {});
+		this.statisticsItem = menuBar.addItem("", VaadinIcons.LINE_CHART, command -> {});
+		this.manageItem = menuBar.addItem("", VaadinIcons.TOOLS, null);
+		this.doctorsItem = manageItem.addItem("", command -> {});
+		this.techniciansItem = manageItem.addItem("", command -> {});
+		this.procedureTemplatesItem = manageItem.addItem("", command -> {});
+		this.executionTemplatesItem = manageItem.addItem("", command -> {});
+		this.sampleTemplatesItem = manageItem.addItem("", command -> {});
+		this.contentsItem.setStyleName("button");
+		this.manageItem.setStyleName("button");
+		this.statisticsItem.setStyleName("button");
+		this.calendarItem.setStyleName("button");
 		this.homeItem.setStyleName("button");
-		this.proceduresItem = menuBar.addItem("", VaadinIcons.TOOTH, command -> 
-			DentoUI.getCurrent().navigateToProceduresPage());
-		
-		this.proceduresItem.setStyleName("button");
 		this.menuBar.addStyleName("titlemenubar");
 		this.menuBar.addStyleName(ValoTheme.MENUBAR_BORDERLESS);
 		this.menuBar.setHeight(100, Unit.PERCENTAGE);
@@ -84,6 +105,17 @@ public class PageLayout extends VerticalLayout implements Localizable {
 		aboutButton.setCaption(Localizer.getLocalizedString("about"));
 		homeItem.setText(Localizer.getLocalizedString("home"));
 		proceduresItem.setText(Localizer.getLocalizedString("procedures"));
+		executionsItem.setText(Localizer.getLocalizedString("executions"));
+		samplesItem.setText(Localizer.getLocalizedString("samples"));
+		manageItem.setText(Localizer.getLocalizedString("manage"));
+		statisticsItem.setText(Localizer.getLocalizedString("statistics"));
+		doctorsItem.setText(Localizer.getLocalizedString("doctors"));
+		techniciansItem.setText(Localizer.getLocalizedString("technicians"));
+		procedureTemplatesItem.setText(Localizer.getLocalizedString("procedureTemplates"));
+		executionTemplatesItem.setText(Localizer.getLocalizedString("executionTemplates"));
+		sampleTemplatesItem.setText(Localizer.getLocalizedString("sampleTemplates"));
+		calendarItem.setText(Localizer.getLocalizedString("calendar"));
+		contentsItem.setText(Localizer.getLocalizedString("contents"));
 	}
 	
 	/**

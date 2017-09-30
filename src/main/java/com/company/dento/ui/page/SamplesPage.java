@@ -4,14 +4,14 @@ import java.util.List;
 
 import org.springframework.stereotype.Component;
 
-import com.company.dento.model.business.Procedure;
-import com.company.dento.ui.layout.ProceduresLayout;
+import com.company.dento.model.business.Sample;
+import com.company.dento.ui.layout.SamplesLayout;
 import com.vaadin.navigator.ViewChangeListener.ViewChangeEvent;
 import com.vaadin.spring.annotation.SpringView;
 import com.vaadin.spring.annotation.UIScope;
 
 /**
- * Page that displays a list of all procedures.
+ * Page that displays a list of all samples.
  * 
  * @author Radu Georoceanu <rgeoroceanu@yahoo.com>
  *
@@ -19,16 +19,16 @@ import com.vaadin.spring.annotation.UIScope;
 @Component
 @UIScope
 @SpringView
-public class ProceduresPage extends Page {
+public class SamplesPage extends Page {
 
 	private static final long serialVersionUID = 1L;
-	private final ProceduresLayout proceduresLayout;
+	private final SamplesLayout samplesLayout;
 
-	public ProceduresPage() {
+	public SamplesPage() {
 		super();
-		proceduresLayout = new ProceduresLayout();
+		samplesLayout = new SamplesLayout();
 		//proceduresLayout.addAddButtonListener(click -> App.getCurrent().navigateToUserPage(null));
-		this.setLayout(proceduresLayout);
+		this.setLayout(samplesLayout);
 	}
 	
 	@Override
@@ -42,7 +42,7 @@ public class ProceduresPage extends Page {
 	}
 	
 	private void open() {
-		final List<Procedure> procedures = dataService.getAll(Procedure.class);
-		proceduresLayout.setItems(procedures);
+		final List<Sample> samples = dataService.getAll(Sample.class);
+		samplesLayout.setItems(samples);
 	}
 }

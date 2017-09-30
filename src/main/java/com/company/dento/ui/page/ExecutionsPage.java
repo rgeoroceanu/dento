@@ -4,14 +4,14 @@ import java.util.List;
 
 import org.springframework.stereotype.Component;
 
-import com.company.dento.model.business.Procedure;
-import com.company.dento.ui.layout.ProceduresLayout;
+import com.company.dento.model.business.Execution;
+import com.company.dento.ui.layout.ExecutionsLayout;
 import com.vaadin.navigator.ViewChangeListener.ViewChangeEvent;
 import com.vaadin.spring.annotation.SpringView;
 import com.vaadin.spring.annotation.UIScope;
 
 /**
- * Page that displays a list of all procedures.
+ * Page that displays a list of all executions.
  * 
  * @author Radu Georoceanu <rgeoroceanu@yahoo.com>
  *
@@ -19,16 +19,16 @@ import com.vaadin.spring.annotation.UIScope;
 @Component
 @UIScope
 @SpringView
-public class ProceduresPage extends Page {
+public class ExecutionsPage extends Page {
 
 	private static final long serialVersionUID = 1L;
-	private final ProceduresLayout proceduresLayout;
+	private final ExecutionsLayout executionsLayout;
 
-	public ProceduresPage() {
+	public ExecutionsPage() {
 		super();
-		proceduresLayout = new ProceduresLayout();
+		executionsLayout = new ExecutionsLayout();
 		//proceduresLayout.addAddButtonListener(click -> App.getCurrent().navigateToUserPage(null));
-		this.setLayout(proceduresLayout);
+		this.setLayout(executionsLayout);
 	}
 	
 	@Override
@@ -42,7 +42,7 @@ public class ProceduresPage extends Page {
 	}
 	
 	private void open() {
-		final List<Procedure> procedures = dataService.getAll(Procedure.class);
-		proceduresLayout.setItems(procedures);
+		final List<Execution> executions = dataService.getAll(Execution.class);
+		executionsLayout.setItems(executions);
 	}
 }

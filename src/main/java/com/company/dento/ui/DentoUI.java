@@ -11,8 +11,10 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import com.company.dento.model.type.Role;
 import com.company.dento.ui.localization.Localizable;
 import com.company.dento.ui.page.ErrorPage;
+import com.company.dento.ui.page.ExecutionsPage;
 import com.company.dento.ui.page.ProcedurePage;
 import com.company.dento.ui.page.ProceduresPage;
+import com.company.dento.ui.page.SamplesPage;
 import com.company.dento.ui.page.StartPage;
 import com.vaadin.annotations.Theme;
 import com.vaadin.annotations.Widgetset;
@@ -57,6 +59,10 @@ public class DentoUI extends UI implements Localizable {
 	@Autowired
 	private ProceduresPage proceduresPage;
 	@Autowired
+	private ExecutionsPage executionsPage;
+	@Autowired
+	private SamplesPage samplesPage;
+	@Autowired
 	private ProcedurePage procedurePage;
 	@Autowired
 	private ErrorPage errorPage;
@@ -68,9 +74,9 @@ public class DentoUI extends UI implements Localizable {
 		navigator.addView(START_PAGE_NAV_NAME, startPage);
 		navigator.addView(PROCEDURES_PAGE_NAV_NAME, proceduresPage);
 		navigator.addView(PROCEDURE_PAGE_NAV_NAME, procedurePage);
-		//navigator.addView(SAMPLES_PAGE_NAV_NAME, samplesPage);
+		navigator.addView(SAMPLES_PAGE_NAV_NAME, samplesPage);
 		//navigator.addView(PROCEDURE_PAGE_NAV_NAME, samplePage);
-		//navigator.addView(EXECUTIONS_PAGE_NAV_NAME, executionsPage);
+		navigator.addView(EXECUTIONS_PAGE_NAV_NAME, executionsPage);
 		//navigator.addView(EXECUTION_PAGE_NAV_NAME, executionPage);
 		navigator.addView(ERROR_PAGE_NAV_NAME, errorPage);
 		navigator.navigateTo(START_PAGE_NAV_NAME);
@@ -90,6 +96,8 @@ public class DentoUI extends UI implements Localizable {
 	public void localize() {
 		localizeRecursive(startPage);
 		localizeRecursive(proceduresPage);
+		localizeRecursive(samplesPage);
+		localizeRecursive(executionsPage);
 		localizeRecursive(procedurePage);
 	}
 	
@@ -105,7 +113,7 @@ public class DentoUI extends UI implements Localizable {
 	}
 	
 	public void navigateToSamplesPage() {
-		//navigator.navigateTo(SAMPLES_PAGE_NAV_NAME);
+		navigator.navigateTo(SAMPLES_PAGE_NAV_NAME);
 	}
 	
 	public void navigateToSamplePage(Long sampleId) {
@@ -118,7 +126,7 @@ public class DentoUI extends UI implements Localizable {
 	}
 	
 	public void navigateToExecutionsPage() {
-		//navigator.navigateTo(EXECUTIONS_PAGE_NAV_NAME);
+		navigator.navigateTo(EXECUTIONS_PAGE_NAV_NAME);
 	}
 	
 	public void navigateToExecutionPage(Long sampleId) {
