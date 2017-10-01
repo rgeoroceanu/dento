@@ -1,8 +1,10 @@
 package com.company.dento.model.business;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.persistence.Column;
 import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -24,5 +26,7 @@ public class Sample extends Base {
 	private Procedure procedure;
 	@ElementCollection
 	private List<String> images = new ArrayList<>();
+	@Column
+	private LocalDateTime date;
 	
 }

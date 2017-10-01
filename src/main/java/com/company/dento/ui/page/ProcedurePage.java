@@ -43,7 +43,7 @@ public class ProcedurePage extends Page {
 	public void enter(ViewChangeEvent event) {
 		super.enter(event);
 		final String parameters = event.getParameters();
-		final Procedure procedure = extractCarFromParameters(parameters);
+		final Procedure procedure = extractFromParameters(parameters);
 		open(procedure);	
 	}
 
@@ -127,7 +127,7 @@ public class ProcedurePage extends Page {
 		Notification.show(Localizer.getLocalizedString("saved"));
 	}
 	
-	private Procedure extractCarFromParameters(final String parameters) {
+	private Procedure extractFromParameters(final String parameters) {
 		Procedure procedure = null;
 
 		if (parameters == null || parameters.isEmpty()) {

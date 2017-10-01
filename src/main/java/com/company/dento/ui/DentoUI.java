@@ -11,9 +11,11 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import com.company.dento.model.type.Role;
 import com.company.dento.ui.localization.Localizable;
 import com.company.dento.ui.page.ErrorPage;
+import com.company.dento.ui.page.ExecutionPage;
 import com.company.dento.ui.page.ExecutionsPage;
 import com.company.dento.ui.page.ProcedurePage;
 import com.company.dento.ui.page.ProceduresPage;
+import com.company.dento.ui.page.SamplePage;
 import com.company.dento.ui.page.SamplesPage;
 import com.company.dento.ui.page.StartPage;
 import com.vaadin.annotations.Theme;
@@ -65,6 +67,10 @@ public class DentoUI extends UI implements Localizable {
 	@Autowired
 	private ProcedurePage procedurePage;
 	@Autowired
+	private ExecutionPage executionPage;
+	@Autowired
+	private SamplePage samplePage;
+	@Autowired
 	private ErrorPage errorPage;
 	private Navigator navigator;
 	
@@ -75,9 +81,9 @@ public class DentoUI extends UI implements Localizable {
 		navigator.addView(PROCEDURES_PAGE_NAV_NAME, proceduresPage);
 		navigator.addView(PROCEDURE_PAGE_NAV_NAME, procedurePage);
 		navigator.addView(SAMPLES_PAGE_NAV_NAME, samplesPage);
-		//navigator.addView(PROCEDURE_PAGE_NAV_NAME, samplePage);
+		navigator.addView(SAMPLE_PAGE_NAV_NAME, samplePage);
 		navigator.addView(EXECUTIONS_PAGE_NAV_NAME, executionsPage);
-		//navigator.addView(EXECUTION_PAGE_NAV_NAME, executionPage);
+		navigator.addView(EXECUTION_PAGE_NAV_NAME, executionPage);
 		navigator.addView(ERROR_PAGE_NAV_NAME, errorPage);
 		navigator.navigateTo(START_PAGE_NAV_NAME);
 		navigator.setErrorView(errorPage);
@@ -99,6 +105,8 @@ public class DentoUI extends UI implements Localizable {
 		localizeRecursive(samplesPage);
 		localizeRecursive(executionsPage);
 		localizeRecursive(procedurePage);
+		localizeRecursive(executionPage);
+		localizeRecursive(samplePage);
 	}
 	
 	/**
@@ -117,25 +125,25 @@ public class DentoUI extends UI implements Localizable {
 	}
 	
 	public void navigateToSamplePage(Long sampleId) {
-//		final StringBuilder path = new StringBuilder(SAMPLE_PAGE_NAV_NAME);
-//		if (sampleId != null) {
-//			path.append("/");
-//			path.append(String.valueOf(sampleId));
-//		}
-//		navigator.navigateTo(path.toString());
+		final StringBuilder path = new StringBuilder(SAMPLE_PAGE_NAV_NAME);
+		if (sampleId != null) {
+			path.append("/");
+			path.append(String.valueOf(sampleId));
+		}
+		navigator.navigateTo(path.toString());
 	}
 	
 	public void navigateToExecutionsPage() {
 		navigator.navigateTo(EXECUTIONS_PAGE_NAV_NAME);
 	}
 	
-	public void navigateToExecutionPage(Long sampleId) {
-//		final StringBuilder path = new StringBuilder(EXECUTION_PAGE_NAV_NAME);
-//		if (executionId != null) {
-//			path.append("/");
-//			path.append(String.valueOf(executionId));
-//		}
-//		navigator.navigateTo(path.toString());
+	public void navigateToExecutionPage(Long executionId) {
+		final StringBuilder path = new StringBuilder(EXECUTION_PAGE_NAV_NAME);
+		if (executionId != null) {
+			path.append("/");
+			path.append(String.valueOf(executionId));
+		}
+		navigator.navigateTo(path.toString());
 	}
 	
 	public void navigateToProcedurePage(Long procedureId) {

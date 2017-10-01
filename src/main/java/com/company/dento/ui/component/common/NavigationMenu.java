@@ -5,7 +5,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 import com.company.dento.ui.localization.Localizable;
-import com.vaadin.icons.VaadinIcons;
+import com.vaadin.server.FontIcon;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.Button.ClickListener;
 import com.vaadin.ui.CustomComponent;
@@ -24,7 +24,7 @@ public class NavigationMenu extends CustomComponent implements Localizable {
 		this.setHeight(100, Unit.PERCENTAGE);
 	}
 	
-	public void addNavigationButton(String captionId, VaadinIcons icon, ClickListener listener) {
+	public void addNavigationButton(String captionId, FontIcon icon, ClickListener listener) {
 		Button button = createNavigationButton(listener);
 		button.setIcon(icon);
 		layout.addComponent(button);

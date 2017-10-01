@@ -57,9 +57,13 @@ public class Form extends FormLayout implements Localizable {
 	}
 	
 	public void setActionButtonsEnableState(boolean saveButtonEnabled, boolean removeButtonEnabled) {
-		
 		saveButton.setVisible(saveButtonEnabled);
 		removeButton.setVisible(removeButtonEnabled);
+		if (!saveButtonEnabled && !removeButtonEnabled) {
+			buttonLayout.setVisible(false);
+		} else {
+			buttonLayout.setVisible(true);
+		}
 	}
 
 	@Override

@@ -60,6 +60,7 @@ public class ProcedureOverviewLayout extends Form implements Localizable {
 		this.addComponent(priceField);
 		this.addComponent(descriptionField);
 		this.setMargin(true);
+		this.setActionButtonsEnableState(false, false);
 	}
 	
 	private ComboBox<ProcedureTemplate> initProcedureTypeField() {

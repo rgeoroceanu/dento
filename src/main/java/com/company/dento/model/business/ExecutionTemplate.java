@@ -18,5 +18,9 @@ public class ExecutionTemplate extends Base {
 	private String name;
 	@Basic
 	private int duration;
+	@Basic
+	private int price;
+	@Basic
+	private int coefficient;
 	
 }

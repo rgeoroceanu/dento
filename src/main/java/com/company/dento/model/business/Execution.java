@@ -1,11 +1,13 @@
 package com.company.dento.model.business;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
 import javax.persistence.Basic;
-import javax.persistence.ElementCollection;
+import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
@@ -32,7 +34,15 @@ public class Execution extends Base {
 	@ManyToOne
 	private User technician;
 	@Basic
-	private int duration;
+	private int estimatedDuration;
+	@Basic
+	private int price;
+	@Column
+	private LocalDateTime deadlineDate;
+	@Enumerated
+	private Priority priority;
+	@Enumerated
+	private Status status;
 	@Basic
 	private int spentTime;
 	@Basic
@@ -41,8 +51,8 @@ public class Execution extends Base {
 	private List<MaterialTemplate> usedMaterials = new ArrayList<>();
 	@Basic
 	private String description;
-	@ElementCollection
-	private List<String> comments = new ArrayList<>();
+	//@ElementCollection
+	//private List<String> comments = new ArrayList<>();
 	
 	
 }

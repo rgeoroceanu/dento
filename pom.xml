@@ -45,11 +45,11 @@
 	</repositories>
 
 	<dependencies>
-<!-- 		<dependency> -->
-<!-- 		<groupId>com.vaadin</groupId> -->
-<!-- 		<artifactId>vaadin-client-compiler</artifactId> -->
-<!-- 		<scope>provided</scope> -->
-<!-- 		</dependency> -->
+		<!-- <dependency> -->
+		<!-- <groupId>com.vaadin</groupId> -->
+		<!-- <artifactId>vaadin-client-compiler</artifactId> -->
+		<!-- <scope>provided</scope> -->
+		<!-- </dependency> -->
 		<dependency>
 			<groupId>org.vaadin.addon</groupId>
 			<artifactId>confirmdialog</artifactId>
@@ -122,9 +122,11 @@
 			<scope>test</scope>
 		</dependency>
 		<dependency>
-			<groupId>org.mariadb.jdbc</groupId>
-			<artifactId>mariadb-java-client</artifactId>
+			<groupId>mysql</groupId>
+			<artifactId>mysql-connector-java</artifactId>
+			<version>8.0.7-dmr</version>
 		</dependency>
+
 	</dependencies>
 
 	<dependencyManagement>

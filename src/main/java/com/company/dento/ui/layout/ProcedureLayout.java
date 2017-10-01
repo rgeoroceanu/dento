@@ -27,11 +27,11 @@ public class ProcedureLayout extends PageLayout implements Localizable {
 	}
 	
 	public void addSaveButtonListener(ClickListener listener) {
-		procedureOverviewLayout.addSaveButtonListener(listener);
+		navigationMenu.addNavigationButton("save", VaadinIcons.STORAGE, listener);
 	}
 	
 	public void addRemoveButtonListener(ClickListener listener) {
-		procedureOverviewLayout.addRemoveButtonListener(listener);
+		navigationMenu.addNavigationButton("remove", VaadinIcons.TRASH, listener);
 	}
 	
 	public ProcedureOverviewLayout getProcedureOverviewLayout() {
