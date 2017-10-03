@@ -27,4 +27,10 @@ public class ProcedureTemplate extends Base {
 	@OneToMany
 	private List<ExecutionTemplate> executions = new ArrayList<>();
 	
+	public String toString() {
+		if (name != null) {
+			return name;
+		}
+		return super.toString();
+	}
 }

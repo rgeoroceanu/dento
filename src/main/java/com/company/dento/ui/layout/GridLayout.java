@@ -8,6 +8,7 @@ import com.company.dento.ui.localization.Localizer;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.Button.ClickListener;
 import com.vaadin.ui.Grid;
+import com.vaadin.ui.Grid.Column;
 import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.components.grid.ItemClickListener;
 import com.vaadin.ui.themes.ValoTheme;
@@ -61,5 +62,8 @@ public class GridLayout<T extends Base> extends VerticalLayout implements Locali
 	@Override
 	public void localize() {
 		addButton.setCaption(Localizer.getLocalizedString("add"));
+		for (Column<?, ?> column : grid.getColumns()) {
+			column.setCaption(Localizer.getLocalizedString(column.getId()));
+		}
 	}
 }

@@ -10,7 +10,7 @@ public class ProcedureExecutionsLayout extends GridLayout<Execution> implements 
    
 	public ProcedureExecutionsLayout() {
 		super(DentoUI.EXECUTIONS_PAGE_NAV_NAME, Execution.class);
-		super.setVisibleColumns("id", "template", "technician", "procedure", "progressPercentage", "created");
+		super.setVisibleColumns("id", "template", "technician", "procedure", "status", "created");
 		super.addItemClickListener(e -> DentoUI.getCurrent().navigateToExecutionPage(e.getItem().getId()));
 		this.setSpacing(true);
 		this.setMargin(true);

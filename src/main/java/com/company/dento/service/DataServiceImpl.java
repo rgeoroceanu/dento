@@ -77,10 +77,10 @@ public class DataServiceImpl implements DataService {
 			saveEntity(user);
 			
 			ExecutionTemplate executionTemplate1 = new ExecutionTemplate();
-			executionTemplate1.setDuration(1);
+			executionTemplate1.setEstimatedDuration(1);
 			executionTemplate1.setName("Executie Ceramica");
 			ExecutionTemplate executionTemplate2 = new ExecutionTemplate();
-			executionTemplate2.setDuration(2);
+			executionTemplate2.setEstimatedDuration(2);
 			executionTemplate2.setName("Executie CAD");
 			saveEntity(executionTemplate1);
 			saveEntity(executionTemplate2);

@@ -26,4 +26,10 @@ public class MaterialTemplate extends Base {
 	@Basic
 	private boolean perProcedure;
 	
+	public String toString() {
+		if (name != null) {
+			return name;
+		}
+		return super.toString();
+	}
 }

@@ -6,6 +6,7 @@ import com.company.dento.model.business.Doctor;
 import com.company.dento.model.business.ProcedureTemplate;
 import com.company.dento.ui.component.form.Form;
 import com.company.dento.ui.localization.Localizable;
+import com.company.dento.ui.localization.Localizer;
 import com.vaadin.ui.ComboBox;
 import com.vaadin.ui.DateTimeField;
 import com.vaadin.ui.TextArea;
@@ -44,12 +45,12 @@ public class ProcedureOverviewLayout extends Form implements Localizable {
 	@Override
 	public void localize() {
 		super.localize();
-		procedureTypeField.setCaption("type");
-		priceField.setCaption("price");
-		doctorField.setCaption("doctor");
-		patientField.setCaption("patient");
-		deliveryDateField.setCaption("delivery_date");
-		descriptionField.setCaption("description");
+		procedureTypeField.setCaption(Localizer.getLocalizedString("type"));
+		priceField.setCaption(Localizer.getLocalizedString("price"));
+		doctorField.setCaption(Localizer.getLocalizedString("doctor"));
+		patientField.setCaption(Localizer.getLocalizedString("patient"));
+		deliveryDateField.setCaption(Localizer.getLocalizedString("delivery_date"));
+		descriptionField.setCaption(Localizer.getLocalizedString("description"));
 	}
 	
 	private void setupLayout() {
@@ -60,7 +61,6 @@ public class ProcedureOverviewLayout extends Form implements Localizable {
 		this.addComponent(priceField);
 		this.addComponent(descriptionField);
 		this.setMargin(true);
-		this.setActionButtonsEnableState(false, false);
 	}
 	
 	private ComboBox<ProcedureTemplate> initProcedureTypeField() {

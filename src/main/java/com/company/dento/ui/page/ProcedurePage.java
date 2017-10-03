@@ -54,6 +54,7 @@ public class ProcedurePage extends Page {
 		} else {
 			navigationItems.put(procedure.getId().toString(), e -> {});
 		}
+		setReadOnlyFields(procedure);
 		procedureLayout.setNavigationItems(navigationItems);
 		binder.setBean(procedure);
 		procedureLayout.getProcedureSamplesLayout().setItems(dataService.getProcedureSamples(procedure.getId()));
@@ -78,6 +79,14 @@ public class ProcedurePage extends Page {
 			.bind(Procedure::getDescription, Procedure::setDescription);
 		binder.forField(procedureLayout.getProcedureOverviewLayout().getDeliveryDateField())
 			.bind(Procedure::getDeliveryDate, Procedure::setDeliveryDate);
+	}
+	
+	private void setReadOnlyFields(Procedure procedure) {
+		if (procedure.getId() == null) {
+			procedureLayout.getProcedureOverviewLayout().getProcedureTypeField().setReadOnly(false);
+		} else {
+			procedureLayout.getProcedureOverviewLayout().getProcedureTypeField().setReadOnly(true);
+		}
 	}
 	
 	private void handleSave() {

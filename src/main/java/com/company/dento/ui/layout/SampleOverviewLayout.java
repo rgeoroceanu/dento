@@ -42,6 +42,8 @@ public class SampleOverviewLayout extends Form implements Localizable {
 		super.localize();
 		procedureField.setCaption(Localizer.getLocalizedString("procedure"));
 		descriptionField.setCaption(Localizer.getLocalizedString("description"));
+		dateField.setCaption(Localizer.getLocalizedString("date"));
+		sampleTypeField.setCaption(Localizer.getLocalizedString("type"));
 	}
 	
 	private void setupLayout() {
@@ -50,7 +52,6 @@ public class SampleOverviewLayout extends Form implements Localizable {
 		this.addComponent(dateField);
 		this.addComponent(descriptionField);
 		this.setMargin(true);
-		this.setActionButtonsEnableState(false, false);
 	}
 	
 	private ComboBox<Procedure> initProcedureField() {

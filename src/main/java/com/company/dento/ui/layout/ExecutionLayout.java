@@ -23,11 +23,11 @@ public class ExecutionLayout extends PageLayout implements Localizable {
 	}
 	
 	public void addSaveButtonListener(ClickListener listener) {
-		navigationMenu.addNavigationButton("save", VaadinIcons.STORAGE, listener);
+		executionOverviewLayout.addSaveButtonListener(listener);
 	}
 	
 	public void addRemoveButtonListener(ClickListener listener) {
-		navigationMenu.addNavigationButton("remove", VaadinIcons.TRASH, listener);
+		executionOverviewLayout.addRemoveButtonListener(listener);
 	}
 	
 	public ExecutionOverviewLayout getExecutionOverviewLayout() {
@@ -38,6 +38,7 @@ public class ExecutionLayout extends PageLayout implements Localizable {
 	public void localize() {
 		super.localize();
 		executionOverviewLayout.localize();
+		navigationMenu.localize();
 	}
 	
 	private void setupLayout() {

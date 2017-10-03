@@ -30,4 +30,11 @@ public class Doctor extends Base {
 	@Basic
 	private String phone;
 	
+	@Override
+	public String toString() {
+		if (lastName != null) {
+			return firstName + " " + lastName;
+		}
+		return super.toString();
+	}
 }

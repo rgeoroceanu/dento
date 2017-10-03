@@ -43,4 +43,11 @@ public class Procedure extends Base {
 	private List<Execution> executions = new ArrayList<>();
 	@ElementCollection
 	private List<String> cadFiles = new ArrayList<>();
+	
+	public String toString() {
+		if (template != null) {
+			return template.getName() + " : Id " + super.getId();
+		}
+		return super.toString();
+	}
 }

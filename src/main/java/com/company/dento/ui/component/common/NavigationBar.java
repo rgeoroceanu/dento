@@ -6,6 +6,7 @@ import java.util.Map.Entry;
 
 import com.company.dento.ui.DentoUI;
 import com.company.dento.ui.localization.Localizable;
+import com.company.dento.ui.localization.Localizer;
 import com.vaadin.icons.VaadinIcons;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.Button.ClickListener;
@@ -67,7 +68,7 @@ public class NavigationBar extends CustomComponent implements Localizable {
 	@Override
 	public void localize() {
 		for (Entry<Button, String> e : captionIds.entrySet()) {
-			e.getKey().setCaption(e.getValue());
+			e.getKey().setCaption(Localizer.getLocalizedString(e.getValue()));
 		}
 	}
 	

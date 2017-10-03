@@ -54,5 +54,10 @@ public class Execution extends Base {
 	//@ElementCollection
 	//private List<String> comments = new ArrayList<>();
 	
-	
+	public String toString() {
+		if (template != null && procedure != null) {
+			return template.getName() + " : " + procedure.getId();
+		}
+		return super.toString();
+	}
 }

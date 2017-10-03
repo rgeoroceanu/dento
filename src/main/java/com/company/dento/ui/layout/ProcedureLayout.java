@@ -27,11 +27,11 @@ public class ProcedureLayout extends PageLayout implements Localizable {
 	}
 	
 	public void addSaveButtonListener(ClickListener listener) {
-		navigationMenu.addNavigationButton("save", VaadinIcons.STORAGE, listener);
+		procedureOverviewLayout.addSaveButtonListener(listener);
 	}
 	
 	public void addRemoveButtonListener(ClickListener listener) {
-		navigationMenu.addNavigationButton("remove", VaadinIcons.TRASH, listener);
+		procedureOverviewLayout.addRemoveButtonListener(listener);
 	}
 	
 	public ProcedureOverviewLayout getProcedureOverviewLayout() {
@@ -52,12 +52,14 @@ public class ProcedureLayout extends PageLayout implements Localizable {
 		procedureOverviewLayout.localize();
 		procedureSamplesLayout.localize();
 		procedureExecutionsLayout.localize();
+		navigationMenu.localize();
 	}
 	
 	private void setupLayout() {
 		layout.addComponent(navigationMenu);
 		setContentLayout(procedureOverviewLayout);
 		layout.setSpacing(true);
+		layout.setWidth(100, Unit.PERCENTAGE);
 		this.setContentWidth(70, Unit.PERCENTAGE);
 		this.setContent(layout);
 	}
@@ -69,6 +71,7 @@ public class ProcedureLayout extends PageLayout implements Localizable {
 			this.layout.replaceComponent(currentContent, layout);
 		}
 		currentContent = layout;
+		this.layout.setExpandRatio(layout, 1);
 	}
 	
 	private NavigationMenu initNavigationMenu() {

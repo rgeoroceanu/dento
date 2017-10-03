@@ -5,6 +5,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 import com.company.dento.ui.localization.Localizable;
+import com.company.dento.ui.localization.Localizer;
 import com.vaadin.server.FontIcon;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.Button.ClickListener;
@@ -21,6 +22,7 @@ public class NavigationMenu extends CustomComponent implements Localizable {
 		layout = new VerticalLayout();
 		this.addStyleName("navigation-bar");
 		this.setCompositionRoot(layout);
+		this.setWidth(250, Unit.PIXELS);
 		this.setHeight(100, Unit.PERCENTAGE);
 	}
 	
@@ -41,8 +43,7 @@ public class NavigationMenu extends CustomComponent implements Localizable {
 	@Override
 	public void localize() {
 		for (Entry<Button, String> e : captionIds.entrySet()) {
-			e.getKey().setCaption(e.getValue());
+			e.getKey().setCaption(Localizer.getLocalizedString(e.getValue()));
 		}
 	}
-	
 }

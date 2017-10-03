@@ -27,4 +27,11 @@ public class Clinic extends Base {
 	@Basic
 	private String phone;
 	
+	@Override
+	public String toString() {
+		if (name != null) {
+			return name;
+		}
+		return super.toString();
+	}
 }

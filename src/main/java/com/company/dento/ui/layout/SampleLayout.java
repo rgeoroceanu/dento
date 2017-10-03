@@ -23,11 +23,11 @@ public class SampleLayout extends PageLayout implements Localizable {
 	}
 	
 	public void addSaveButtonListener(ClickListener listener) {
-		navigationMenu.addNavigationButton("save", VaadinIcons.STORAGE, listener);
+		sampleOverviewLayout.addSaveButtonListener(listener);
 	}
 	
 	public void addRemoveButtonListener(ClickListener listener) {
-		navigationMenu.addNavigationButton("remove", VaadinIcons.TRASH, listener);
+		sampleOverviewLayout.addRemoveButtonListener(listener);
 	}
 	
 	public SampleOverviewLayout getSampleOverviewLayout() {
@@ -38,6 +38,7 @@ public class SampleLayout extends PageLayout implements Localizable {
 	public void localize() {
 		super.localize();
 		sampleOverviewLayout.localize();
+		navigationMenu.localize();
 	}
 	
 	private void setupLayout() {

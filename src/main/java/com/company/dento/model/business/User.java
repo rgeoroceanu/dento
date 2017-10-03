@@ -31,4 +31,11 @@ public class User extends Base {
 	private String firstName;
 	@Basic
 	private String lastName;
+	
+	public String toString() {
+		if (lastName != null) {
+			return firstName + " " + lastName;
+		}
+		return super.toString();
+	}
 }

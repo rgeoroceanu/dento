@@ -24,6 +24,7 @@ public class ProceduresLayout extends PageLayout implements Localizable {
 		gridLayout = new GridLayout<Procedure>(DentoUI.PROCEDURES_PAGE_NAV_NAME, Procedure.class);
 		gridLayout.setVisibleColumns("id", "doctor", "patient", "created");
 		gridLayout.addItemClickListener(e -> DentoUI.getCurrent().navigateToProcedurePage(e.getItem().getId()));
+		gridLayout.addAddButtonListener(e -> DentoUI.getCurrent().navigateToProcedurePage(null));
 		super.setNavigationItems(navigationItems);
 		this.setContentWidth(70, Unit.PERCENTAGE);
 		this.setContent(gridLayout);

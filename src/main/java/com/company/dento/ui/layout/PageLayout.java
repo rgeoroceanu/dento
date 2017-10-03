@@ -36,6 +36,7 @@ public class PageLayout extends VerticalLayout implements Localizable {
 			+ "margin-bottom:0px;background-color:rgba(0,0,0,0);color:white;font-size:35px'";
 	private static final Locale ENGLISH_LOCALE = new Locale("en");
 	private static final Locale GERMAN_LOCALE = new Locale("de");
+	private static final Locale ROMANIAN_LOCALE = new Locale("ro");
 	
 	private final ComboBox<Locale> languageSelect;
 	private final MenuBar menuBar;
@@ -111,9 +112,9 @@ public class PageLayout extends VerticalLayout implements Localizable {
 		statisticsItem.setText(Localizer.getLocalizedString("statistics"));
 		doctorsItem.setText(Localizer.getLocalizedString("doctors"));
 		techniciansItem.setText(Localizer.getLocalizedString("technicians"));
-		procedureTemplatesItem.setText(Localizer.getLocalizedString("procedureTemplates"));
-		executionTemplatesItem.setText(Localizer.getLocalizedString("executionTemplates"));
-		sampleTemplatesItem.setText(Localizer.getLocalizedString("sampleTemplates"));
+		procedureTemplatesItem.setText(Localizer.getLocalizedString("procedures"));
+		executionTemplatesItem.setText(Localizer.getLocalizedString("executions"));
+		sampleTemplatesItem.setText(Localizer.getLocalizedString("samples"));
 		calendarItem.setText(Localizer.getLocalizedString("calendar"));
 		contentsItem.setText(Localizer.getLocalizedString("contents"));
 	}
@@ -190,19 +191,21 @@ public class PageLayout extends VerticalLayout implements Localizable {
 		languageSelect.addStyleName(ValoTheme.COMBOBOX_BORDERLESS);
 		languageSelect.addStyleName(ValoTheme.COMBOBOX_TINY);
 		languageSelect.addStyleName(ValoTheme.LINK_SMALL);
-		languageSelect.setItems(Arrays.asList(ENGLISH_LOCALE, GERMAN_LOCALE));
+		languageSelect.setItems(Arrays.asList(ENGLISH_LOCALE, GERMAN_LOCALE, ROMANIAN_LOCALE));
 		languageSelect.setItemCaptionGenerator(locale -> {
 			if (ENGLISH_LOCALE.equals(locale)) {
 				return "English";
 			} else if (GERMAN_LOCALE.equals(locale)) {
 				return "Deutsch";
+			} else if (ROMANIAN_LOCALE.equals(locale)) {
+				return "Română";
 			}
 			return "";
 		});
 		languageSelect.setTextInputAllowed(false);
 		languageSelect.setEmptySelectionAllowed(false);
 		languageSelect.addValueChangeListener(e -> changeLocale(e.getValue()));
-		languageSelect.setValue(ENGLISH_LOCALE);
+		languageSelect.setValue(ROMANIAN_LOCALE);
 		languageSelect.setWidth(7, Unit.EM);
 		return languageSelect;
 	}

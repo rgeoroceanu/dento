@@ -22,8 +22,9 @@ public class ExecutionsLayout extends PageLayout implements Localizable {
 	
 	public ExecutionsLayout() {
 		gridLayout = new GridLayout<Execution>(DentoUI.EXECUTIONS_PAGE_NAV_NAME, Execution.class);
-		gridLayout.setVisibleColumns("id", "template", "technician", "procedure", "progressPercentage", "created");
+		gridLayout.setVisibleColumns("id", "template", "technician", "procedure", "status", "created");
 		gridLayout.addItemClickListener(e -> DentoUI.getCurrent().navigateToExecutionPage(e.getItem().getId()));
+		gridLayout.addAddButtonListener(e -> DentoUI.getCurrent().navigateToExecutionPage(null));
 		super.setNavigationItems(navigationItems);
 		this.setContentWidth(70, Unit.PERCENTAGE);
 		this.setContent(gridLayout);

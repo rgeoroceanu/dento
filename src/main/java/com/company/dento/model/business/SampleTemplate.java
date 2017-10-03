@@ -16,4 +16,10 @@ public class SampleTemplate extends Base {
 	@Column(unique = true, nullable = false)
 	private String name;
 	
+	public String toString() {
+		if (name != null) {
+			return name;
+		}
+		return super.toString();
+	}
 }

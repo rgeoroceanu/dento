@@ -76,16 +76,15 @@ public class ExecutionOverviewLayout extends Form implements Localizable {
 		this.addComponent(procedureField);
 		this.addComponent(executionTypeField);
 		this.addComponent(technicianField);
+		this.addComponent(priceField);
 		this.addComponent(statusField);
+		this.addComponent(priorityField);
 		this.addComponent(estimatedDurationField);
 		this.addComponent(deadlineDateField);
-		this.addComponent(priorityField);
 		this.addComponent(spentTimeField);
 		this.addComponent(progressPercentageField);
-		this.addComponent(priceField);
 		this.addComponent(descriptionField);
 		this.setMargin(true);
-		this.setActionButtonsEnableState(false, false);
 	}
 	
 	private ComboBox<Procedure> initProcedureField() {

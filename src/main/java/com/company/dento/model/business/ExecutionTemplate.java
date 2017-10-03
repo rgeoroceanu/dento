@@ -17,10 +17,16 @@ public class ExecutionTemplate extends Base {
 	@Column(unique = true, nullable = false)
 	private String name;
 	@Basic
-	private int duration;
+	private int estimatedDuration;
 	@Basic
 	private int price;
 	@Basic
-	private int coefficient;
+	private Priority priority;
 	
+	public String toString() {
+		if (name != null) {
+			return name;
+		}
+		return super.toString();
+	}
 }

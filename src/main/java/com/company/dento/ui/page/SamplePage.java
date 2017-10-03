@@ -52,28 +52,34 @@ public class SamplePage extends Page {
 		} else {
 			navigationItems.put(sample.getId().toString(), e -> {});
 		}
+		setReadOnlyFields(sample);
 		sampleLayout.setNavigationItems(navigationItems);
 		binder.setBean(sample);
 	}
 
 	private void bindFields() {
-//		binder.forField(procedureLayout.getProcedureOverviewLayout().getProcedureTypeField())
-//			.asRequired("Please choose procedure type!")
-//			.bind(Procedure::getTemplate, Procedure::setTemplate);
-//		binder.forField(procedureLayout.getProcedureOverviewLayout().getPriceField())
-//			.asRequired("Please insert price!")
-//			.withConverter(new StringToIntegerConverter("Number required"))
-//			.bind(Procedure::getPrice, Procedure::setPrice);
-//		binder.forField(procedureLayout.getProcedureOverviewLayout().getDoctorField())
-//			.asRequired("Please choose doctor!")
-//			.bind(Procedure::getDoctor, Procedure::setDoctor);
-//		binder.forField(procedureLayout.getProcedureOverviewLayout().getPatientField())
-//			.asRequired("Please provide patient name!")
-//			.bind(Procedure::getPatient, Procedure::setPatient);
-//		binder.forField(procedureLayout.getProcedureOverviewLayout().getDescriptionField())
-//			.bind(Procedure::getDescription, Procedure::setDescription);
-//		binder.forField(procedureLayout.getProcedureOverviewLayout().getDeliveryDateField())
-//			.bind(Procedure::getDeliveryDate, Procedure::setDeliveryDate);
+		binder.forField(sampleLayout.getSampleOverviewLayout().getSampleTypeField())
+			.asRequired("Please choose sample type!")
+			.bind(Sample::getTemplate, Sample::setTemplate);
+		binder.forField(sampleLayout.getSampleOverviewLayout().getProcedureField())
+			.asRequired("Please choose procedure!")
+			.bind(Sample::getProcedure, Sample::setProcedure);
+		binder.forField(sampleLayout.getSampleOverviewLayout().getDateField())
+			.asRequired("Please set date!")
+			.bind(Sample::getDate, Sample::setDate);
+		binder.forField(sampleLayout.getSampleOverviewLayout().getDescriptionField())
+			.bind(Sample::getDescription, Sample::setDescription);
+
+	}
+	
+	private void setReadOnlyFields(Sample sample) {
+		if (sample.getId() == null) {
+			sampleLayout.getSampleOverviewLayout().getProcedureField().setReadOnly(false);
+			sampleLayout.getSampleOverviewLayout().getSampleTypeField().setReadOnly(false);
+		} else {
+			sampleLayout.getSampleOverviewLayout().getProcedureField().setReadOnly(true);
+			sampleLayout.getSampleOverviewLayout().getSampleTypeField().setReadOnly(true);
+		}
 	}
 	
 	private void handleSave() {
