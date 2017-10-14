@@ -72,7 +72,7 @@ public class PageLayout extends VerticalLayout implements Localizable {
 		this.proceduresItem = contentsItem.addItem("", command -> DentoUI.getCurrent().navigateToProceduresPage());
 		this.executionsItem = contentsItem.addItem("", command -> DentoUI.getCurrent().navigateToExecutionsPage());
 		this.samplesItem = contentsItem.addItem("", command -> DentoUI.getCurrent().navigateToSamplesPage());
-		this.calendarItem = menuBar.addItem("", VaadinIcons.CALENDAR, command -> {});
+		this.calendarItem = menuBar.addItem("", VaadinIcons.CALENDAR, command -> DentoUI.getCurrent().navigateToCalendarPage());
 		this.statisticsItem = menuBar.addItem("", VaadinIcons.LINE_CHART, command -> {});
 		this.manageItem = menuBar.addItem("", VaadinIcons.TOOLS, null);
 		this.doctorsItem = manageItem.addItem("", command -> {});

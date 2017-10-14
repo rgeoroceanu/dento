@@ -3,6 +3,7 @@ package com.company.dento.ui.page;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.company.dento.service.DataService;
+import com.company.dento.ui.DentoUI;
 import com.company.dento.ui.layout.PageLayout;
 import com.vaadin.navigator.Navigator;
 import com.vaadin.navigator.View;
@@ -32,9 +33,9 @@ public abstract class Page extends CustomComponent implements View {
 	}
 	
 	private void handleAccess() {	
-//		if (DentoUI.getCurrent().isSimpleUser() == false && DentoUI.getCurrent().isAdminUser() == false) {
-//			DentoUI.getCurrent().navigateToErrorPage("Permission denied!");
-//			return;
-//		}
+		if (DentoUI.getCurrent().isSimpleUser() == false && DentoUI.getCurrent().isAdminUser() == false) {
+			DentoUI.getCurrent().navigateToErrorPage("Permission denied!");
+			return;
+		}
 	}
 }

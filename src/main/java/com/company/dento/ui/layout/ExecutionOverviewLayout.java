@@ -1,5 +1,7 @@
 package com.company.dento.ui.layout;
 
+import java.util.Arrays;
+
 import org.springframework.stereotype.Component;
 
 import com.company.dento.model.business.ExecutionTemplate;
@@ -89,12 +91,16 @@ public class ExecutionOverviewLayout extends Form implements Localizable {
 	
 	private ComboBox<Procedure> initProcedureField() {
 		ComboBox<Procedure> comboBox = new ComboBox<>();
+		comboBox.setTextInputAllowed(false);
+		comboBox.setEmptySelectionAllowed(false);
 		comboBox.setWidth(25, Unit.EM);
 		return comboBox;
 	}
 	
 	private ComboBox<ExecutionTemplate> initExecutionTypeField() {
 		ComboBox<ExecutionTemplate> comboBox = new ComboBox<>();
+		comboBox.setTextInputAllowed(false);
+		comboBox.setEmptySelectionAllowed(false);
 		comboBox.setWidth(25, Unit.EM);
 		return comboBox;
 	}
@@ -107,7 +113,10 @@ public class ExecutionOverviewLayout extends Form implements Localizable {
 	
 	private ComboBox<Priority> initPriorityField() {
 		ComboBox<Priority> priorityField = new ComboBox<Priority>();
+		priorityField.setTextInputAllowed(false);
+		priorityField.setEmptySelectionAllowed(false);
 		priorityField.setWidth(10, Unit.EM);
+		priorityField.setItems(Priority.values());
 		return priorityField;
 	}
 	
@@ -120,6 +129,9 @@ public class ExecutionOverviewLayout extends Form implements Localizable {
 	private ComboBox<Integer> initProgressPercentageField() {
 		ComboBox<Integer> progressPercentageField = new ComboBox<Integer>();
 		progressPercentageField.setWidth(10, Unit.EM);
+		progressPercentageField.setEmptySelectionAllowed(false);
+		progressPercentageField.setWidth(10, Unit.EM);
+		progressPercentageField.setItems(Arrays.asList(0, 10, 25, 50, 75, 100));
 		return progressPercentageField;
 	}
 	

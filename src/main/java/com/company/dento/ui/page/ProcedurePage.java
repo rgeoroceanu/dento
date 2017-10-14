@@ -7,6 +7,7 @@ import org.springframework.stereotype.Component;
 import org.vaadin.dialogs.ConfirmDialog;
 
 import com.company.dento.model.business.Procedure;
+import com.company.dento.model.business.ProcedureTemplate;
 import com.company.dento.service.exception.DataDoesNotExistException;
 import com.company.dento.ui.DentoUI;
 import com.company.dento.ui.layout.ProcedureLayout;
@@ -51,6 +52,7 @@ public class ProcedurePage extends Page {
 		initNavigationItems();
 		if (procedure == null) {
 			procedure = new Procedure();
+			initTemplates();
 		} else {
 			navigationItems.put(procedure.getId().toString(), e -> {});
 		}
@@ -79,6 +81,10 @@ public class ProcedurePage extends Page {
 			.bind(Procedure::getDescription, Procedure::setDescription);
 		binder.forField(procedureLayout.getProcedureOverviewLayout().getDeliveryDateField())
 			.bind(Procedure::getDeliveryDate, Procedure::setDeliveryDate);
+	}
+	
+	private void initTemplates() {
+		procedureLayout.getProcedureOverviewLayout().getProcedureTypeField().setItems(dataService.getAll(ProcedureTemplate.class));
 	}
 	
 	private void setReadOnlyFields(Procedure procedure) {

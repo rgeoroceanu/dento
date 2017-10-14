@@ -28,7 +28,7 @@ public class ApplicationConfiguration {
 	@Bean
 	public ServletRegistrationBean dispatcherRegistration(DispatcherServlet dispatcherServlet) {
 		ServletRegistrationBean registration = new ServletRegistrationBean(dispatcherServlet);
-		registration.addUrlMappings( "/*");
+		registration.addUrlMappings( "/cms");
 		return registration;
 	}
 

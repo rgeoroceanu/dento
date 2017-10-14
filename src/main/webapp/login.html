@@ -1,0 +1,31 @@
+<!DOCTYPE> 
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Login Form</title>
+      <link rel="stylesheet" href="logincss/style.css">
+</head>
+ <body>
+	<div class="login">
+		<div class="login-screen">
+			<div class="app-title">
+				<h1>Login</h1>
+			</div>
+
+			<form class="login-form" action="login" method="POST">
+				<div class="control-group">
+				<input type="text" name="username" class="login-field" value="" placeholder="username" id="login-name">
+				<label class="login-field-icon fui-user" for="login-name"></label>
+				</div>
+
+				<div class="control-group">
+				<input type="password" name="password" class="login-field" value="" placeholder="password" id="login-pass">
+				<label class="login-field-icon fui-lock" for="login-pass"></label>
+				</div>
+
+				<button type="submit" class="btn btn-primary btn-large btn-block">login</button>
+			</form>
+		</div>
+	</div>
+</body>
+</html>

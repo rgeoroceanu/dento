@@ -65,6 +65,8 @@ public class ProcedureOverviewLayout extends Form implements Localizable {
 	
 	private ComboBox<ProcedureTemplate> initProcedureTypeField() {
 		ComboBox<ProcedureTemplate> comboBox = new ComboBox<>();
+		comboBox.setTextInputAllowed(false);
+		comboBox.setEmptySelectionAllowed(false);
 		comboBox.setWidth(25, Unit.EM);
 		return comboBox;
 	}
@@ -77,6 +79,8 @@ public class ProcedureOverviewLayout extends Form implements Localizable {
 	
 	private ComboBox<Doctor> initDoctorField() {
 		ComboBox<Doctor> comboBox = new ComboBox<>();
+		comboBox.setTextInputAllowed(false);
+		comboBox.setEmptySelectionAllowed(false);
 		comboBox.setWidth(10, Unit.EM);
 		return comboBox;
 	}

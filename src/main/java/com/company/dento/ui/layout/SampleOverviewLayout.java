@@ -56,12 +56,16 @@ public class SampleOverviewLayout extends Form implements Localizable {
 	
 	private ComboBox<Procedure> initProcedureField() {
 		ComboBox<Procedure> comboBox = new ComboBox<>();
+		comboBox.setTextInputAllowed(false);
+		comboBox.setEmptySelectionAllowed(false);
 		comboBox.setWidth(25, Unit.EM);
 		return comboBox;
 	}
 	
 	private ComboBox<SampleTemplate> initSampleTypeField() {
 		ComboBox<SampleTemplate> comboBox = new ComboBox<>();
+		comboBox.setTextInputAllowed(false);
+		comboBox.setEmptySelectionAllowed(false);
 		comboBox.setWidth(25, Unit.EM);
 		return comboBox;
 	}

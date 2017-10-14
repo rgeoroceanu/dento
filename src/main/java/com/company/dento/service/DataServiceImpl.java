@@ -10,6 +10,7 @@ import javax.annotation.PostConstruct;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -64,18 +65,22 @@ public class DataServiceImpl implements DataService {
 	private UserDao userDao;
 	@Autowired
 	private ClinicDao clinicDao;
+	@Autowired
+	private PasswordEncoder passwordEncoder;
 	
 	@PostConstruct
 	public void init() throws InvalidDataTypeException {
+		// add initial user
 		if (userDao.findAll().isEmpty()) {
 			User user = new User();
-			user.setFirstName("Test");
-			user.setLastName("User");
-			user.setUsername("user");
-			user.setPassword("user");
-			user.setRoles(new HashSet<>(Arrays.asList(Role.USER)));
-			saveEntity(user);
+			user.setFirstName("Admin");
+			user.setLastName("Admin");
+			user.setUsername("admin");
+			user.setPassword("admin1234");
+			user.setRoles(new HashSet<>(Arrays.asList(Role.ADMIN)));
+			saveUserAndEncodePassword(user);
 			
+			// TODO remove this
 			ExecutionTemplate executionTemplate1 = new ExecutionTemplate();
 			executionTemplate1.setEstimatedDuration(1);
 			executionTemplate1.setName("Executie Ceramica");
@@ -191,7 +196,6 @@ public class DataServiceImpl implements DataService {
 	
 	@SuppressWarnings("unchecked")
 	private <T extends Base> JpaRepository<T, Long> getDaoByEntityClass(Class<T> entityClass) throws InvalidDataTypeException {
-
 		if (entityClass == Execution.class) {
 			return (JpaRepository<T, Long>) executionDao;
 		} else if (entityClass == ExecutionTemplate.class) {
@@ -220,11 +224,37 @@ public class DataServiceImpl implements DataService {
 
 	@Override
 	public List<Sample> getProcedureSamples(Long procedureId) {
+		Preconditions.checkNotNull(procedureId, "Procedure id cannot be null!");
+		LOG.info("Retrieve samples for procedure " + procedureId);
 		return sampleDao.findByProcedureId(procedureId);
 	}
 
 	@Override
 	public List<Execution> getProcedureExecutions(Long procedureId) {
+		Preconditions.checkNotNull(procedureId, "Procedure id cannot be null!");
+		LOG.info("Retrieve executions for procedure " + procedureId);
 		return executionDao.findByProcedureId(procedureId);
+	}
+
+	@Override
+	public User getUser(String username) throws DataDoesNotExistException {
+		Preconditions.checkNotNull(username, "Username cannot be null!");
+		LOG.info("Retrieve user " + username);
+		User user = userDao.findByUsername(username);
+		if (user == null) {
+			LOG.warn("User with name " + username + " does not exist!");
+			throw new DataDoesNotExistException("Invalid username requested!");
+		}
+		
+		return user;
+	}
+	
+	@Transactional
+	@Override
+	public User saveUserAndEncodePassword(User user) {
+		Preconditions.checkNotNull(user, "User must not be null!");
+		LOG.info("Save user " + user.getUsername());
+		user.setPassword(passwordEncoder.encode(user.getPassword()));
+		return userDao.saveAndFlush(user);
 	}
 }

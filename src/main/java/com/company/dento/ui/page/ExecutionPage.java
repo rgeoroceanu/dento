@@ -8,6 +8,7 @@ import org.vaadin.dialogs.ConfirmDialog;
 
 import com.company.dento.model.business.Execution;
 import com.company.dento.model.business.ExecutionTemplate;
+import com.company.dento.model.business.Procedure;
 import com.company.dento.service.exception.DataDoesNotExistException;
 import com.company.dento.ui.DentoUI;
 import com.company.dento.ui.layout.ExecutionLayout;
@@ -53,6 +54,7 @@ public class ExecutionPage extends Page {
 		initNavigationItems();
 		if (execution == null) {
 			execution = new Execution();
+			initSelectionFields();
 		} else {
 			navigationItems.put(execution.getId().toString(), e -> {});
 		}
@@ -95,9 +97,14 @@ public class ExecutionPage extends Page {
 			.bind(Execution::getDescription, Execution::setDescription);
 	}
 	
+	private void initSelectionFields() {
+		executionLayout.getExecutionOverviewLayout().getExecutionTypeField().setItems(dataService.getAll(ExecutionTemplate.class));
+		executionLayout.getExecutionOverviewLayout().getProcedureField().setItems(dataService.getAll(Procedure.class));
+	}
+	
 	private void updateTemplateFields(ExecutionTemplate executionTemplate) {
 		final Execution execution = binder.getBean();
-		if (execution.getId() == null) {
+		if (execution.getId() == null && executionTemplate != null) {
 			executionLayout.getExecutionOverviewLayout().getPriceField().setValue(String.valueOf(executionTemplate.getPrice()));
 			executionLayout.getExecutionOverviewLayout().getEstimatedDurationField().setValue(String.valueOf(executionTemplate.getEstimatedDuration()));
 			executionLayout.getExecutionOverviewLayout().getPriorityField().setValue(executionTemplate.getPriority());

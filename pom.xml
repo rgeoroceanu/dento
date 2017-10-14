@@ -45,11 +45,16 @@
 	</repositories>
 
 	<dependencies>
-		<!-- <dependency> -->
-		<!-- <groupId>com.vaadin</groupId> -->
-		<!-- <artifactId>vaadin-client-compiler</artifactId> -->
-		<!-- <scope>provided</scope> -->
-		<!-- </dependency> -->
+		<dependency>
+			<groupId>com.vaadin</groupId>
+			<artifactId>vaadin-client-compiler</artifactId>
+			<scope>provided</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.vaadin.blackbluegl</groupId>
+			<artifactId>calendar-component</artifactId>
+			<version>2.0-BETA3</version>
+		</dependency>
 		<dependency>
 			<groupId>org.vaadin.addon</groupId>
 			<artifactId>confirmdialog</artifactId>

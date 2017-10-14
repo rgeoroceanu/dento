@@ -10,6 +10,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 
 import com.company.dento.model.type.Role;
 import com.company.dento.ui.localization.Localizable;
+import com.company.dento.ui.page.CalendarPage;
 import com.company.dento.ui.page.ErrorPage;
 import com.company.dento.ui.page.ExecutionPage;
 import com.company.dento.ui.page.ExecutionsPage;
@@ -34,7 +35,7 @@ import com.vaadin.ui.UI;
  * @author Radu Georoceanu <rgeoroceanu@yahoo.com>
  *
  */
-@SpringUI(path = "/")
+@SpringUI(path = "/cms")
 @Theme("dento")
 @Widgetset("com.company.dento.ui.widgetset.DentoUIWidgetSet")
 public class DentoUI extends UI implements Localizable {
@@ -44,6 +45,7 @@ public class DentoUI extends UI implements Localizable {
 	 * View identifier of the start page.
 	 */
 	public static final String START_PAGE_NAV_NAME = "start";
+	public static final String CALENDAR_PAGE_NAV_NAME = "calendar";
 	public static final String PROCEDURES_PAGE_NAV_NAME = "procedures";
 	public static final String PROCEDURE_PAGE_NAV_NAME = "procedure";
 	public static final String SAMPLES_PAGE_NAV_NAME = "samples";
@@ -58,6 +60,8 @@ public class DentoUI extends UI implements Localizable {
 	public static final String LOGOUT_URL = "../logout";
 	@Autowired
 	private StartPage startPage;
+	@Autowired
+	private CalendarPage calendarPage;
 	@Autowired
 	private ProceduresPage proceduresPage;
 	@Autowired
@@ -78,6 +82,7 @@ public class DentoUI extends UI implements Localizable {
     protected void init(VaadinRequest vaadinRequest) {
 		navigator = new Navigator(this, this);
 		navigator.addView(START_PAGE_NAV_NAME, startPage);
+		navigator.addView(CALENDAR_PAGE_NAV_NAME, calendarPage);
 		navigator.addView(PROCEDURES_PAGE_NAV_NAME, proceduresPage);
 		navigator.addView(PROCEDURE_PAGE_NAV_NAME, procedurePage);
 		navigator.addView(SAMPLES_PAGE_NAV_NAME, samplesPage);
@@ -107,13 +112,21 @@ public class DentoUI extends UI implements Localizable {
 		localizeRecursive(procedurePage);
 		localizeRecursive(executionPage);
 		localizeRecursive(samplePage);
+		localizeRecursive(calendarPage);
 	}
 	
 	/**
-	 * Navigate to the start searching page.
+	 * Navigate to the start page.
 	 */
 	public void navigateToStartPage() {
 		navigator.navigateTo(START_PAGE_NAV_NAME);
+	}
+	
+	/**
+	 * Navigate to the calendar page.
+	 */
+	public void navigateToCalendarPage() {
+		navigator.navigateTo(CALENDAR_PAGE_NAV_NAME);
 	}
 	
 	public void navigateToProceduresPage() {
@@ -192,7 +205,7 @@ public class DentoUI extends UI implements Localizable {
 	 * @return true if user has USER role.
 	 */
 	public boolean isSimpleUser() {
-		return getAuthorities().contains(Role.USER.toString());
+		return getAuthorities().contains(Role.USER.toString()) || getAuthorities().contains(Role.TECHNICIAN.toString());
 	}
 	
 	/**

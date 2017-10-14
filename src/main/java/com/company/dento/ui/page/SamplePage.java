@@ -6,7 +6,9 @@ import java.util.Map;
 import org.springframework.stereotype.Component;
 import org.vaadin.dialogs.ConfirmDialog;
 
+import com.company.dento.model.business.Procedure;
 import com.company.dento.model.business.Sample;
+import com.company.dento.model.business.SampleTemplate;
 import com.company.dento.service.exception.DataDoesNotExistException;
 import com.company.dento.ui.DentoUI;
 import com.company.dento.ui.layout.SampleLayout;
@@ -49,6 +51,7 @@ public class SamplePage extends Page {
 		initNavigationItems();
 		if (sample == null) {
 			sample = new Sample();
+			initSelectionFields();
 		} else {
 			navigationItems.put(sample.getId().toString(), e -> {});
 		}
@@ -70,6 +73,11 @@ public class SamplePage extends Page {
 		binder.forField(sampleLayout.getSampleOverviewLayout().getDescriptionField())
 			.bind(Sample::getDescription, Sample::setDescription);
 
+	}
+	
+	private void initSelectionFields() {
+		sampleLayout.getSampleOverviewLayout().getSampleTypeField().setItems(dataService.getAll(SampleTemplate.class));
+		sampleLayout.getSampleOverviewLayout().getProcedureField().setItems(dataService.getAll(Procedure.class));
 	}
 	
 	private void setReadOnlyFields(Sample sample) {
