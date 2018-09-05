@@ -7,7 +7,6 @@ import java.util.List;
 
 import javax.annotation.PostConstruct;
 
-import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -41,10 +40,12 @@ import com.company.dento.service.exception.DataDoesNotExistException;
 import com.company.dento.service.exception.InvalidDataTypeException;
 import com.google.common.base.Preconditions;
 
+import lombok.extern.log4j.Log4j2;
+
 @Service
+@Log4j2
 public class DataServiceImpl implements DataService {
 	
-	private static final Logger LOG = Logger.getLogger(DataServiceImpl.class);
 	@Autowired
 	private ExecutionDao executionDao;
 	@Autowired
@@ -129,17 +130,27 @@ public class DataServiceImpl implements DataService {
 			procedure.setPatient("Gheorghe");
 			saveEntity(procedure);
 			
-			Execution execution = new Execution();
-			execution.setTechnician(user);
-			execution.setTemplate(executionTemplate1);
-			execution.setProcedure(procedure);
+			Execution execution1 = new Execution();
+			execution1.setTechnician(user);
+			execution1.setTemplate(executionTemplate1);
+			execution1.setProcedure(procedure);
+			
+			Execution execution2 = new Execution();
+			execution2.setTechnician(user);
+			execution2.setTemplate(executionTemplate1);
+			execution2.setProcedure(procedure);
+			
+			Execution execution3 = new Execution();
+			execution3.setTechnician(user);
+			execution3.setTemplate(executionTemplate1);
+			execution3.setProcedure(procedure);
 			
 			Sample sample = new Sample();
 			sample.setTemplate(sampleTemplate1);
 			sample.setProcedure(procedure);
 			
 			procedure.getSamples().add(sample);
-			procedure.getExecutions().add(execution);
+			procedure.getExecutions().addAll(Arrays.asList(execution1, execution2, execution3));
 			saveEntity(procedure);
 		}
 	}
@@ -148,7 +159,7 @@ public class DataServiceImpl implements DataService {
 	@Transactional
 	public <T extends Base> T saveEntity(T entity) throws InvalidDataTypeException {
 		Preconditions.checkNotNull(entity, "Entity cannot be null!");
-		LOG.info("Saving entity of type " + entity.getClass().getSimpleName() + ": " + entity);
+		log.info("Saving entity of type " + entity.getClass().getSimpleName() + ": " + entity);
 		
 		JpaRepository<T, Long> dao = (JpaRepository<T, Long>) getDaoByEntityClass(entity.getClass());
 		
@@ -159,7 +170,7 @@ public class DataServiceImpl implements DataService {
 	@Transactional
 	public <T extends Base> List<T> getAll(Class<T> entityClass) throws InvalidDataTypeException {
 		Preconditions.checkNotNull(entityClass, "Entity class cannot be null!");
-		LOG.info("Retrieving all entitities of type " + entityClass.getSimpleName());
+		log.info("Retrieving all entitities of type " + entityClass.getSimpleName());
 		
 		JpaRepository<T, Long> dao = (JpaRepository<T, Long>) getDaoByEntityClass(entityClass);
 		
@@ -168,34 +179,35 @@ public class DataServiceImpl implements DataService {
 
 	@Override
 	@Transactional
-	public <T extends Base> T getEntity(Long entityId, Class<T> entityClass) throws InvalidDataTypeException, DataDoesNotExistException {
+	public <T extends Base> T getEntity(Long entityId, Class<T> entityClass) 
+			throws InvalidDataTypeException, DataDoesNotExistException {
+		
 		Preconditions.checkNotNull(entityClass, "Entity class cannot be null!");
 		Preconditions.checkNotNull(entityId, "Entity id cannot be null!");
-		LOG.info("Retrieving entity of type " + entityClass.getSimpleName() + " with id " + entityId);
+		log.info("Retrieving entity of type " + entityClass.getSimpleName() + " with id " + entityId);
 		
-		T entity = null;
-		JpaRepository<T, Long> dao = (JpaRepository<T, Long>) getDaoByEntityClass(entityClass);
-		entity = dao.findOne(entityId);
+		final JpaRepository<T, Long> dao = (JpaRepository<T, Long>) getDaoByEntityClass(entityClass);
 		
-		if (entity == null) {
-			LOG.warn("Entity of type " + entityClass.getSimpleName() + " with id " + entityId + " does not exist!");
-			throw new DataDoesNotExistException("Invalid id requested!");
-		}
-		
-		return entity;
+		return dao.findById(entityId)
+				.orElseThrow(()-> new DataDoesNotExistException(String
+						.format("Invalid id requested: ", entityId)));
 	}
 
 	@Override
 	@Transactional
-	public <T extends Base> void deleteEntity(Long entityId, Class<T> entityClass) throws InvalidDataTypeException, DataDoesNotExistException {
+	public <T extends Base> void deleteEntity(Long entityId, Class<T> entityClass) 
+			throws InvalidDataTypeException, DataDoesNotExistException {
+		
 		Preconditions.checkNotNull(entityClass, "Entity class cannot be null!");
 		Preconditions.checkNotNull(entityId, "Entity id cannot be null!");
-		LOG.info("Deleting entity of type " + entityClass.getSimpleName() + " with id " + entityId);
+		log.info("Deleting entity of type " + entityClass.getSimpleName() + " with id " + entityId);
 		
 	}
 	
 	@SuppressWarnings("unchecked")
-	private <T extends Base> JpaRepository<T, Long> getDaoByEntityClass(Class<T> entityClass) throws InvalidDataTypeException {
+	private <T extends Base> JpaRepository<T, Long> getDaoByEntityClass(Class<T> entityClass) 
+			throws InvalidDataTypeException {
+		
 		if (entityClass == Execution.class) {
 			return (JpaRepository<T, Long>) executionDao;
 		} else if (entityClass == ExecutionTemplate.class) {
@@ -218,42 +230,39 @@ public class DataServiceImpl implements DataService {
 			return (JpaRepository<T, Long>) clinicDao;
 		}
 		
-		LOG.warn("Invalid entity type " + entityClass.getSimpleName());
+		log.warn("Invalid entity type " + entityClass.getSimpleName());
 		throw new InvalidDataTypeException("Invalid data type " + entityClass.getName());
 	}
 
 	@Override
 	public List<Sample> getProcedureSamples(Long procedureId) {
 		Preconditions.checkNotNull(procedureId, "Procedure id cannot be null!");
-		LOG.info("Retrieve samples for procedure " + procedureId);
+		log.info("Retrieve samples for procedure " + procedureId);
 		return sampleDao.findByProcedureId(procedureId);
 	}
 
 	@Override
 	public List<Execution> getProcedureExecutions(Long procedureId) {
 		Preconditions.checkNotNull(procedureId, "Procedure id cannot be null!");
-		LOG.info("Retrieve executions for procedure " + procedureId);
+		log.info("Retrieve executions for procedure " + procedureId);
 		return executionDao.findByProcedureId(procedureId);
 	}
 
 	@Override
 	public User getUser(String username) throws DataDoesNotExistException {
 		Preconditions.checkNotNull(username, "Username cannot be null!");
-		LOG.info("Retrieve user " + username);
-		User user = userDao.findByUsername(username);
-		if (user == null) {
-			LOG.warn("User with name " + username + " does not exist!");
-			throw new DataDoesNotExistException("Invalid username requested!");
-		}
+		log.info("Retrieve user " + username);
 		
-		return user;
+		return userDao.findByUsername(username)
+				.orElseThrow(() -> new DataDoesNotExistException(String
+						.format("Invalid username requested: ", username)));
 	}
 	
 	@Transactional
 	@Override
 	public User saveUserAndEncodePassword(User user) {
 		Preconditions.checkNotNull(user, "User must not be null!");
-		LOG.info("Save user " + user.getUsername());
+		log.info("Save user " + user.getUsername());
 		user.setPassword(passwordEncoder.encode(user.getPassword()));
 		return userDao.saveAndFlush(user);
 	}

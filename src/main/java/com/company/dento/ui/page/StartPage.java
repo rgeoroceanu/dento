@@ -1,33 +1,24 @@
 package com.company.dento.ui.page;
 
-import org.springframework.stereotype.Component;
+import org.springframework.security.access.annotation.Secured;
 
-import com.company.dento.ui.layout.StartLayout;
-import com.vaadin.navigator.ViewChangeListener.ViewChangeEvent;
-import com.vaadin.spring.annotation.SpringView;
-import com.vaadin.spring.annotation.UIScope;
+import com.vaadin.flow.router.Route;
 
 /**
- * Home page of the application. Displays individual boxes of information.
+ * Layout of the start page containing individual boxes of information.
  * 
  * @author Radu Georoceanu <rgeoroceanu@yahoo.com>
  *
  */
-@Component
-@UIScope
-@SpringView
-public class StartPage extends Page {
+//@Component
+//@UIScope
+@Secured(value = {"USER", "ADMIN"})
+@Route(value = "start")
+public class StartPage extends Page{
 	
 	private static final long serialVersionUID = 1L;
-	private final StartLayout startLayout;
 	
 	public StartPage() {
-		startLayout = new StartLayout();
-		this.setLayout(startLayout);
-	}
-	
-	@Override
-	public void enter(ViewChangeEvent event) {
-		super.enter(event);
+		
 	}
 }

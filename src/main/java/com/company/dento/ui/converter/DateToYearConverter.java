@@ -4,9 +4,9 @@ import java.util.Date;
 
 import org.joda.time.DateTime;
 
-import com.vaadin.data.Converter;
-import com.vaadin.data.Result;
-import com.vaadin.data.ValueContext;
+import com.vaadin.flow.data.binder.Result;
+import com.vaadin.flow.data.binder.ValueContext;
+import com.vaadin.flow.data.converter.Converter;
 
 /**
  * Vaadin data {@link Converter} that converts Date to the year representation.

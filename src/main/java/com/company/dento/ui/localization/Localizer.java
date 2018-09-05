@@ -42,7 +42,7 @@ public final class Localizer {
 	 * @param id of the localized string to be read.
 	 * @return the localized string.
 	 */
-	public static String getLocalizedString(String id) {
+	public static String getLocalizedString(final String id) {
 		Preconditions.checkNotNull(id);
 		Preconditions.checkNotNull(instance.locale);
 		String localizedName = id;

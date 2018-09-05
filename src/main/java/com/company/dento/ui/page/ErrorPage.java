@@ -1,12 +1,14 @@
 package com.company.dento.ui.page;
 
-import com.vaadin.navigator.View;
-import com.vaadin.navigator.ViewChangeListener.ViewChangeEvent;
-import com.vaadin.spring.annotation.SpringView;
-import com.vaadin.spring.annotation.UIScope;
-import com.vaadin.ui.Label;
-import com.vaadin.ui.VerticalLayout;
 import org.springframework.stereotype.Component;
+
+import com.vaadin.flow.component.html.Label;
+import com.vaadin.flow.component.orderedlayout.VerticalLayout;
+import com.vaadin.flow.router.BeforeEnterEvent;
+import com.vaadin.flow.router.BeforeEnterObserver;
+import com.vaadin.flow.router.BeforeEvent;
+import com.vaadin.flow.router.HasUrlParameter;
+import com.vaadin.flow.spring.annotation.UIScope;
 
 /**
  * Error view of the cms.
@@ -16,8 +18,7 @@ import org.springframework.stereotype.Component;
  */
 @Component
 @UIScope
-@SpringView
-public class ErrorPage extends VerticalLayout implements View {
+public class ErrorPage extends VerticalLayout implements BeforeEnterObserver, HasUrlParameter<String> {
 
     private static final long serialVersionUID = 1L;
     private static final String DEFAULT_ERROR_MESSAGE = "Oops! An error occured! You may have navigated to an invalid page!";
@@ -28,15 +29,18 @@ public class ErrorPage extends VerticalLayout implements View {
 	 */
 	public ErrorPage() {
 		label = new Label();
-		label.setValue(DEFAULT_ERROR_MESSAGE);
-		this.addComponent(label);
+		label.setText(DEFAULT_ERROR_MESSAGE);
+		this.add(label);
 	}
 
 	@Override
-	public final void enter(final ViewChangeEvent event) {
-		final String message = event.getParameters();
-		if (message != null) {
-			label.setValue(message);
-		}
+	public void beforeEnter(final BeforeEnterEvent event) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void setParameter(BeforeEvent event, String parameter) {
+		label.setText(parameter);
 	}
 }
