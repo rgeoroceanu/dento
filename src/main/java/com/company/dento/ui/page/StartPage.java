@@ -1,5 +1,6 @@
 package com.company.dento.ui.page;
 
+import com.company.dento.service.DataService;
 import org.springframework.security.access.annotation.Secured;
 
 import com.vaadin.flow.router.Route;
@@ -18,7 +19,7 @@ public class StartPage extends Page{
 	
 	private static final long serialVersionUID = 1L;
 	
-	public StartPage() {
-		
+	public StartPage(final DataService dataService) {
+		super(dataService);
 	}
 }

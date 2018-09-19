@@ -1,5 +1,6 @@
 package com.company.dento.model.business;
 
+import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Table;
@@ -15,6 +16,8 @@ public class SampleTemplate extends Base {
 	
 	@Column(unique = true, nullable = false)
 	private String name;
+	@Basic
+	private boolean active;
 	
 	public String toString() {
 		if (name != null) {

@@ -1,9 +1,13 @@
 package com.company.dento.model.business;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Enumerated;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
 import com.company.dento.model.type.MeasurementUnit;
@@ -24,7 +28,11 @@ public class MaterialTemplate extends Base {
 	@Basic
 	private int pricePerUnit;
 	@Basic
-	private boolean perProcedure;
+	private boolean perJob;
+	@OneToMany
+	private List<MaterialPrice> individualPrices = new ArrayList<>();
+	@Basic
+	private boolean active;
 	
 	public String toString() {
 		if (name != null) {

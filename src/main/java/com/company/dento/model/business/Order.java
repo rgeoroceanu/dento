@@ -20,15 +20,15 @@ import lombok.Setter;
 @Getter
 @Setter
 @Entity
-@Table(name = "procedures")
-public class Procedure extends Base {
+@Table(name = "orders")
+public class Order extends Base {
 	
 	@OneToOne
 	private Doctor doctor;
 	@Basic
 	private String patient;
 	@ManyToOne(optional = false)
-	private ProcedureTemplate template;
+	private OrderTemplate template;
 	@Basic
 	private int price;
 	@Column
@@ -40,7 +40,7 @@ public class Procedure extends Base {
 	@OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
 	private List<Sample> samples = new ArrayList<>();
 	@OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
-	private List<Execution> executions = new ArrayList<>();
+	private List<Job> jobs = new ArrayList<>();
 	@ElementCollection
 	private List<String> cadFiles = new ArrayList<>();
 	

@@ -1,8 +1,5 @@
 package com.company.dento.ui;
 
-import com.vaadin.flow.theme.Theme;
-import com.vaadin.flow.theme.lumo.Lumo;
-
 /**
  * UI entry point of the application.
  * 

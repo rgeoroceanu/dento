@@ -15,8 +15,8 @@ import lombok.Setter;
 @Getter
 @Setter
 @Entity
-@Table(name = "procedure_templates")
-public class ProcedureTemplate extends Base {
+@Table(name = "order_templates")
+public class OrderTemplate extends Base {
 	
 	@Column(unique = true, nullable = false)
 	private String name;
@@ -25,7 +25,7 @@ public class ProcedureTemplate extends Base {
 	@OneToMany
 	private List<SampleTemplate> samples = new ArrayList<>();
 	@OneToMany
-	private List<ExecutionTemplate> executions = new ArrayList<>();
+	private List<JobTemplate> executions = new ArrayList<>();
 	
 	public String toString() {
 		if (name != null) {

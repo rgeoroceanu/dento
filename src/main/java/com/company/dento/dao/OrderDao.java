@@ -3,9 +3,9 @@ package com.company.dento.dao;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
-import com.company.dento.model.business.Procedure;
+import com.company.dento.model.business.Order;
 
 @Repository
-public interface ProcedureDao extends JpaRepository<Procedure, Long> {
+public interface OrderDao extends JpaRepository<Order, Long> {
 
 }

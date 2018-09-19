@@ -9,5 +9,5 @@ import com.company.dento.model.business.Sample;
 
 @Repository
 public interface SampleDao extends JpaRepository<Sample, Long> {
-	List<Sample> findByProcedureId(Long procedureId);
+	List<Sample> findByOrderId(final Long orderId);
 }

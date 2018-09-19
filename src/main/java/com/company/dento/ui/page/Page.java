@@ -38,7 +38,6 @@ import com.vaadin.flow.router.BeforeEnterObserver;
 public abstract class Page extends HorizontalLayout implements Localizable, BeforeEnterObserver {
 	private static final long serialVersionUID = 1L;
 	
-	@Autowired
 	protected DataService dataService;
 	
 	private static final Locale ENGLISH_LOCALE = new Locale("en");
@@ -49,7 +48,8 @@ public abstract class Page extends HorizontalLayout implements Localizable, Befo
 	private final Div contentLayout;
 	private final MenuLayout menuLayout;
 	
-	public Page() {
+	public Page(final DataService dataService) {
+		this.dataService = dataService;
 		this.languageSelect = initLanguageSelect();
 		this.logoutButton = initLogoutButton();
 		this.contentLayout = new Div();

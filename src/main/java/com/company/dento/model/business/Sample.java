@@ -4,7 +4,6 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
@@ -24,17 +23,15 @@ public class Sample extends Base {
 	@ManyToOne(optional = false)
 	private SampleTemplate template;
 	@ManyToOne(fetch = FetchType.EAGER)
-	private Procedure procedure;
+	private Order order;
 	@ElementCollection
 	private List<String> images = new ArrayList<>();
 	@Column
 	private LocalDateTime date;
-	@Basic
-	private String description;
 	
 	public String toString() {
 		if (template != null) {
-			return template.getName() + " : " + procedure.getId();
+			return template.getName() + " : " + order.getId();
 		}
 		return super.toString();
 	}
