@@ -37,7 +37,18 @@ public class ExecutionSpecification implements Specification<Execution> {
             predicates.add(builder.and(builder.equal(executionRoot.get("job").get("technician"),
                     executionCriteria.getTechnician())));
         }
-
+        if (executionCriteria.getJobTemplateName() != null) {
+            predicates.add(builder.and(builder.equal(executionRoot.get("job").get("template").get("name"),
+                    executionCriteria.getJobTemplateName())));
+        }
+        if (executionCriteria.getTemplateName() != null) {
+            predicates.add(builder.and(builder.equal(executionRoot.get("template").get("name"),
+                    executionCriteria.getTemplateName())));
+        }
+        if (executionCriteria.getOrderId() != null) {
+            predicates.add(builder.and(builder.equal(executionRoot.get("job").get("order").get("id"),
+                    executionCriteria.getOrderId())));
+        }
         predicates.add(builder.and(builder.equal(executionRoot.get("job").get("finalized"),
                 executionCriteria.isFinalized())));
 
@@ -47,7 +58,19 @@ public class ExecutionSpecification implements Specification<Execution> {
         }
         if (executionCriteria.getEndDate() != null) {
             predicates.add(builder.and(builder.lessThanOrEqualTo(executionRoot.get("created"),
-                    executionCriteria.getEndDate())));
+                    executionCriteria.getEndDate().toLocalDate().plusDays(1).atStartOfDay())));
+        }
+        if (executionCriteria.getFromPrice() != null) {
+            predicates.add(builder.and(builder.greaterThanOrEqualTo(executionRoot.get("price"),
+                    executionCriteria.getFromPrice())));
+        }
+        if (executionCriteria.getToPrice() != null) {
+            predicates.add(builder.and(builder.lessThanOrEqualTo(executionRoot.get("price"),
+                    executionCriteria.getToPrice())));
+        }
+        if (executionCriteria.getCount() != null) {
+            predicates.add(builder.and(builder.equal(executionRoot.get("count"),
+                    executionCriteria.getCount())));
         }
         Predicate[] predicatesArray = new Predicate[predicates.size()];
         return builder.and(predicates.toArray(predicatesArray));

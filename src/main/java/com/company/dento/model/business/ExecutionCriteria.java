@@ -15,4 +15,11 @@ public class ExecutionCriteria {
     private LocalDateTime endDate;
     private User technician;
     private boolean finalized;
+    private Long orderId;
+    private String templateName;
+    private String jobTemplateName;
+    private Integer count;
+    private Integer fromPrice;
+    private Integer toPrice;
+
 }

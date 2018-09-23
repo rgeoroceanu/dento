@@ -5,6 +5,7 @@ import com.company.dento.service.DataService;
 import com.company.dento.ui.localization.Localizable;
 import com.company.dento.ui.localization.Localizer;
 import com.vaadin.flow.component.grid.Grid;
+import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.data.provider.*;
 import com.vaadin.flow.data.renderer.LocalDateRenderer;
 
@@ -33,24 +34,21 @@ public class FilterableGrid<T extends Base, V> extends Grid<T> implements Locali
 
     @Override
     public void localize() {
-        this.getColumns().forEach(column ->
-                column.setHeader(Localizer.getLocalizedString(column.getKey())));
+        this.getColumns().forEach(column -> {
+                    final Div headerCell = new Div();
+                    headerCell.addClassName("dento-grid-header");
+                    headerCell.setText(Localizer.getLocalizedString(column.getKey()));
+                    column.setHeader(headerCell);
+                });
     }
 
     private void initGrid() {
         this.setSelectionMode(SelectionMode.NONE);
         this.setSizeFull();
         this.getElement().setAttribute("theme", "no-border row-stripes");
-        removeDefaultColumns();
+        this.getColumns().forEach(this::removeColumn);
         this.addColumn(new LocalDateRenderer<>(item -> item.getCreated().toLocalDate(), "d.M.yyyy"))
-                .setKey("formattedDate").setWidth("250px");
-    }
-
-    private void removeDefaultColumns() {
-        this.removeColumnByKey("id");
-        this.removeColumnByKey("created");
-        this.removeColumnByKey("updated");
-        this.removeColumnByKey("version");
+                .setKey("date").setWidth("250px");
     }
 
     private ConfigurableFilterDataProvider<T, Void, V> initDataProvider() {
