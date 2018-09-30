@@ -35,6 +35,7 @@ import com.vaadin.flow.router.BeforeEnterObserver;
  *
  */
 @HtmlImport("frontend://styles/shared-styles.html")
+@HtmlImport("frontend://styles/language-select.html")
 public abstract class Page extends HorizontalLayout implements Localizable, BeforeEnterObserver {
 	private static final long serialVersionUID = 1L;
 	
@@ -130,7 +131,7 @@ public abstract class Page extends HorizontalLayout implements Localizable, Befo
 		headerWrapper.setClassName("main-layout__header");
 		headerButtonsLayout.setClassName("main-layout__header-buttons");
 		rightLayout.add(headerWrapper, contentLayout);
-		headerButtonsLayout.add(logoutButton);
+		headerButtonsLayout.add(languageSelect, logoutButton);
 		headerWrapper.add(headerButtonsLayout);
 		contentLayout.setClassName("main-layout__content");
 		this.add(menuLayout);
@@ -145,15 +146,22 @@ public abstract class Page extends HorizontalLayout implements Localizable, Befo
 		languageSelect.setItems(Arrays.asList(ENGLISH_LOCALE, ROMANIAN_LOCALE));
 		languageSelect.setItemLabelGenerator(locale -> {
 			if (ENGLISH_LOCALE.equals(locale)) {
-				return "English";
+				return "EN";
 			} else if (ROMANIAN_LOCALE.equals(locale)) {
-				return "Română";
+				return "RO";
 			}
 			return "";
 		});
 		languageSelect.setAllowCustomValue(false);
-		languageSelect.addValueChangeListener(e -> changeLocale(e.getValue()));
+		languageSelect.setPreventInvalidInput(true);
+		languageSelect.addValueChangeListener(e -> {
+			final String className = ENGLISH_LOCALE.equals(e.getValue()) ? "language-select-en" : "language-select-ro";
+			languageSelect.removeClassNames("language-select-en", "language-select-ro");
+			languageSelect.addClassName(className);
+			changeLocale(e.getValue());
+		});
 		languageSelect.setValue(ROMANIAN_LOCALE);
+		languageSelect.addClassName("language-select");
 		return languageSelect;
 	}
 	
@@ -165,8 +173,9 @@ public abstract class Page extends HorizontalLayout implements Localizable, Befo
 		logoutButton.setClassName("main-layout__header-button");
 		return logoutButton;
 	}
-	
+
 	private void changeLocale(final Locale locale) {
 		Localizer.setLocale(locale);
+		localizeRecursive(this);
 	}
 }

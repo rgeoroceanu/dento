@@ -13,6 +13,7 @@ import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.textfield.TextField;
+import com.vaadin.flow.data.renderer.LocalDateRenderer;
 import com.vaadin.flow.data.value.ValueChangeMode;
 import com.vaadin.flow.router.AfterNavigationEvent;
 import com.vaadin.flow.router.AfterNavigationObserver;
@@ -38,11 +39,9 @@ public class ExecutionsPage extends Page implements Localizable, AfterNavigation
     private final DatePicker toDateFilter;
     private final Checkbox finalizedFilter;
     private final TextField orderIdFilter;
-    private final ComboBox<String> jobTemplateNameFilter;
     private final ComboBox<String> templateNameFilter;
     private final TextField countFilter;
-    private final TextField fromPriceFilter;
-    private final TextField toPriceFilter;
+    private final TextField priceFilter;
 
 	public ExecutionsPage(final DataService dataService) {
 	    super(dataService);
@@ -53,17 +52,16 @@ public class ExecutionsPage extends Page implements Localizable, AfterNavigation
         toDateFilter = new DatePicker();
         finalizedFilter = new Checkbox();
         orderIdFilter = new TextField();
-        jobTemplateNameFilter = new ComboBox<>();
         templateNameFilter = new ComboBox<>();
         countFilter = new TextField();
-        fromPriceFilter = new TextField();
-        toPriceFilter = new TextField();
+        priceFilter = new TextField();
 
-        grid.addColumn("job.order.id").setWidth("50px");
-        grid.addColumn("job.template.name");
+        grid.addColumn(new LocalDateRenderer<>(item -> item.getCreated().toLocalDate(), "d.M.yyyy"))
+                .setKey("date");
+        grid.addColumn("job.order.id");
         grid.addColumn("template.name");
         grid.addColumn("job.technician");
-        grid.addColumn("count").setWidth("50px");
+        grid.addColumn("count");
         grid.addColumn("price");
         grid.addComponentColumn(item -> {
             final Icon icon = new Icon(item.getJob().isFinalized() ? VaadinIcon.CHECK : VaadinIcon.CLOSE_SMALL);
@@ -71,7 +69,7 @@ public class ExecutionsPage extends Page implements Localizable, AfterNavigation
             final String color = item.getJob().isFinalized() ? "green": "red";
             icon.setColor(color);
             return icon;
-        }).setKey("jobFinalized").setWidth("70px");
+        }).setKey("jobFinalized");
 
         initFilters();
         initLayout();
@@ -99,15 +97,11 @@ public class ExecutionsPage extends Page implements Localizable, AfterNavigation
         criteria.setOrderId(orderIdFilter.getOptionalValue()
                 .filter(StringUtils::isNumeric)
                 .map(Long::valueOf).orElse(null));
-        criteria.setJobTemplateName(jobTemplateNameFilter.getOptionalValue().orElse(null));
         criteria.setTemplateName(templateNameFilter.getOptionalValue().orElse(null));
         criteria.setCount(countFilter.getOptionalValue()
                 .filter(StringUtils::isNumeric)
                 .map(Integer::valueOf).orElse(null));
-        criteria.setFromPrice(fromPriceFilter.getOptionalValue()
-                .filter(NumberUtils::isCreatable)
-                .map(Integer::valueOf).orElse(null));
-        criteria.setToPrice(toPriceFilter.getOptionalValue()
+        criteria.setPrice(priceFilter.getOptionalValue()
                 .filter(NumberUtils::isCreatable)
                 .map(Integer::valueOf).orElse(null));
         grid.refresh(criteria);
@@ -116,57 +110,48 @@ public class ExecutionsPage extends Page implements Localizable, AfterNavigation
 
     private void clearFilters() {
 	    technicianFilter.setItems(dataService.getAll(User.class));
-	    jobTemplateNameFilter.setItems(dataService.getAll(JobTemplate.class).stream().map(JobTemplate::getName));
         templateNameFilter.setItems(dataService.getAll(ExecutionTemplate.class).stream().map(ExecutionTemplate::getName));
         technicianFilter.setValue(null);
         //fromDateFilter.setValue(LocalDate.now().minusDays(LocalDate.now().getDayOfMonth() - 1));
         toDateFilter.setValue(null);
         finalizedFilter.setValue(false);
-        jobTemplateNameFilter.setValue(null);
         templateNameFilter.setValue(null);
         countFilter.setValue("");
         orderIdFilter.setValue("");
-        fromPriceFilter.setValue("");
-        toPriceFilter.setValue("");
+        priceFilter.setValue("");
     }
 
 	private void initFilters() {
         final HorizontalLayout dateFilterLayout = new HorizontalLayout();
-        final HorizontalLayout priceFilterLayout = new HorizontalLayout();
         fromDateFilter.addValueChangeListener(event -> refresh());
         toDateFilter.addValueChangeListener(event -> refresh());
         technicianFilter.addValueChangeListener(event -> refresh());
         finalizedFilter.addValueChangeListener(event -> refresh());
         orderIdFilter.addValueChangeListener(event -> refresh());
-        jobTemplateNameFilter.addValueChangeListener(event -> refresh());
         templateNameFilter.addValueChangeListener(event -> refresh());
         countFilter.addValueChangeListener(event -> refresh());
-        fromPriceFilter.addValueChangeListener(event -> refresh());
-        toPriceFilter.addValueChangeListener(event -> refresh());
+        priceFilter.addValueChangeListener(event -> refresh());
         orderIdFilter.setValueChangeMode(ValueChangeMode.EAGER);
-        fromPriceFilter.setValueChangeMode(ValueChangeMode.EAGER);
-        toPriceFilter.setValueChangeMode(ValueChangeMode.EAGER);
+        priceFilter.setValueChangeMode(ValueChangeMode.EAGER);
         countFilter.setValueChangeMode(ValueChangeMode.EAGER);
         dateFilterLayout.add(fromDateFilter, toDateFilter);
-        priceFilterLayout.add(fromPriceFilter, toPriceFilter);
         final HeaderRow filterRow = grid.appendHeaderRow();
         filterRow.getCells().get(0).setComponent(dateFilterLayout);
         filterRow.getCells().get(1).setComponent(orderIdFilter);
-        filterRow.getCells().get(2).setComponent(jobTemplateNameFilter);
-        filterRow.getCells().get(3).setComponent(templateNameFilter);
-        filterRow.getCells().get(4).setComponent(technicianFilter);
-        filterRow.getCells().get(5).setComponent(countFilter);
-        filterRow.getCells().get(6).setComponent(priceFilterLayout);
-        filterRow.getCells().get(7).setComponent(finalizedFilter);
-        fromDateFilter.setWidth("120px");
-        toDateFilter.setWidth("120px");
-        fromPriceFilter.setWidth("80px");
-        toPriceFilter.setWidth("80px");
-        technicianFilter.setWidth("170px");
-        jobTemplateNameFilter.setWidth("170px");
-        templateNameFilter.setWidth("170px");
-        orderIdFilter.setWidth("50px");
-        countFilter.setWidth("50px");
+        filterRow.getCells().get(2).setComponent(templateNameFilter);
+        filterRow.getCells().get(3).setComponent(technicianFilter);
+        filterRow.getCells().get(4).setComponent(countFilter);
+        filterRow.getCells().get(5).setComponent(priceFilter);
+        filterRow.getCells().get(6).setComponent(finalizedFilter);
+        fromDateFilter.addClassName("dento-grid-filter");
+        toDateFilter.addClassName("dento-grid-filter");
+        priceFilter.addClassName("dento-grid-filter");
+        technicianFilter.addClassName("dento-grid-filter");
+        templateNameFilter.addClassName("dento-grid-filter");
+        orderIdFilter.addClassName("dento-grid-filter");
+        countFilter.addClassName("dento-grid-filter");
+        fromDateFilter.setWidth("90px");
+        toDateFilter.setWidth("90px");
     }
 
 	private void initLayout() {

@@ -1,5 +1,10 @@
 <custom-style>
   <style>
+    [part~="cell"].vaadin-grid > vaadin-grid-cell-content {
+      font-size: 14px;
+      color: grey;
+    }
+
   	.main-layout__header {
             align-items: center;
             margin-right: 15px;
@@ -34,6 +39,14 @@
   .dento-grid-icon {
     width: 18px;
   }
+
+  .dento-grid-filter {
+      --lumo-text-field-size: 30px;
+      --lumo-size-m: 30px;
+      --lumo-font-size-m: 13px;
+      font-size: 13px;
+      width: 140px;
+    }
 
   	.app-sidebar, .off-canvas-sidebar {
   font-family: "Montserrat", "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;

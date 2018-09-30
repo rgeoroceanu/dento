@@ -47,8 +47,6 @@ public class FilterableGrid<T extends Base, V> extends Grid<T> implements Locali
         this.setSizeFull();
         this.getElement().setAttribute("theme", "no-border row-stripes");
         this.getColumns().forEach(this::removeColumn);
-        this.addColumn(new LocalDateRenderer<>(item -> item.getCreated().toLocalDate(), "d.M.yyyy"))
-                .setKey("date").setWidth("250px");
     }
 
     private ConfigurableFilterDataProvider<T, Void, V> initDataProvider() {

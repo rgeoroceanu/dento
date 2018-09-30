@@ -19,7 +19,6 @@ public class ExecutionCriteria {
     private String templateName;
     private String jobTemplateName;
     private Integer count;
-    private Integer fromPrice;
-    private Integer toPrice;
+    private Integer price;
 
 }

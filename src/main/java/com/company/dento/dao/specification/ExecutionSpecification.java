@@ -60,13 +60,9 @@ public class ExecutionSpecification implements Specification<Execution> {
             predicates.add(builder.and(builder.lessThanOrEqualTo(executionRoot.get("created"),
                     executionCriteria.getEndDate().toLocalDate().plusDays(1).atStartOfDay())));
         }
-        if (executionCriteria.getFromPrice() != null) {
-            predicates.add(builder.and(builder.greaterThanOrEqualTo(executionRoot.get("price"),
-                    executionCriteria.getFromPrice())));
-        }
-        if (executionCriteria.getToPrice() != null) {
-            predicates.add(builder.and(builder.lessThanOrEqualTo(executionRoot.get("price"),
-                    executionCriteria.getToPrice())));
+        if (executionCriteria.getPrice() != null) {
+            predicates.add(builder.and(builder.equal(executionRoot.get("price"),
+                    executionCriteria.getPrice())));
         }
         if (executionCriteria.getCount() != null) {
             predicates.add(builder.and(builder.equal(executionRoot.get("count"),
