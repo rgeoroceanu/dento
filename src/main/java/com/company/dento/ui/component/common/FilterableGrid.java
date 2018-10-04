@@ -9,6 +9,7 @@ import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.data.provider.*;
 import com.vaadin.flow.data.renderer.LocalDateRenderer;
 
+import java.util.Arrays;
 import java.util.Map;
 import java.util.stream.Collectors;
 
@@ -34,7 +35,9 @@ public class FilterableGrid<T extends Base, V> extends Grid<T> implements Locali
 
     @Override
     public void localize() {
-        this.getColumns().forEach(column -> {
+        this.getColumns().stream()
+                .filter(column -> !Arrays.asList("remove", "add", "edit").contains(column.getKey()))
+                .forEach(column -> {
                     final Div headerCell = new Div();
                     headerCell.addClassName("dento-grid-header");
                     headerCell.setText(Localizer.getLocalizedString(column.getKey()));

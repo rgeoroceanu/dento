@@ -4,8 +4,11 @@ import com.company.dento.model.business.*;
 import com.company.dento.service.DataService;
 import com.company.dento.ui.component.common.FilterableGrid;
 import com.company.dento.ui.localization.Localizable;
+import com.vaadin.flow.component.ClickEvent;
+import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.checkbox.Checkbox;
 import com.vaadin.flow.component.combobox.ComboBox;
+import com.vaadin.flow.component.confirmdialog.ConfirmDialog;
 import com.vaadin.flow.component.datepicker.DatePicker;
 import com.vaadin.flow.component.grid.HeaderRow;
 import com.vaadin.flow.component.icon.Icon;
@@ -42,6 +45,7 @@ public class ExecutionsPage extends Page implements Localizable, AfterNavigation
     private final ComboBox<String> templateNameFilter;
     private final TextField countFilter;
     private final TextField priceFilter;
+    private final ConfirmDialog confirmDialog;
 
 	public ExecutionsPage(final DataService dataService) {
 	    super(dataService);
@@ -55,6 +59,7 @@ public class ExecutionsPage extends Page implements Localizable, AfterNavigation
         templateNameFilter = new ComboBox<>();
         countFilter = new TextField();
         priceFilter = new TextField();
+        confirmDialog = new ConfirmDialog();
 
         grid.addColumn(new LocalDateRenderer<>(item -> item.getCreated().toLocalDate(), "d.M.yyyy"))
                 .setKey("date");
@@ -70,6 +75,15 @@ public class ExecutionsPage extends Page implements Localizable, AfterNavigation
             icon.setColor(color);
             return icon;
         }).setKey("jobFinalized");
+        grid.addComponentColumn(item -> {
+            final Icon icon = new Icon(VaadinIcon.TRASH);
+            final Button remove = new Button();
+            remove.setIcon(icon);
+            remove.addClickListener(this::confirmRemove);
+            icon.addClassName("dento-grid-icon");
+            remove.addClassName("dento-grid-action");
+            return remove;
+        }).setKey("remove").setWidth("18px");
 
         initFilters();
         initLayout();
@@ -84,6 +98,17 @@ public class ExecutionsPage extends Page implements Localizable, AfterNavigation
     public void afterNavigation(final AfterNavigationEvent event) {
         clearFilters();
         refresh();
+    }
+
+    private void confirmRemove(final ClickEvent event) {
+	    final ConfirmDialog confirmDialog = new ConfirmDialog();
+	    confirmDialog.addConfirmListener(confirm -> remove());
+	    confirmDialog.setCancelable(true);
+	    confirmDialog.open();
+    }
+
+    private void remove() {
+
     }
 
     private void refresh() {
@@ -150,8 +175,8 @@ public class ExecutionsPage extends Page implements Localizable, AfterNavigation
         templateNameFilter.addClassName("dento-grid-filter");
         orderIdFilter.addClassName("dento-grid-filter");
         countFilter.addClassName("dento-grid-filter");
-        fromDateFilter.setWidth("90px");
-        toDateFilter.setWidth("90px");
+        fromDateFilter.setWidth("85px");
+        toDateFilter.setWidth("85px");
     }
 
 	private void initLayout() {

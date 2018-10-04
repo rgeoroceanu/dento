@@ -2,20 +2,23 @@
     <template>
         <style>
             :host(.language-select) {
-                width: 40px; !important
+                width: 40px !important;
+                --checkmark-display: none;
             }
+            --checkmark-display: none;
             :host(.language-select) [part="clear-button"] {
-                display:none !important
+                display:none !important;
             }
             :host(.language-select) [part="toggle-button"] {
-                display:none !important
+                display:none !important;
             }
             :host(.language-select) [part="text-field"] {
+                --combo-box-background-color: transparent;
                 --combo-box-no-value: none;
                 --combo-box-background-x: center;
                 --combo-box-background-y: center;
                 --combo-box-background-repeat: no-repeat;
-                --combo-box-background-size: 30px;
+                --combo-box-background-size: 23px;
             }
             :host(.language-select-en) [part="text-field"] {
                 --combo-box-background: url(/frontend/images/en.png);
@@ -30,14 +33,24 @@
     <template>
         <style>
             [part="input-field"] {
-                background: var(--combo-box-background) !important;
+                background-color: var(--combo-box-background-color, var(--lumo-contrast-10pct));
+                background-image: var(--combo-box-background) !important;
                 background-size: var(--combo-box-background-size) !important;
-                background-position-y: var(--combo-box-background-y) !important;;
-                background-position-x: var(--combo-box-background-x) !important;;
-                background-repeat: var(--combo-box-background-repeat) !important;;
+                background-position-y: var(--combo-box-background-y) !important;
+                background-position-x: var(--combo-box-background-x) !important;
+                background-repeat: var(--combo-box-background-repeat) !important;
             }
             [part="value"] {
                 display: var(--combo-box-no-value) !important
+            }
+        </style>
+    </template>
+</dom-module>
+<dom-module id="language-select-overlay-theme" theme-for="vaadin-combo-box-item">
+    <template>
+        <style>
+             :host {
+                --_lumo-item-selected-icon-display: var(--checkmark-display) !important;
             }
         </style>
     </template>
