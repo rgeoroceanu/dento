@@ -14,7 +14,7 @@ import com.vaadin.flow.spring.annotation.UIScope;
 
 @UIScope
 @Secured(value = {"USER", "ADMIN"})
-@Route(value = "samples")
+//@Route(value = "samples")
 public class SamplesPage extends Page implements Localizable {
 	
 	private static final long serialVersionUID = 1L;

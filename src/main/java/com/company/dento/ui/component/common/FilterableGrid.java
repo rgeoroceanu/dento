@@ -7,13 +7,13 @@ import com.company.dento.ui.localization.Localizer;
 import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.data.provider.*;
-import com.vaadin.flow.data.renderer.LocalDateRenderer;
+import org.springframework.data.jpa.domain.Specification;
 
 import java.util.Arrays;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-public class FilterableGrid<T extends Base, V> extends Grid<T> implements Localizable {
+public class FilterableGrid<T extends Base, V extends Specification<T>> extends Grid<T> implements Localizable {
 
     private final ConfigurableFilterDataProvider<T, Void, V> filterableDataProvider;
     private final DataService dataService;

@@ -1,14 +1,15 @@
 package com.company.dento.dao.specification;
 
 import com.company.dento.model.business.Execution;
-import com.company.dento.model.business.ExecutionCriteria;
-import com.google.common.base.Preconditions;
+import com.company.dento.model.business.User;
+import lombok.Setter;
 import org.springframework.data.jpa.domain.Specification;
 
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -18,55 +19,51 @@ import java.util.List;
  * @author Radu Georoceanu <rgeoroceanu@yahoo.com>
  *
  */
+@Setter
 public class ExecutionSpecification implements Specification<Execution> {
 
-    private final ExecutionCriteria executionCriteria;
-
-    public ExecutionSpecification(final ExecutionCriteria executionCriteria) {
-        this.executionCriteria = executionCriteria;
-    }
+    private LocalDateTime startDate;
+    private LocalDateTime endDate;
+    private User technician;
+    private Boolean finalized;
+    private Long orderId;
+    private String templateName;
+    private String jobTemplateName;
+    private Integer count;
+    private Integer price;
 
     @Override
     public Predicate toPredicate(final Root<Execution> executionRoot,
                                  final CriteriaQuery<?> query, CriteriaBuilder builder) {
 
-        Preconditions.checkNotNull(executionCriteria, "Search criteria can not be null!");
-
         final List<Predicate> predicates = new ArrayList<>();
-        if (executionCriteria.getTechnician() != null) {
-            predicates.add(builder.and(builder.equal(executionRoot.get("job").get("technician"),
-                    executionCriteria.getTechnician())));
+        if (technician != null) {
+            predicates.add(builder.and(builder.equal(executionRoot.get("job").get("technician"), technician)));
         }
-        if (executionCriteria.getJobTemplateName() != null) {
-            predicates.add(builder.and(builder.equal(executionRoot.get("job").get("template").get("name"),
-                    executionCriteria.getJobTemplateName())));
+        if (jobTemplateName != null) {
+            predicates.add(builder.and(builder.equal(executionRoot.get("job").get("template").get("name"), jobTemplateName)));
         }
-        if (executionCriteria.getTemplateName() != null) {
-            predicates.add(builder.and(builder.equal(executionRoot.get("template").get("name"),
-                    executionCriteria.getTemplateName())));
+        if (templateName != null) {
+            predicates.add(builder.and(builder.equal(executionRoot.get("template").get("name"), templateName)));
         }
-        if (executionCriteria.getOrderId() != null) {
-            predicates.add(builder.and(builder.equal(executionRoot.get("job").get("order").get("id"),
-                    executionCriteria.getOrderId())));
+        if (orderId != null) {
+            predicates.add(builder.and(builder.equal(executionRoot.get("job").get("order").get("id"), orderId)));
         }
-        predicates.add(builder.and(builder.equal(executionRoot.get("job").get("finalized"),
-                executionCriteria.isFinalized())));
-
-        if (executionCriteria.getStartDate() != null) {
-            predicates.add(builder.and(builder.greaterThanOrEqualTo(executionRoot.get("created"),
-                    executionCriteria.getStartDate())));
+        if (finalized != null) {
+            predicates.add(builder.and(builder.equal(executionRoot.get("job").get("order").get("finalized"), finalized)));
         }
-        if (executionCriteria.getEndDate() != null) {
+        if (startDate != null) {
+            predicates.add(builder.and(builder.greaterThanOrEqualTo(executionRoot.get("created"), startDate)));
+        }
+        if (endDate != null) {
             predicates.add(builder.and(builder.lessThanOrEqualTo(executionRoot.get("created"),
-                    executionCriteria.getEndDate().toLocalDate().plusDays(1).atStartOfDay())));
+                    endDate.toLocalDate().plusDays(1).atStartOfDay())));
         }
-        if (executionCriteria.getPrice() != null) {
-            predicates.add(builder.and(builder.equal(executionRoot.get("price"),
-                    executionCriteria.getPrice())));
+        if (price != null) {
+            predicates.add(builder.and(builder.equal(executionRoot.get("price"), price)));
         }
-        if (executionCriteria.getCount() != null) {
-            predicates.add(builder.and(builder.equal(executionRoot.get("count"),
-                    executionCriteria.getCount())));
+        if (count != null) {
+            predicates.add(builder.and(builder.equal(executionRoot.get("count"), count)));
         }
         Predicate[] predicatesArray = new Predicate[predicates.size()];
         return builder.and(predicates.toArray(predicatesArray));

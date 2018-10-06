@@ -1,7 +1,6 @@
 package com.company.dento.service;
 
 import com.company.dento.dao.*;
-import com.company.dento.dao.specification.ExecutionSpecification;
 import com.company.dento.model.business.*;
 import com.company.dento.model.type.MeasurementUnit;
 import com.company.dento.model.type.Role;
@@ -35,7 +34,6 @@ public class DataServiceImpl implements DataService {
 	private final MaterialTemplateDao materialTemplateDao;
 	private final ExecutionTemplateDao executionTemplateDao;
 	private final ExecutionDao executionDao;
-	private final OrderTemplateDao orderTemplateDao;
 	private final OrderDao orderDao;
 	private final SampleDao sampleDao;
 	private final SampleTemplateDao sampleTemplateDao;
@@ -47,7 +45,7 @@ public class DataServiceImpl implements DataService {
 	public DataServiceImpl(final JobDao jobDao, final JobTemplateDao jobTemplateDao,
 						   final MaterialTemplateDao materialTemplateDao,
 						   final ExecutionTemplateDao executionTemplateDao, final ExecutionDao executionDao,
-						   final OrderTemplateDao orderTemplateDao, final OrderDao orderDao, final SampleDao sampleDao,
+						   final OrderDao orderDao, final SampleDao sampleDao,
 						   final SampleTemplateDao sampleTemplateDao, final DoctorDao doctorDao, final UserDao userDao,
 						   final ClinicDao clinicDao, final PasswordEncoder passwordEncoder) {
 
@@ -56,7 +54,6 @@ public class DataServiceImpl implements DataService {
 		this.materialTemplateDao = materialTemplateDao;
 		this.executionTemplateDao = executionTemplateDao;
 		this.executionDao = executionDao;
-		this.orderTemplateDao = orderTemplateDao;
 		this.orderDao = orderDao;
 		this.sampleDao = sampleDao;
 		this.sampleTemplateDao = sampleTemplateDao;
@@ -97,14 +94,6 @@ public class DataServiceImpl implements DataService {
 			sampleTemplate1.setName("Proba Ceramica");
 			saveEntity(sampleTemplate1);
 			
-			OrderTemplate procedureTemplate = new OrderTemplate();
-			procedureTemplate.setName("Ceramica Zr");
-			procedureTemplate.setPrice(100);
-			procedureTemplate.getExecutions().add(jobTemplate1);
-			procedureTemplate.getExecutions().add(jobTemplate2);
-			procedureTemplate.getSamples().add(sampleTemplate1);
-			saveEntity(procedureTemplate);
-			
 			MaterialTemplate material = new MaterialTemplate();
 			material.setName("Material 1");
 			material.setMeasurementUnit(MeasurementUnit.CM);
@@ -125,11 +114,11 @@ public class DataServiceImpl implements DataService {
 			saveEntity(doctor);
 			
 			Order order = new Order();
-			order.setTemplate(procedureTemplate);
 			order.setDeliveryDate(LocalDateTime.now());
 			order.setDoctor(doctor);
 			order.setPrice(111);
 			order.setPatient("Gheorghe");
+			order.setClinic(clinic);
 			saveEntity(order);
 			
 			Job job1 = new Job();
@@ -230,7 +219,9 @@ public class DataServiceImpl implements DataService {
 		Preconditions.checkNotNull(entityClass, "Entity class cannot be null!");
 		Preconditions.checkNotNull(entityId, "Entity id cannot be null!");
 		log.info("Deleting entity of type " + entityClass.getSimpleName() + " with id " + entityId);
-		
+
+		final JpaRepository<T, Long> dao = getDaoByEntityClass(entityClass);
+		dao.deleteById(entityId);
 	}
 	
 	@SuppressWarnings("unchecked")
@@ -243,8 +234,6 @@ public class DataServiceImpl implements DataService {
 			return (JpaRepository<T, Long>) jobTemplateDao;
 		} else if (entityClass == MaterialTemplate.class) {
 			return (JpaRepository<T, Long>) materialTemplateDao;
-		} else if (entityClass == OrderTemplate.class) {
-			return (JpaRepository<T, Long>) orderTemplateDao;
 		} else if (entityClass == Order.class) {
 			return (JpaRepository<T, Long>) orderDao;
 		} else if (entityClass == Sample.class) {
@@ -303,30 +292,28 @@ public class DataServiceImpl implements DataService {
 
 	@Transactional(readOnly = true)
 	@Override
-	public <T extends Base, V> List<T> getByCriteria(final Class<T> itemClass,
-													 final V criteria, final int offset,
-													 final int limit, final Map<String, Boolean> sortOrder) {
+	public <T extends Base> List<T> getByCriteria(final Class<T> itemClass,
+												  final Specification<T> spec, final int offset,
+												  final int limit, final Map<String, Boolean> sortOrder) {
 
-	    Preconditions.checkNotNull(criteria, "Search criteria must not be null!");
-		log.info("Requested all executions by search criteria " + criteria.toString());
+	    Preconditions.checkNotNull(spec, "Search criteria must not be null!");
+		log.info("Requested all executions by search criteria " + spec.toString());
 
 		final int page = offset / limit;
 		final Sort sort = Sort.by(extractSortOrders(sortOrder));
 		final PageRequest pageRequest = PageRequest.of(page, limit, sort);
 		final JpaSpecificationExecutor dao = (JpaSpecificationExecutor) getDaoByEntityClass(itemClass);
-		final Specification specification = getSpecification(itemClass, criteria);
-		return dao.findAll(specification, pageRequest).getContent();
+		return dao.findAll(spec, pageRequest).getContent();
 	}
 
 	@Transactional(readOnly = true)
 	@Override
-	public <T extends Base, V>  int countByCriteria(final Class<T> itemClass, final V criteria) {
-		Preconditions.checkNotNull(criteria, "Search criteria must not be null!");
-		log.info("Count by search criteria " + criteria.toString());
+	public <T extends Base>  int countByCriteria(final Class<T> itemClass, final Specification<T> spec) {
+		Preconditions.checkNotNull(spec, "Search criteria must not be null!");
+		log.info("Count by search criteria " + spec.toString());
 
 		final JpaSpecificationExecutor dao = (JpaSpecificationExecutor) getDaoByEntityClass(itemClass);
-		final Specification specification = getSpecification(itemClass, criteria);
-        return Math.toIntExact(dao.count(specification));
+        return Math.toIntExact(dao.count(spec));
 	}
 
 	private List<Sort.Order> extractSortOrders(final Map<String, Boolean> sortOrder) {
@@ -334,12 +321,4 @@ public class DataServiceImpl implements DataService {
 				.map(e -> new Sort.Order(e.getValue() ? Sort.Direction.ASC : Sort.Direction.DESC, e.getKey()))
 				.collect(Collectors.toList());
 	}
-
-    private <T extends Base, V> Specification getSpecification(final Class<T> itemClass, V criteria) {
-        if (itemClass == Execution.class) {
-            return new ExecutionSpecification((ExecutionCriteria) criteria);
-        } else {
-            throw new IllegalArgumentException(String.format("No Specification found for class %s", itemClass));
-        }
-    }
 }

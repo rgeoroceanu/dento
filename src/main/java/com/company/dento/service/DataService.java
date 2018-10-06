@@ -6,6 +6,7 @@ import java.util.Map;
 import com.company.dento.model.business.*;
 import com.company.dento.service.exception.DataDoesNotExistException;
 import com.company.dento.service.exception.InvalidDataTypeException;
+import org.springframework.data.jpa.domain.Specification;
 
 public interface DataService {
 	
@@ -17,9 +18,9 @@ public interface DataService {
 	List<Job> getProcedureExecutions(final Long procedureId);
 	User getUser(final String username) throws DataDoesNotExistException;
 	User saveUserAndEncodePassword(final User user);
-	<T extends Base, V> List<T> getByCriteria(final Class<T> itemClass,
-										final V criteria,
+	<T extends Base> List<T> getByCriteria(final Class<T> itemClass,
+										final Specification<T> criteria,
 										final int offset, final int limit,
 										final Map<String, Boolean> sortOrder);
-	<T extends Base, V> int countByCriteria(final Class<T> itemClass, final V criteria);
+	<T extends Base> int countByCriteria(final Class<T> itemClass, final Specification<T> criteria);
 }

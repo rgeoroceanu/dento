@@ -4,7 +4,7 @@ import com.company.dento.ui.localization.Localizable;
 import com.company.dento.ui.localization.Localizer;
 import com.company.dento.ui.page.ExecutionsPage;
 import com.company.dento.ui.page.Page;
-import com.company.dento.ui.page.SamplesPage;
+import com.company.dento.ui.page.OrdersPage;
 import com.company.dento.ui.page.StartPage;
 import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.html.Label;
@@ -24,15 +24,15 @@ public class MenuLayout extends Div implements Localizable {
 
 	private final RouterLink homeButton;
 	private final RouterLink executionsButton;
-	private final RouterLink samplesButton;
+	private final RouterLink ordersButton;
 	private final Label titleLabel;
 	
 	public MenuLayout() {
 		this.titleLabel = initTitleLabel();
 		
 		this.homeButton = initMenuItem(StartPage.class, VaadinIcon.HOME);
-		this.executionsButton = initMenuItem(ExecutionsPage.class, VaadinIcon.TOOLS);
-		this.samplesButton = initMenuItem(SamplesPage.class, VaadinIcon.SPECIALIST);
+		this.executionsButton = initMenuItem(ExecutionsPage.class, VaadinIcon.SPECIALIST);
+		this.ordersButton = initMenuItem(OrdersPage.class, VaadinIcon.FILE);
 		init();
 	}
 	
@@ -41,7 +41,7 @@ public class MenuLayout extends Div implements Localizable {
 		// localize
 		localizeMenuItem(homeButton, "home");
 		localizeMenuItem(executionsButton, "executions");
-		localizeMenuItem(samplesButton, "samples");
+		localizeMenuItem(ordersButton, "orders");
 	}
 	
 	private void localizeMenuItem(final RouterLink routerLink, final String messageId) {
@@ -62,7 +62,7 @@ public class MenuLayout extends Div implements Localizable {
 		final UnorderedList generalButtonsLayout = new UnorderedList();
 		final ListItem homeItem = new ListItem();
 		final ListItem executionsItem = new ListItem();
-		final ListItem samplesItem = new ListItem();
+		final ListItem ordersItem = new ListItem();
 		
 		this.setClassName("app-sidebar");
 		sidebarLogo.setClassName("logo");
@@ -74,12 +74,12 @@ public class MenuLayout extends Div implements Localizable {
 		generalButtonsLayout.setClassName("navigation navigation-main");
 		homeItem.setClassName("nav-item");
 		executionsItem.setClassName("nav-item");
-		samplesItem.setClassName("nav-item");
+		ordersItem.setClassName("nav-item");
 		
 		homeItem.add(homeButton);
 		executionsItem.add(executionsButton);
-		samplesItem.add(samplesButton);
-		generalButtonsLayout.add(homeItem, executionsItem, samplesItem);
+		ordersItem.add(ordersButton);
+		generalButtonsLayout.add(homeItem, ordersItem, executionsItem);
 		sidebarTitle.add(titleLabel);
 		sidebarLogo.add(sidebarImage, sidebarTitle);
 		navContainer.add(generalButtonsLayout);

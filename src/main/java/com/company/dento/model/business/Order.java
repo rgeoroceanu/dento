@@ -1,21 +1,12 @@
 package com.company.dento.model.business;
 
+import lombok.Getter;
+import lombok.Setter;
+
+import javax.persistence.*;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
-
-import javax.persistence.Basic;
-import javax.persistence.CascadeType;
-import javax.persistence.Column;
-import javax.persistence.ElementCollection;
-import javax.persistence.Entity;
-import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
-import javax.persistence.OneToOne;
-import javax.persistence.Table;
-
-import lombok.Getter;
-import lombok.Setter;
 
 @Getter
 @Setter
@@ -23,12 +14,12 @@ import lombok.Setter;
 @Table(name = "orders")
 public class Order extends Base {
 	
-	@OneToOne
+	@ManyToOne
 	private Doctor doctor;
 	@Basic
 	private String patient;
-	@ManyToOne(optional = false)
-	private OrderTemplate template;
+	@ManyToOne
+	private Clinic clinic;
 	@Basic
 	private int price;
 	@Column
@@ -43,11 +34,9 @@ public class Order extends Base {
 	private List<Job> jobs = new ArrayList<>();
 	@ElementCollection
 	private List<String> cadFiles = new ArrayList<>();
-	
-	public String toString() {
-		if (template != null) {
-			return template.getName() + " : Id " + super.getId();
-		}
-		return super.toString();
-	}
+	@Basic
+	private boolean finalized;
+	@Basic
+	private boolean paid;
+
 }

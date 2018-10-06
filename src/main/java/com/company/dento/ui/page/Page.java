@@ -1,18 +1,5 @@
 package com.company.dento.ui.page;
 
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.Locale;
-import java.util.Set;
-import java.util.stream.Collectors;
-
-import com.vaadin.flow.data.renderer.ComponentRenderer;
-import com.vaadin.flow.data.renderer.TextRenderer;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.context.SecurityContextHolder;
-
 import com.company.dento.model.type.Role;
 import com.company.dento.service.DataService;
 import com.company.dento.ui.component.common.MenuLayout;
@@ -29,6 +16,15 @@ import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.router.BeforeEnterEvent;
 import com.vaadin.flow.router.BeforeEnterObserver;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.context.SecurityContextHolder;
+
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Locale;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 /**
  * Layout of all pages of this application. It is composed mainly by header, content and footer.
@@ -38,6 +34,7 @@ import com.vaadin.flow.router.BeforeEnterObserver;
  */
 @HtmlImport("frontend://styles/shared-styles.html")
 @HtmlImport("frontend://styles/language-select.html")
+@HtmlImport("frontend://styles/dento-confirm-dialog.html")
 public abstract class Page extends HorizontalLayout implements Localizable, BeforeEnterObserver {
 	private static final long serialVersionUID = 1L;
 	
@@ -58,6 +55,7 @@ public abstract class Page extends HorizontalLayout implements Localizable, Befo
 		this.contentLayout = new Div();
 		this.menuLayout = new MenuLayout();
 		initLayout();
+		Localizer.setLocale(ROMANIAN_LOCALE);
 	}
 	
 	@Override
@@ -156,14 +154,14 @@ public abstract class Page extends HorizontalLayout implements Localizable, Befo
 		});
 		languageSelect.setAllowCustomValue(false);
 		languageSelect.setPreventInvalidInput(true);
-		languageSelect.addValueChangeListener(e -> {
-			final String className = ENGLISH_LOCALE.equals(e.getValue()) ? "language-select-en" : "language-select-ro";
-			languageSelect.removeClassNames("language-select-en", "language-select-ro");
-			languageSelect.addClassName(className);
-			changeLocale(e.getValue());
-		});
+        languageSelect.addValueChangeListener(e -> {
+            final String className = ENGLISH_LOCALE.equals(e.getValue()) ? "language-select-en" : "language-select-ro";
+            languageSelect.removeClassNames("language-select-en", "language-select-ro");
+            languageSelect.addClassName(className);
+        });
 		languageSelect.setValue(ROMANIAN_LOCALE);
 		languageSelect.addClassName("language-select");
+        languageSelect.addValueChangeListener(e -> changeLocale(e.getValue())) ;
 		return languageSelect;
 	}
 	
