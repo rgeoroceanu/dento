@@ -30,7 +30,7 @@ public class Order extends Base {
 	private LocalDateTime deliveryDate;
 	@OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
 	private List<Sample> samples = new ArrayList<>();
-	@OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
+	@OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER, mappedBy = "order")
 	private List<Job> jobs = new ArrayList<>();
 	@ElementCollection
 	private List<String> cadFiles = new ArrayList<>();

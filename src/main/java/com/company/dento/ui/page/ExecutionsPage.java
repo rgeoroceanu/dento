@@ -100,6 +100,8 @@ public class ExecutionsPage extends Page implements Localizable, AfterNavigation
 	public void localize() {
 		super.localize();
 		confirmDialog.localize();
+        finalizedFilter.setItemLabelGenerator(item ->
+                item ? Localizer.getLocalizedString("yes") : Localizer.getLocalizedString("no"));
 	}
 
     @Override
@@ -186,22 +188,23 @@ public class ExecutionsPage extends Page implements Localizable, AfterNavigation
         filterRow.getCells().get(4).setComponent(countFilter);
         filterRow.getCells().get(5).setComponent(priceFilter);
         filterRow.getCells().get(6).setComponent(finalizedFilter);
-        fromDateFilter.addClassName("dento-grid-filter");
-        toDateFilter.addClassName("dento-grid-filter");
-        priceFilter.addClassName("dento-grid-filter");
-        technicianFilter.addClassName("dento-grid-filter");
-        templateNameFilter.addClassName("dento-grid-filter");
-        orderIdFilter.addClassName("dento-grid-filter");
-        countFilter.addClassName("dento-grid-filter");
-        finalizedFilter.addClassName("dento-grid-filter");
-        fromDateFilter.setWidth("85px");
-        toDateFilter.setWidth("85px");
+        fromDateFilter.addClassNames("dento-grid-filter-small", "dento-grid-date-picker");
+        toDateFilter.addClassNames("dento-grid-filter-small", "dento-grid-date-picker");
+        priceFilter.addClassName("dento-grid-filter-small");
+        technicianFilter.addClassName("dento-grid-filter-large");
+        templateNameFilter.addClassName("dento-grid-filter-large");
+        orderIdFilter.addClassName("dento-grid-filter-small");
+        countFilter.addClassName("dento-grid-filter-small");
+        finalizedFilter.addClassName("dento-grid-filter-small");
+        fromDateFilter.setWidth("75px");
+        toDateFilter.setWidth("75px");
     }
 
 	private void initLayout() {
 	    final VerticalLayout layout = new VerticalLayout();
         layout.add(grid);
         layout.setHeight("100%");
+        layout.setPadding(false);
         this.setContent(layout);
     }
 }

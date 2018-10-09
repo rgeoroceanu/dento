@@ -32,6 +32,8 @@ public class Job extends Base {
 	private User technician;
 	@Basic
 	private int price;
+	@Basic
+	private int count = 1;
 	@OneToMany
 	private List<MaterialTemplate> usedMaterials = new ArrayList<>();
 	

@@ -35,6 +35,7 @@ import java.util.stream.Collectors;
 @HtmlImport("frontend://styles/shared-styles.html")
 @HtmlImport("frontend://styles/language-select.html")
 @HtmlImport("frontend://styles/dento-confirm-dialog.html")
+@HtmlImport("frontend://styles/dento-grid-date-picker.html")
 public abstract class Page extends HorizontalLayout implements Localizable, BeforeEnterObserver {
 	private static final long serialVersionUID = 1L;
 	

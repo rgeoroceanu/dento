@@ -36,7 +36,7 @@ public class FilterableGrid<T extends Base, V extends Specification<T>> extends 
     @Override
     public void localize() {
         this.getColumns().stream()
-                .filter(column -> !Arrays.asList("remove", "add", "edit").contains(column.getKey()))
+                .filter(column -> !Arrays.asList("remove", "add", "edit", "print").contains(column.getKey()))
                 .forEach(column -> {
                     final Div headerCell = new Div();
                     headerCell.addClassName("dento-grid-header");

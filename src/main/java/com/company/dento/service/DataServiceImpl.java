@@ -112,31 +112,44 @@ public class DataServiceImpl implements DataService {
 			doctor.setEmail("test@test");
 			doctor.setClinic(clinic);
 			saveEntity(doctor);
-			
+
 			Order order = new Order();
 			order.setDeliveryDate(LocalDateTime.now());
 			order.setDoctor(doctor);
-			order.setPrice(111);
 			order.setPatient("Gheorghe");
 			order.setClinic(clinic);
+			order.setPrice(450);
 			saveEntity(order);
+
+
+			Order order2 = new Order();
+			order2.setDeliveryDate(LocalDateTime.now());
+			order2.setDoctor(doctor);
+			order2.setPrice(111);
+			order2.setPatient("Gheorghe");
+			order2.setClinic(clinic);
+			saveEntity(order2);
+
 			
 			Job job1 = new Job();
 			job1.setTechnician(user);
 			job1.setTemplate(jobTemplate1);
 			job1.setOrder(order);
+			job1.setPrice(100);
             saveEntity(job1);
 			
 			Job job2 = new Job();
 			job2.setTechnician(user);
 			job2.setTemplate(jobTemplate1);
 			job2.setOrder(order);
+			job2.setPrice(150);
             saveEntity(job2);
 			
 			Job job3 = new Job();
 			job3.setTechnician(user);
 			job3.setTemplate(jobTemplate1);
-			job3.setOrder(order);
+			job3.setOrder(order2);
+			job3.setPrice(200);
             saveEntity(job3);
 
 			Execution execution1 = new Execution();

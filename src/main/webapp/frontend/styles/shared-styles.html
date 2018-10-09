@@ -1,7 +1,7 @@
 <custom-style>
   <style>
     [part~="cell"].vaadin-grid > vaadin-grid-cell-content {
-      font-size: 14px;
+      font-size: 13px;
       color: grey;
     }
   	.main-layout__header {
@@ -28,7 +28,20 @@
    .main-layout__content {
             height: 100%;
             width: 100%;
+            margin-top: 2px;
         }
+   .main-layout__content-menu {
+            height: 50px;
+            width: 100%;
+            margin-right: 15px;
+            background-color: var(--lumo-base-color);
+            box-shadow: 0 1px 0 0 var(--lumo-contrast-5pct);
+            align-items: center;
+            margin-top: 2px!important;
+   }
+   .main-layout__content-menu-button {
+      background-color: var(--lumo-contrast-5pct)!important;
+   }
   .dento-confirm-dialog-header {
       color: grey;
       background-color: #e7ebef;
@@ -59,21 +72,31 @@
   .dento-grid-header {
     color: #0b8793;
     font-weight: bold;
+    font-size: 13px!important;
   }
 
   .dento-grid-icon {
-    width: 18px;
+    width: 16px;
   }
   .dento-grid-action {
     background: transparent !important;
     color: grey;
   }
-  .dento-grid-filter {
-      --lumo-text-field-size: 30px;
-      --lumo-size-m: 30px;
+  .dento-grid-filter-small {
+      --lumo-text-field-size: 25px;
+      --lumo-size-m: 25px;
       --lumo-font-size-m: 13px;
-      font-size: 13px;
-      width: 140px;
+      font-size: 12px;
+      width: 100%;
+      font-color: grey;
+    }
+  .dento-grid-filter-large {
+      --lumo-text-field-size: 25px;
+      --lumo-size-m: 25px;
+      --lumo-font-size-m: 13px;
+      font-size: 12px;
+      width: 100%;
+      font-color: grey;
     }
   .app-sidebar, .off-canvas-sidebar {
   font-family: "Montserrat", "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
