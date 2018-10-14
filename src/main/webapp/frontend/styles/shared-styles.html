@@ -1,5 +1,12 @@
 <custom-style>
   <style>
+    vaadin-tab::before, vaadin-tab::after {
+        color: #0b8793 !important;
+        background-color: #0b8793 !important;
+    }
+    vaadin-tab[selected] {
+        color: #0b8793 !important;
+    }
     [part~="cell"].vaadin-grid > vaadin-grid-cell-content {
       font-size: 13px;
       color: grey;
@@ -40,7 +47,15 @@
             margin-top: 2px!important;
    }
    .main-layout__content-menu-button {
-      background-color: var(--lumo-contrast-5pct)!important;
+   }
+   .edit-layout__footer {
+        height: 50px;
+        width: 100%;
+        margin-bottom: 30px;
+   }
+   .edit-layout__footer-buttons {
+        float: right;
+        margin-right: 25px;
    }
   .dento-confirm-dialog-header {
       color: grey;

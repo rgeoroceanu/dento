@@ -11,6 +11,7 @@ import com.company.dento.ui.component.common.FilterableGrid;
 import com.company.dento.ui.localization.Localizable;
 import com.company.dento.ui.localization.Localizer;
 import com.vaadin.flow.component.Component;
+import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.combobox.ComboBox;
 import com.vaadin.flow.component.datepicker.DatePicker;
@@ -60,6 +61,7 @@ public class OrdersPage extends Page implements Localizable, AfterNavigationObse
     private final TextField priceFilter;
     private final ConfirmDialog confirmDialog;
     private final Button addButton;
+    private final Button printButton;
 
 	public OrdersPage(final DataService dataService) {
 	    super(dataService);
@@ -76,8 +78,12 @@ public class OrdersPage extends Page implements Localizable, AfterNavigationObse
         priceFilter = new TextField();
         confirmDialog = new ConfirmDialog();
         addButton = new Button();
+        addButton.setIcon(new Icon(VaadinIcon.PLUS));
         addButton.addClassNames("dento-button-simple", "main-layout__content-menu-button");
         addButton.addClickListener(e -> addOrder());
+        printButton = new Button();
+        printButton.setIcon(new Icon(VaadinIcon.PRINT));
+        printButton.addClassNames("dento-button-simple", "main-layout__content-menu-button");
 
         grid.addColumn(new LocalDateRenderer<>(item -> item.getCreated().toLocalDate(), "d.M.yyyy"))
                 .setKey("date").setWidth("140px");
@@ -143,7 +149,6 @@ public class OrdersPage extends Page implements Localizable, AfterNavigationObse
             remove.addClassName("dento-grid-action");
             return remove;
         }).setKey("remove").setWidth("18px");
-        grid.setPageSize(20);
 
         initFilters();
         initLayout();
@@ -157,7 +162,6 @@ public class OrdersPage extends Page implements Localizable, AfterNavigationObse
                 item ? Localizer.getLocalizedString("yes") : Localizer.getLocalizedString("no"));
         paidFilter.setItemLabelGenerator(item ->
                 item ? Localizer.getLocalizedString("yes") : Localizer.getLocalizedString("no"));
-        addButton.setText(Localizer.getLocalizedString("addOrder"));
 	}
 
     @Override
@@ -248,7 +252,7 @@ public class OrdersPage extends Page implements Localizable, AfterNavigationObse
         patientFilter.setValueChangeMode(ValueChangeMode.EAGER);
         dateFilterLayout.add(fromDateFilter, toDateFilter);
         final HeaderRow menuRow = grid.prependHeaderRow();
-        menuRow.getCells().get(0).setComponent(addButton);
+        menuRow.getCells().get(0).setComponent(new HorizontalLayout(addButton, printButton));
         final HeaderRow filterRow = grid.appendHeaderRow();
         filterRow.getCells().get(0).setComponent(dateFilterLayout);
         filterRow.getCells().get(1).setComponent(idFilter);
@@ -286,6 +290,6 @@ public class OrdersPage extends Page implements Localizable, AfterNavigationObse
     }
 
     private void addOrder() {
-
+        UI.getCurrent().navigate(OrderEditPage.class);
     }
 }

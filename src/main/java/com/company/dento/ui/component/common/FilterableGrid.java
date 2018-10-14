@@ -50,6 +50,7 @@ public class FilterableGrid<T extends Base, V extends Specification<T>> extends 
         this.setSizeFull();
         this.getElement().setAttribute("theme", "no-border row-stripes");
         this.getColumns().forEach(this::removeColumn);
+        this.setPageSize(20);
     }
 
     private ConfigurableFilterDataProvider<T, Void, V> initDataProvider() {
