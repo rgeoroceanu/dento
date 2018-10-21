@@ -1,13 +1,11 @@
 package com.company.dento.dao;
 
-import java.util.List;
-
-import org.springframework.data.jpa.repository.JpaRepository;
+import com.company.dento.model.business.Job;
 import org.springframework.stereotype.Repository;
 
-import com.company.dento.model.business.Job;
+import java.util.List;
 
 @Repository
-public interface JobDao extends JpaRepository<Job, Long> {
+public interface JobDao extends PageableRepository<Job, Long> {
 	List<Job> findByOrderId(final Long orderId);
 }

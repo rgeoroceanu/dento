@@ -1,15 +1,13 @@
 package com.company.dento.dao;
 
-import java.util.Optional;
-
-import org.springframework.data.jpa.repository.JpaRepository;
+import com.company.dento.model.business.User;
 import org.springframework.stereotype.Repository;
 
-import com.company.dento.model.business.User;
+import java.util.Optional;
 
 @Repository
-public interface UserDao extends JpaRepository<User, Long> {
+public interface UserDao extends PageableRepository<User, Long> {
 	
-	public Optional<User> findByUsername(final String username);
+	Optional<User> findByUsername(final String username);
 	
 }

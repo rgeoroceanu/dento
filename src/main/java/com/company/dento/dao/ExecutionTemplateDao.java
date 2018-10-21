@@ -1,11 +1,9 @@
 package com.company.dento.dao;
 
-import org.springframework.data.jpa.repository.JpaRepository;
+import com.company.dento.model.business.ExecutionTemplate;
 import org.springframework.stereotype.Repository;
 
-import com.company.dento.model.business.ExecutionTemplate;
-
 @Repository
-public interface ExecutionTemplateDao extends JpaRepository<ExecutionTemplate, Long> {
+public interface ExecutionTemplateDao extends PageableRepository<ExecutionTemplate, Long> {
 
 }

@@ -8,7 +8,6 @@ import com.company.dento.service.exception.DataDoesNotExistException;
 import com.company.dento.service.exception.InvalidDataTypeException;
 import com.google.common.base.Preconditions;
 import lombok.extern.log4j.Log4j2;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -312,11 +311,9 @@ public class DataServiceImpl implements DataService {
 	    Preconditions.checkNotNull(spec, "Search criteria must not be null!");
 		log.info("Requested all executions by search criteria " + spec.toString());
 
-		final int page = offset / limit;
 		final Sort sort = Sort.by(extractSortOrders(sortOrder));
-		final PageRequest pageRequest = PageRequest.of(page, limit, sort);
-		final JpaSpecificationExecutor dao = (JpaSpecificationExecutor) getDaoByEntityClass(itemClass);
-		return dao.findAll(spec, pageRequest).getContent();
+		final PageableRepository dao = (PageableRepository) getDaoByEntityClass(itemClass);
+		return dao.findAll(spec, offset, limit, sort);
 	}
 
 	@Transactional(readOnly = true)
