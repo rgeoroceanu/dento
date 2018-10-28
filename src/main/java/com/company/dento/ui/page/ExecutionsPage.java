@@ -180,6 +180,7 @@ public class ExecutionsPage extends Page implements Localizable, AfterNavigation
         priceFilter.setValueChangeMode(ValueChangeMode.EAGER);
         countFilter.setValueChangeMode(ValueChangeMode.EAGER);
         dateFilterLayout.add(fromDateFilter, toDateFilter);
+
         final HeaderRow filterRow = grid.appendHeaderRow();
         filterRow.getCells().get(0).setComponent(dateFilterLayout);
         filterRow.getCells().get(1).setComponent(orderIdFilter);

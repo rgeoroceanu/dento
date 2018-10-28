@@ -1,5 +1,9 @@
 <custom-style>
   <style>
+    vaadin-tab {
+        --lumo-primary-color: #0b8793 !important;
+        --lumo-primary-text-color: #0b8793 !important;
+    }
     vaadin-tab::before, vaadin-tab::after {
         color: #0b8793 !important;
         background-color: #0b8793 !important;
@@ -7,9 +11,8 @@
     vaadin-tab[selected] {
         color: #0b8793 !important;
     }
-    [part~="cell"].vaadin-grid > vaadin-grid-cell-content {
-      font-size: 13px;
-      color: grey;
+    vaadin-checkbox {
+        --lumo-primary-color: #0b8793 !important;
     }
   	.main-layout__header {
             align-items: center;
@@ -49,11 +52,11 @@
    .main-layout__content-menu-button {
    }
    .edit-layout__footer {
-        height: 50px;
         width: 100%;
-        margin-bottom: 30px;
+        padding-bottom: 30px;
    }
    .edit-layout__footer-buttons {
+        height: 50px;
         float: right;
         margin-right: 25px;
    }
@@ -91,7 +94,7 @@
   }
 
   .dento-grid-icon {
-    width: 16px;
+    width: 1.2em;
   }
   .dento-grid-action {
     background: transparent !important;
@@ -113,6 +116,68 @@
       width: 100%;
       font-color: grey;
     }
+  .dento-form-layout {
+    margin-left: 15px;
+    margin-top: 15px;
+    overflow-y: auto;
+  }
+  .dento-teeth-select {
+    display: block; width: 100%;
+    position: relative;
+	width: 20em;
+	height: 23em;
+	padding: 2.8em;
+	/*border: dashed 1px;
+	border-radius: 50%;*/
+	margin: 1em;
+  }
+  .dento-teeth-select-tooth {
+	display: block;
+	overflow: hidden;
+	position: absolute;
+	top: 50%;
+	left: 50%;
+	margin: -2em;
+    background: transparent;
+    color: #0b8793;
+    padding: 0px;
+}
+.dento-teeth-select-tooth-button {
+    background: transparent;
+    padding: 0px;
+}
+.dento-teeth-select-tooth-active {
+	background: #0b8793;
+	color: white;
+}
+.dento-teeth-select-tooth-inactive {
+	background: transparent;
+	color: #0b8793;
+}
+.dento-teeth-select-radio-group {
+    display: flex;
+    flex-direction: column;
+}
+.dento-teeth-select-properties {
+   background: rgba(11, 135, 147, 0.9);
+   font-size: 11px;
+}
+.tooth11 { transform: rotate(266deg) translate(13.5em) rotate(-266deg);  }
+.tooth12 { transform: rotate(253deg) translate(13.2em) rotate(-253deg);  }
+.tooth13 { transform: rotate(241deg) translate(12.9em) rotate(-241deg);  }
+.tooth14 { transform: rotate(230deg) translate(12.6em) rotate(-230deg);  }
+.tooth15 { transform: rotate(218deg) translate(12.3em) rotate(-218deg);  }
+.tooth16 { transform: rotate(206deg) translate(12.1em) rotate(-206deg);  }
+.tooth17 { transform: rotate(194deg) translate(11.9em) rotate(-194deg);  }
+.tooth18 { transform: rotate(183deg) translate(11.9em) rotate(-183deg);  }
+.tooth21 { transform: rotate(-86deg) translate(13.5em) rotate(86deg);  }
+.tooth22 { transform: rotate(-73deg) translate(13.2em) rotate(73deg);  }
+.tooth23 { transform: rotate(-61deg) translate(12.9em) rotate(61deg);  }
+.tooth24 { transform: rotate(-50deg) translate(12.6em) rotate(50deg);  }
+.tooth25 { transform: rotate(-38deg) translate(12.3em) rotate(38deg);  }
+.tooth26 { transform: rotate(-26deg) translate(12.1em) rotate(26deg);  }
+.tooth27 { transform: rotate(-14deg) translate(11.9em) rotate(14deg);  }
+.tooth28 { transform: rotate(-3deg) translate(11.9em) rotate(3deg);  }
   .app-sidebar, .off-canvas-sidebar {
   font-family: "Montserrat", "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
   z-index: 4;

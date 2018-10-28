@@ -2,14 +2,22 @@ package com.company.dento.ui.page;
 
 import com.company.dento.model.business.Color;
 import com.company.dento.model.business.Doctor;
+import com.company.dento.model.business.JobTemplate;
+import com.company.dento.model.business.Order;
 import com.company.dento.service.DataService;
+import com.company.dento.ui.component.common.JobSelect;
+import com.company.dento.ui.component.common.TeethSelect;
 import com.company.dento.ui.localization.Localizable;
 import com.company.dento.ui.localization.Localizer;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.checkbox.Checkbox;
 import com.vaadin.flow.component.combobox.ComboBox;
 import com.vaadin.flow.component.datepicker.DatePicker;
+import com.vaadin.flow.component.formlayout.FormLayout;
 import com.vaadin.flow.component.html.Div;
+import com.vaadin.flow.component.html.Label;
+import com.vaadin.flow.component.icon.Icon;
+import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.tabs.Tab;
@@ -17,6 +25,7 @@ import com.vaadin.flow.component.tabs.Tabs;
 import com.vaadin.flow.component.textfield.TextArea;
 import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.component.upload.Upload;
+import com.vaadin.flow.data.binder.Binder;
 import com.vaadin.flow.router.AfterNavigationEvent;
 import com.vaadin.flow.router.AfterNavigationObserver;
 import com.vaadin.flow.router.Route;
@@ -30,69 +39,148 @@ import org.springframework.security.access.annotation.Secured;
 @Log4j2
 public class OrderEditPage extends Page implements Localizable, AfterNavigationObserver {
 
-    private final Tabs tabs;
-    private final Tab generalTab;
-    private final Tab teethTab;
-    private final Button saveButton;
-    private final Button discardButton;
-    private final ComboBox<Doctor> doctorField;
-    private final TextField patientField;
-    private final ComboBox<Color> colorField;
-    private final TextArea observationsField;
-    private final DatePicker dateField;
-    private final Upload cadField;
-    private final Checkbox paidField;
-    private final TextField partialSumField;
+    private final Tabs tabs = new Tabs();
+    private final Tab generalTab = new Tab();
+    private final Tab jobsTab = new Tab();
+    private final Tab executionsSamplesTab = new Tab();
+    private final Button saveButton = new Button();
+    private final Button discardButton = new Button();
+    private final ComboBox<Doctor> doctorField = new ComboBox<>();
+    private final TextField patientField = new TextField();
+    private final ComboBox<Color> colorField = new ComboBox<>();
+    private final TextArea observationsField = new TextArea();
+    private final DatePicker dateField = new DatePicker();
+    private final Upload cadField = new Upload();
+    private final Checkbox paidField = new Checkbox();
+    private final TextField partialSumField = new TextField();
+    private final JobSelect jobSelect = new JobSelect();
+    private final TeethSelect teethSelect = new TeethSelect();
+
+    private final Binder<Order> binder = new Binder<>();
+
+    private final Label doctorLabel = new Label();
+    private final Label patientLabel = new Label();
+    private final Label colorLabel = new Label();
+    private final Label observationsLabel = new Label();
+    private final Label dateLabel = new Label();
+    private final Label cadLabel = new Label();
+    private final Label paidLabel = new Label();
+    private final Label partialSumLabel = new Label();
+    private final Label jobSelectLabel = new Label();
+    private final Label teethSelectLabel = new Label();
+
+    private final FormLayout generalLayout = new FormLayout();
+    private final FormLayout jobsLayout = new FormLayout();
 
     public OrderEditPage(final DataService dataService) {
         super(dataService);
         final VerticalLayout layout = new VerticalLayout();
-        final HorizontalLayout generalLayout = new HorizontalLayout();
         final HorizontalLayout buttonsLayout = new HorizontalLayout();
         final Div footerDiv = new Div();
 
-        doctorField = new ComboBox<>();
-        patientField = new TextField();
-        colorField = new ComboBox<>();
-        observationsField = new TextArea();
-        dateField = new DatePicker();
-        cadField = new Upload();
-        paidField = new Checkbox();
-        partialSumField = new TextField();
+        initGeneralTab();
+        initTeethTab();
+        bindGeneralFields();
 
-        generalTab = new Tab();
-        teethTab = new Tab();
-        tabs = new Tabs();
-        saveButton = new Button();
-        discardButton = new Button();
         saveButton.addClassName("dento-button-full");
         discardButton.addClassName("dento-button-simple");
 
         buttonsLayout.addClassName("edit-layout__footer-buttons");
         footerDiv.addClassName("edit-layout__footer");
+
         layout.setSizeFull();
         layout.setPadding(false);
         layout.setMargin(false);
+        layout.add(tabs, generalLayout, jobsLayout, footerDiv);
+
         generalLayout.setSizeFull();
-        generalLayout.setAlignItems(Alignment.END);
+        jobsLayout.setSizeFull();
         buttonsLayout.add(discardButton, saveButton);
         footerDiv.add(buttonsLayout);
-        tabs.add(generalTab, teethTab);
-        layout.add(tabs, generalLayout, footerDiv);
+        tabs.add(generalTab, jobsTab, executionsSamplesTab);
+        tabs.addSelectedChangeListener(e -> toggleTabSelection(e.getSource().getSelectedIndex()));
+
         this.setContent(layout);
+        this.setMargin(false);
+        this.setPadding(false);
     }
 
     @Override
     public void afterNavigation(AfterNavigationEvent afterNavigationEvent) {
+        jobSelect.setItems(dataService.getAll(JobTemplate.class));
+        doctorField.setItems(dataService.getAll(Doctor.class));
         generalTab.setSelected(true);
+        toggleTabSelection(0);
     }
 
     @Override
     public void localize() {
         super.localize();
         generalTab.setLabel(Localizer.getLocalizedString("generalInformation"));
-        teethTab.setLabel(Localizer.getLocalizedString("teeth"));
+        jobsTab.setLabel(Localizer.getLocalizedString("jobs"));
+        executionsSamplesTab.setLabel(Localizer.getLocalizedString("executionsSamples"));
         saveButton.setText(Localizer.getLocalizedString("save"));
         discardButton.setText(Localizer.getLocalizedString("cancel"));
+        doctorLabel.setText(Localizer.getLocalizedString("doctor"));
+        patientLabel.setText(Localizer.getLocalizedString("patient"));
+        colorLabel.setText(Localizer.getLocalizedString("color"));
+        observationsLabel.setText(Localizer.getLocalizedString("observations"));
+        dateLabel.setText(Localizer.getLocalizedString("date"));
+        cadLabel.setText(Localizer.getLocalizedString("cadData"));
+        paidLabel.setText(Localizer.getLocalizedString("paidStatus"));
+        partialSumLabel.setText(Localizer.getLocalizedString("partialSum"));
+        jobSelectLabel.setText(Localizer.getLocalizedString("jobs"));
+        teethSelectLabel.setText(Localizer.getLocalizedString("teeth"));
+    }
+
+    private void initGeneralTab() {
+        generalLayout.addFormItem(doctorField, doctorLabel);
+        generalLayout.addFormItem(dateField, dateLabel);
+        generalLayout.addFormItem(patientField, patientLabel);
+        generalLayout.addFormItem(colorField, colorLabel);
+        generalLayout.addFormItem(partialSumField, partialSumLabel);
+        generalLayout.addFormItem(paidField, paidLabel);
+        generalLayout.addFormItem(observationsField, observationsLabel);
+        generalLayout.addFormItem(cadField, cadLabel);
+
+        cadField.setAutoUpload(true);
+        cadField.setDropAllowed(false);
+
+        final Button upload = new Button();
+        upload.addClassName("dento-button-simple");
+        upload.setIcon(new Icon(VaadinIcon.UPLOAD));
+        upload.setText("");
+
+        cadField.setUploadButton(upload);
+        observationsField.setWidth("22em");
+        observationsField.setHeight("8em");
+        generalLayout.addClassName("dento-form-layout");
+    }
+
+    private void initTeethTab() {
+        jobsLayout.addFormItem(jobSelect, jobSelectLabel).getStyle().set("align-items", "initial");
+        jobsLayout.addFormItem(teethSelect, teethSelectLabel).getStyle().set("align-items", "initial");
+        jobSelect.setHeight("18em");
+        jobSelect.setWidth("22em");
+        jobsLayout.addClassName("dento-form-layout");
+    }
+
+    private void bindGeneralFields() {
+        binder.forField(doctorField)
+                .asRequired()
+                .bind(Order::getDoctor, Order::setDoctor);
+    }
+
+    private void toggleTabSelection(final int index) {
+        switch (index) {
+            case 0:
+                generalLayout.setVisible(true);
+                jobsLayout.setVisible(false);
+                break;
+            case 1:
+                generalLayout.setVisible(false);
+                jobsLayout.setVisible(true);
+                break;
+        }
     }
 }

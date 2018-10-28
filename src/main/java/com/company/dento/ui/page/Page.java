@@ -36,6 +36,8 @@ import java.util.stream.Collectors;
 @HtmlImport("frontend://styles/language-select.html")
 @HtmlImport("frontend://styles/dento-confirm-dialog.html")
 @HtmlImport("frontend://styles/dento-grid-date-picker.html")
+@HtmlImport("frontend://styles/dento-filterable-grid.html")
+@HtmlImport("frontend://styles/dento-noheader-grid.html")
 public abstract class Page extends HorizontalLayout implements Localizable, BeforeEnterObserver {
 	private static final long serialVersionUID = 1L;
 	
@@ -129,6 +131,7 @@ public abstract class Page extends HorizontalLayout implements Localizable, Befo
 		final Div headerWrapper = new Div();
 		final HorizontalLayout headerButtonsLayout = new HorizontalLayout();
 		final VerticalLayout rightLayout = new VerticalLayout();
+		rightLayout.getElement().getStyle().set("overflow-y", "hidden");
 		headerWrapper.setClassName("main-layout__header");
 		headerButtonsLayout.setClassName("main-layout__header-buttons");
 		rightLayout.add(headerWrapper, contentLayout);

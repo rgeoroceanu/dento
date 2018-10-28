@@ -51,6 +51,7 @@ public class FilterableGrid<T extends Base, V extends Specification<T>> extends 
         this.getElement().setAttribute("theme", "no-border row-stripes");
         this.getColumns().forEach(this::removeColumn);
         this.setPageSize(20);
+        this.addClassName("dento-grid");
     }
 
     private ConfigurableFilterDataProvider<T, Void, V> initDataProvider() {

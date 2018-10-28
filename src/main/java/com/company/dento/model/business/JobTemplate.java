@@ -12,6 +12,7 @@ import javax.persistence.Table;
 
 import com.company.dento.model.type.SelectionType;
 
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -19,6 +20,7 @@ import lombok.Setter;
 @Setter
 @Entity
 @Table(name = "job_templates")
+@EqualsAndHashCode
 public class JobTemplate extends Base {
 	
 	@Column(unique = true, nullable = false)

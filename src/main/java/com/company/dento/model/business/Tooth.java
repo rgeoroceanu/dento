@@ -12,7 +12,6 @@ import lombok.Setter;
 @Setter
 @Embeddable
 public class Tooth {
-
 	private int number;
 	private ToothType type;
 	private ToothProperty property;
