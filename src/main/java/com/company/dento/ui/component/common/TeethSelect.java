@@ -22,6 +22,8 @@ public class TeethSelect extends Div {
         this.addClassName("dento-teeth-select");
         IntStream.range(11, 19).forEach(this::addTooth);
         IntStream.range(21, 29).forEach(this::addTooth);
+        IntStream.range(31, 39).forEach(this::addTooth);
+        IntStream.range(41, 49).forEach(this::addTooth);
     }
 
     private void addTooth(int toothNumber) {
@@ -46,11 +48,12 @@ public class TeethSelect extends Div {
             icon.addClassName("dento-teeth-select-tooth-inactive");
             icon.setSize("1.8em");
             button.setIcon(icon);
-            button.addClassName("dento-teeth-select-tooth-button");
+            button.addClassNames("dento-teeth-select-tooth-button", String.format("tooth%d-elem", toothNumber));
             button.addClickListener(this::selectProperties);
             text = new Label(String.valueOf(toothNumber));
             this.add(button, text);
             this.addClassNames(String.format("tooth%d", toothNumber), "dento-teeth-select-tooth");
+            text.addClassNames("tooth-text", String.format("tooth%d-elem", toothNumber));
             value = new Tooth();
             value.setNumber(toothNumber);
         }
@@ -86,10 +89,18 @@ public class TeethSelect extends Div {
             if (active) {
                 icon.removeClassName("dento-teeth-select-tooth-active");
                 icon.addClassName("dento-teeth-select-tooth-inactive");
+                button.removeClassName("dento-teeth-select-tooth-active");
+                button.addClassName("dento-teeth-select-tooth-inactive");
+                text.removeClassName("dento-teeth-select-tooth-active");
+                text.addClassName("dento-teeth-select-tooth-inactive");
                 active = false;
             } else {
                 icon.removeClassName("dento-teeth-select-tooth-inactive");
                 icon.addClassName("dento-teeth-select-tooth-active");
+                button.removeClassName("dento-teeth-select-tooth-inactive");
+                button.addClassName("dento-teeth-select-tooth-active");
+                text.removeClassName("dento-teeth-select-tooth-inactive");
+                text.addClassName("dento-teeth-select-tooth-active");
                 active = true;
             }
         }

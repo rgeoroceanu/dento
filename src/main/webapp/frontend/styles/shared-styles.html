@@ -122,37 +122,34 @@
     overflow-y: auto;
   }
   .dento-teeth-select {
-    display: block; width: 100%;
     position: relative;
-	width: 20em;
+	width: 23em;
 	height: 23em;
-	padding: 2.8em;
-	/*border: dashed 1px;
-	border-radius: 50%;*/
-	margin: 1em;
+	margin-top: 2.5em;
   }
   .dento-teeth-select-tooth {
 	display: block;
-	overflow: hidden;
 	position: absolute;
 	top: 50%;
 	left: 50%;
-	margin: -2em;
+	width: 2em;
+	height: 2em;
+	margin: -1em;
     background: transparent;
-    color: #0b8793;
+    color: grey;
     padding: 0px;
 }
 .dento-teeth-select-tooth-button {
     background: transparent;
-    padding: 0px;
 }
 .dento-teeth-select-tooth-active {
-	background: #0b8793;
-	color: white;
+	background: transparent;
+	color: #0b8793;
+	font-weight: bold;
 }
 .dento-teeth-select-tooth-inactive {
 	background: transparent;
-	color: #0b8793;
+	color: grey;
 }
 .dento-teeth-select-radio-group {
     display: flex;
@@ -162,22 +159,79 @@
    background: rgba(11, 135, 147, 0.9);
    font-size: 11px;
 }
-.tooth11 { transform: rotate(266deg) translate(13.5em) rotate(-266deg);  }
-.tooth12 { transform: rotate(253deg) translate(13.2em) rotate(-253deg);  }
-.tooth13 { transform: rotate(241deg) translate(12.9em) rotate(-241deg);  }
-.tooth14 { transform: rotate(230deg) translate(12.6em) rotate(-230deg);  }
-.tooth15 { transform: rotate(218deg) translate(12.3em) rotate(-218deg);  }
-.tooth16 { transform: rotate(206deg) translate(12.1em) rotate(-206deg);  }
-.tooth17 { transform: rotate(194deg) translate(11.9em) rotate(-194deg);  }
-.tooth18 { transform: rotate(183deg) translate(11.9em) rotate(-183deg);  }
-.tooth21 { transform: rotate(-86deg) translate(13.5em) rotate(86deg);  }
-.tooth22 { transform: rotate(-73deg) translate(13.2em) rotate(73deg);  }
-.tooth23 { transform: rotate(-61deg) translate(12.9em) rotate(61deg);  }
-.tooth24 { transform: rotate(-50deg) translate(12.6em) rotate(50deg);  }
-.tooth25 { transform: rotate(-38deg) translate(12.3em) rotate(38deg);  }
-.tooth26 { transform: rotate(-26deg) translate(12.1em) rotate(26deg);  }
-.tooth27 { transform: rotate(-14deg) translate(11.9em) rotate(14deg);  }
-.tooth28 { transform: rotate(-3deg) translate(11.9em) rotate(3deg);  }
+.tooth11 { transform: rotate(264.375deg) translate(13.5em) rotate(90deg);  }
+.tooth12 { transform: rotate(253.125deg) translate(13.5em) rotate(90deg);  }
+.tooth13 { transform: rotate(241.875deg) translate(13.5em) rotate(90deg);  }
+.tooth14 { transform: rotate(230.625deg) translate(13.5em) rotate(90deg);  }
+.tooth15 { transform: rotate(219.375deg) translate(13.5em) rotate(90deg);  }
+.tooth16 { transform: rotate(208.125deg) translate(13.5em) rotate(90deg);  }
+.tooth17 { transform: rotate(196.875deg) translate(13.5em) rotate(90deg);  }
+.tooth18 { transform: rotate(185.625deg) translate(13.5em) rotate(90deg);  }
+.tooth21 { transform: rotate(-84.375deg) translate(13.5em) rotate(90deg);  }
+.tooth22 { transform: rotate(-73.125deg) translate(13.5em) rotate(90deg);  }
+.tooth23 { transform: rotate(-61.875deg) translate(13.5em) rotate(90deg);  }
+.tooth24 { transform: rotate(-50.625deg) translate(13.5em) rotate(90deg);  }
+.tooth25 { transform: rotate(-39.375deg) translate(13.5em) rotate(90deg);  }
+.tooth26 { transform: rotate(-28.125deg) translate(13.5em) rotate(90deg);  }
+.tooth27 { transform: rotate(-16.875deg) translate(13.5em) rotate(90deg);  }
+.tooth28 { transform: rotate(-5.625deg) translate(13.5em) rotate(90deg);  }
+
+.tooth41 { transform: rotate(-264.375deg) translate(13.5em) rotate(90deg);  }
+.tooth42 { transform: rotate(-253.125deg) translate(13.5em) rotate(90deg);  }
+.tooth43 { transform: rotate(-241.875deg) translate(13.5em) rotate(90deg);  }
+.tooth44 { transform: rotate(-230.625deg) translate(13.5em) rotate(90deg);  }
+.tooth45 { transform: rotate(-219.375deg) translate(13.5em) rotate(90deg);  }
+.tooth46 { transform: rotate(-208.125deg) translate(13.5em) rotate(90deg);  }
+.tooth47 { transform: rotate(-196.875deg) translate(13.5em) rotate(90deg);  }
+.tooth48 { transform: rotate(-185.625deg) translate(13.5em) rotate(90deg);  }
+.tooth31 { transform: rotate(84.375deg) translate(13.5em) rotate(90deg);  }
+.tooth32 { transform: rotate(73.125deg) translate(13.5em) rotate(90deg);  }
+.tooth33 { transform: rotate(61.875deg) translate(13.5em) rotate(90deg);  }
+.tooth34 { transform: rotate(50.625deg) translate(13.5em) rotate(90deg);  }
+.tooth35 { transform: rotate(39.375deg) translate(13.5em) rotate(90deg);  }
+.tooth36 { transform: rotate(28.125deg) translate(13.5em) rotate(90deg);  }
+.tooth37 { transform: rotate(16.875deg) translate(13.5em) rotate(90deg);  }
+.tooth38 { transform: rotate(5.625deg) translate(13.5em) rotate(90deg);  }
+
+.tooth11-elem { transform: rotate(5.625deg)  }
+.tooth12-elem { transform: rotate(16.875deg)  }
+.tooth13-elem { transform: rotate(28.125deg)  }
+.tooth14-elem { transform: rotate(39.375deg)  }
+.tooth15-elem { transform: rotate(50.325deg)  }
+.tooth16-elem { transform: rotate(61.875deg)  }
+.tooth17-elem { transform: rotate(73.125deg)   }
+.tooth18-elem { transform: rotate(84.375deg)   }
+.tooth21-elem { transform: rotate(-5.625deg)  }
+.tooth22-elem { transform: rotate(-16.875deg)  }
+.tooth23-elem { transform: rotate(-28.125deg)  }
+.tooth24-elem { transform: rotate(-39.375deg)  }
+.tooth25-elem { transform: rotate(-50.625deg)  }
+.tooth26-elem { transform: rotate(-61.875deg)  }
+.tooth27-elem { transform: rotate(-73.125deg)  }
+.tooth28-elem { transform: rotate(-84.375deg)   }
+
+.tooth41-elem { transform: rotate(-185.625deg)  }
+.tooth42-elem { transform: rotate(-196.875deg)  }
+.tooth43-elem { transform: rotate(-208.125deg)  }
+.tooth44-elem { transform: rotate(-219.375deg)  }
+.tooth45-elem { transform: rotate(-230.325deg)  }
+.tooth46-elem { transform: rotate(-241.875deg)  }
+.tooth47-elem { transform: rotate(-253.125deg)   }
+.tooth48-elem { transform: rotate(-264.375deg)   }
+.tooth31-elem { transform: rotate(185.625deg)  }
+.tooth32-elem { transform: rotate(196.875deg)  }
+.tooth33-elem { transform: rotate(208.125deg)  }
+.tooth34-elem { transform: rotate(219.375deg)  }
+.tooth35-elem { transform: rotate(230.625deg)  }
+.tooth36-elem { transform: rotate(241.875deg)  }
+.tooth37-elem { transform: rotate(253.125deg)  }
+.tooth38-elem { transform: rotate(264.375deg)   }
+
+.tooth-text {
+  margin-left: 0.9em;
+  position: absolute;
+}
+
   .app-sidebar, .off-canvas-sidebar {
   font-family: "Montserrat", "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
   z-index: 4;
