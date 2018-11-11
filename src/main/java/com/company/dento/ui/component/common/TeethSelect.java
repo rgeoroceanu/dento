@@ -5,7 +5,6 @@ import com.company.dento.model.type.ToothProperty;
 import com.company.dento.model.type.ToothType;
 import com.vaadin.flow.component.ClickEvent;
 import com.vaadin.flow.component.button.Button;
-import com.vaadin.flow.component.dialog.Dialog;
 import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.html.Label;
 import com.vaadin.flow.component.icon.Icon;
@@ -39,19 +38,25 @@ public class TeethSelect extends Div {
         private boolean active = false;
         private Tooth value;
         private final ToothPropertySelect toothPropertySelect;
+        private ToothPropertyDisplay toothPropertyDisplay;
 
         ToothItem(final int toothNumber) {
             button = new Button();
             icon = new Icon(VaadinIcon.TOOTH);
             toothPropertySelect = new ToothPropertySelect();
             toothPropertySelect.addSelectionListener(this::setProperties);
+            toothPropertySelect.setVisible(false);
+            toothPropertySelect.addClassNames(String.format("tooth%d-elem", toothNumber));
+            toothPropertyDisplay = new ToothPropertyDisplay();
+            toothPropertyDisplay.setVisible(false);
+            toothPropertyDisplay.addClassNames("dento-teeth-select-properties-display", String.format("tooth%d-elem", toothNumber));
             icon.addClassName("dento-teeth-select-tooth-inactive");
             icon.setSize("1.8em");
             button.setIcon(icon);
             button.addClassNames("dento-teeth-select-tooth-button", String.format("tooth%d-elem", toothNumber));
             button.addClickListener(this::selectProperties);
             text = new Label(String.valueOf(toothNumber));
-            this.add(button, text);
+            this.add(toothPropertyDisplay, button, text, toothPropertySelect);
             this.addClassNames(String.format("tooth%d", toothNumber), "dento-teeth-select-tooth");
             text.addClassNames("tooth-text", String.format("tooth%d-elem", toothNumber));
             value = new Tooth();
@@ -72,8 +77,9 @@ public class TeethSelect extends Div {
                 value.setType(null);
                 value.setProperty(null);
                 toothPropertySelect.clear();
+                toothPropertyDisplay.setVisible(false);
             } else {
-                toothPropertySelect.open();
+                toothPropertySelect.setVisible(true);
             }
         }
 
@@ -81,7 +87,9 @@ public class TeethSelect extends Div {
             value.setType(p1);
             value.setProperty(p2);
             toggleState();
-            toothPropertySelect.close();
+            toothPropertyDisplay.setValue(p1, p2);
+            toothPropertyDisplay.setVisible(true);
+            toothPropertySelect.setVisible(false);
             toothPropertySelect.clear();
         }
 
@@ -106,7 +114,7 @@ public class TeethSelect extends Div {
         }
     }
 
-    private static class ToothPropertySelect extends Dialog {
+    private static class ToothPropertySelect extends HorizontalLayout {
         private final RadioButtonGroup<ToothType> g1;
         private final RadioButtonGroup<ToothProperty> g2;
         private SelectionListener selectionListener;
@@ -116,7 +124,6 @@ public class TeethSelect extends Div {
         }
 
         ToothPropertySelect() {
-            final HorizontalLayout hl = new HorizontalLayout();
             g1 = new RadioButtonGroup<>();
             g2 = new RadioButtonGroup<>();
             g1.addClassName("dento-teeth-select-radio-group");
@@ -125,9 +132,8 @@ public class TeethSelect extends Div {
             g2.setItems(ToothProperty.values());
             g1.addValueChangeListener(e -> itemSelected());
             g2.addValueChangeListener(e -> itemSelected());
-            hl.add(g1, g2);
-            this.add(hl);
-            hl.addClassName("dento-teeth-select-properties");
+            this.add(g1, g2);
+            this.addClassName("dento-teeth-select-properties");
         }
 
         void addSelectionListener(final SelectionListener selectionListener) {
@@ -147,6 +153,23 @@ public class TeethSelect extends Div {
             if (type.isPresent() && prop.isPresent()) {
                 selectionListener.selected(type.get(), prop.get());
             }
+        }
+    }
+
+    private static class ToothPropertyDisplay extends Div {
+
+        private final Div typeDiv;
+        private final Div propertyDiv;
+
+        private ToothPropertyDisplay() {
+            typeDiv = new Div();
+            propertyDiv = new Div();
+            this.add(typeDiv, propertyDiv);
+        }
+
+        void setValue(final ToothType type, final ToothProperty property) {
+            typeDiv.setText(type.toString());
+            propertyDiv.setText(property.toString());
         }
     }
 }
