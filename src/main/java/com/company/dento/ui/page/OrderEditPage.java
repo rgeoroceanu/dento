@@ -1,11 +1,9 @@
 package com.company.dento.ui.page;
 
-import com.company.dento.model.business.Color;
-import com.company.dento.model.business.Doctor;
-import com.company.dento.model.business.JobTemplate;
-import com.company.dento.model.business.Order;
+import com.company.dento.model.business.*;
 import com.company.dento.service.DataService;
 import com.company.dento.ui.component.common.JobSelect;
+import com.company.dento.ui.component.common.SampleSelect;
 import com.company.dento.ui.component.common.TeethSelect;
 import com.company.dento.ui.localization.Localizable;
 import com.company.dento.ui.localization.Localizer;
@@ -55,6 +53,7 @@ public class OrderEditPage extends Page implements Localizable, AfterNavigationO
     private final TextField partialSumField = new TextField();
     private final JobSelect jobSelect = new JobSelect();
     private final TeethSelect teethSelect = new TeethSelect();
+    private final SampleSelect sampleSelect = new SampleSelect();
 
     private final Binder<Order> binder = new Binder<>();
 
@@ -68,9 +67,12 @@ public class OrderEditPage extends Page implements Localizable, AfterNavigationO
     private final Label partialSumLabel = new Label();
     private final Label jobSelectLabel = new Label();
     private final Label teethSelectLabel = new Label();
+    private final Label sampleSelectLabel = new Label();
 
     private final FormLayout generalLayout = new FormLayout();
     private final FormLayout jobsLayout = new FormLayout();
+    private final FormLayout executionsSamplesLayout = new FormLayout();
+
 
     public OrderEditPage(final DataService dataService) {
         super(dataService);
@@ -80,6 +82,7 @@ public class OrderEditPage extends Page implements Localizable, AfterNavigationO
 
         initGeneralTab();
         initTeethTab();
+        initExecutionsSamplesTab();
         bindGeneralFields();
 
         saveButton.addClassName("dento-button-full");
@@ -91,10 +94,11 @@ public class OrderEditPage extends Page implements Localizable, AfterNavigationO
         layout.setSizeFull();
         layout.setPadding(false);
         layout.setMargin(false);
-        layout.add(tabs, generalLayout, jobsLayout, footerDiv);
+        layout.add(tabs, generalLayout, jobsLayout, executionsSamplesLayout, footerDiv);
 
         generalLayout.setSizeFull();
         jobsLayout.setSizeFull();
+        executionsSamplesLayout.setSizeFull();
         buttonsLayout.add(discardButton, saveButton);
         footerDiv.add(buttonsLayout);
         tabs.add(generalTab, jobsTab, executionsSamplesTab);
@@ -108,6 +112,7 @@ public class OrderEditPage extends Page implements Localizable, AfterNavigationO
     @Override
     public void afterNavigation(AfterNavigationEvent afterNavigationEvent) {
         jobSelect.setItems(dataService.getAll(JobTemplate.class));
+        sampleSelect.setItems(dataService.getAll(SampleTemplate.class));
         doctorField.setItems(dataService.getAll(Doctor.class));
         generalTab.setSelected(true);
         toggleTabSelection(0);
@@ -131,6 +136,7 @@ public class OrderEditPage extends Page implements Localizable, AfterNavigationO
         partialSumLabel.setText(Localizer.getLocalizedString("partialSum"));
         jobSelectLabel.setText(Localizer.getLocalizedString("jobs"));
         teethSelectLabel.setText(Localizer.getLocalizedString("teeth"));
+        sampleSelectLabel.setText(Localizer.getLocalizedString("samples"));
     }
 
     private void initGeneralTab() {
@@ -161,8 +167,15 @@ public class OrderEditPage extends Page implements Localizable, AfterNavigationO
         jobsLayout.addFormItem(jobSelect, jobSelectLabel).getStyle().set("align-items", "initial");
         jobsLayout.addFormItem(teethSelect, teethSelectLabel).getStyle().set("align-items", "initial");
         jobSelect.setHeight("18em");
-        jobSelect.setWidth("22em");
+        jobSelect.setWidth("25em");
         jobsLayout.addClassName("dento-form-layout");
+    }
+
+    private void initExecutionsSamplesTab() {
+        executionsSamplesLayout.addFormItem(sampleSelect, sampleSelectLabel).getStyle().set("align-items", "initial");
+        sampleSelect.setHeight("25em");
+        sampleSelect.setWidth("54em");
+        executionsSamplesLayout.addClassName("dento-form-layout");
     }
 
     private void bindGeneralFields() {
@@ -176,10 +189,17 @@ public class OrderEditPage extends Page implements Localizable, AfterNavigationO
             case 0:
                 generalLayout.setVisible(true);
                 jobsLayout.setVisible(false);
+                executionsSamplesLayout.setVisible(false);
                 break;
             case 1:
                 generalLayout.setVisible(false);
                 jobsLayout.setVisible(true);
+                executionsSamplesLayout.setVisible(false);
+                break;
+            case 2:
+                generalLayout.setVisible(false);
+                jobsLayout.setVisible(false);
+                executionsSamplesLayout.setVisible(true);
                 break;
         }
     }
