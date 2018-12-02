@@ -72,7 +72,7 @@ public class ExecutionsPage extends Page implements Localizable, AfterNavigation
                 .setKey("date");
         grid.addColumn("job.order.id");
         grid.addColumn("template.name");
-        grid.addColumn("job.technician");
+        grid.addColumn("technician");
         grid.addColumn("count");
         grid.addColumn("price");
         grid.addComponentColumn(item -> {

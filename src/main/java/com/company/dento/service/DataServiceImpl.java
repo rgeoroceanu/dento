@@ -131,21 +131,19 @@ public class DataServiceImpl implements DataService {
 
 			
 			Job job1 = new Job();
-			job1.setTechnician(user);
 			job1.setTemplate(jobTemplate1);
 			job1.setOrder(order);
 			job1.setPrice(100);
             saveEntity(job1);
 			
 			Job job2 = new Job();
-			job2.setTechnician(user);
 			job2.setTemplate(jobTemplate1);
 			job2.setOrder(order);
 			job2.setPrice(150);
             saveEntity(job2);
 			
 			Job job3 = new Job();
-			job3.setTechnician(user);
+
 			job3.setTemplate(jobTemplate1);
 			job3.setOrder(order2);
 			job3.setPrice(200);
@@ -156,6 +154,7 @@ public class DataServiceImpl implements DataService {
 			execution1.setJob(job1);
 			execution1.setPrice(executionTemplate1.getStandardPrice());
 			execution1.setTemplate(executionTemplate1);
+			execution1.setTechnician(user);
             saveEntity(execution1);
 
             Execution execution2 = new Execution();
@@ -163,6 +162,7 @@ public class DataServiceImpl implements DataService {
             execution2.setJob(job2);
             execution2.setPrice(executionTemplate2.getStandardPrice());
             execution2.setTemplate(executionTemplate2);
+			execution2.setTechnician(user);
             saveEntity(execution2);
 
             for (int i=0; i<200; i++) {
@@ -171,6 +171,7 @@ public class DataServiceImpl implements DataService {
 				execution3.setJob(job3);
 				execution3.setPrice(executionTemplate2.getStandardPrice());
 				execution3.setTemplate(executionTemplate2);
+				execution3.setTechnician(user);
 				saveEntity(execution3);
 			}
 

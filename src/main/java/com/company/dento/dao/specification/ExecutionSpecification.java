@@ -38,7 +38,7 @@ public class ExecutionSpecification implements Specification<Execution> {
 
         final List<Predicate> predicates = new ArrayList<>();
         if (technician != null) {
-            predicates.add(builder.and(builder.equal(executionRoot.get("job").get("technician"), technician)));
+            predicates.add(builder.and(builder.equal(executionRoot.get("technician"), technician)));
         }
         if (jobTemplateName != null) {
             predicates.add(builder.and(builder.equal(executionRoot.get("job").get("template").get("name"), jobTemplateName)));

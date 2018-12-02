@@ -1,12 +1,13 @@
 package com.company.dento.ui.component.common;
 
-import com.company.dento.model.business.Sample;
-import com.company.dento.model.business.SampleTemplate;
+import com.company.dento.model.business.Execution;
+import com.company.dento.model.business.ExecutionTemplate;
+import com.company.dento.model.business.User;
+import com.company.dento.service.DataService;
 import com.company.dento.ui.localization.Localizable;
 import com.company.dento.ui.localization.Localizer;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.combobox.ComboBox;
-import com.vaadin.flow.component.datepicker.DatePicker;
 import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.icon.Icon;
 import com.vaadin.flow.component.icon.VaadinIcon;
@@ -16,21 +17,24 @@ import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import java.util.ArrayList;
 import java.util.List;
 
-public class SampleSelect extends VerticalLayout implements Localizable {
+public class ExecutionSelect extends VerticalLayout implements Localizable {
 
-    private final ComboBox<SampleTemplate> sampleSelect;
-    private final List<Sample> value = new ArrayList<>();
-    private final Grid<Sample> grid;
+    private final ComboBox<ExecutionTemplate> executionSelect;
+    private final List<Execution> value = new ArrayList<>();
+    private final Grid<Execution> grid;
+    private final List<User> technicians = new ArrayList<>();
+    private final DataService dataService;
 
-    public SampleSelect() {
+    public ExecutionSelect(final DataService dataService) {
+        this.dataService = dataService;
+
         final HorizontalLayout buttons = new HorizontalLayout();
 
-        grid = new Grid<>(Sample.class);
+        grid = new Grid<>(Execution.class);
         grid.getElement().setAttribute("theme", "row-stripes");
         grid.getColumns().forEach(grid::removeColumn);
         grid.addColumn("template.name").setWidth("18em").setSortable(false);
-        grid.addComponentColumn(this::addDatePickerColumn).setKey("date").setWidth("12em").setSortable(false);
-        grid.addComponentColumn(this::addTimePickerColumn).setKey("time").setWidth("17em").setSortable(false);
+        grid.addComponentColumn(this::addTechnicianColumn).setKey("technician").setWidth("12em").setSortable(false);
 
         grid.addComponentColumn(jb -> {
             final Button removeButton = new Button();
@@ -48,13 +52,13 @@ public class SampleSelect extends VerticalLayout implements Localizable {
         addButton.addClassNames("dento-button-simple",  "main-layout__content-menu-button");
         addButton.addClickListener(e -> add());
 
-        sampleSelect = new ComboBox<>();
-        sampleSelect.setWidth("18em");
-        sampleSelect.setPreventInvalidInput(true);
-        sampleSelect.setAllowCustomValue(false);
-        sampleSelect.setItemLabelGenerator(SampleTemplate::getName);
+        executionSelect = new ComboBox<>();
+        executionSelect.setWidth("18em");
+        executionSelect.setPreventInvalidInput(true);
+        executionSelect.setAllowCustomValue(false);
+        executionSelect.setItemLabelGenerator(ExecutionTemplate::getName);
 
-        buttons.add(sampleSelect, addButton);
+        buttons.add(executionSelect, addButton);
         buttons.setPadding(false);
         buttons.setWidth("100%");
 
@@ -66,53 +70,50 @@ public class SampleSelect extends VerticalLayout implements Localizable {
     @Override
     public void localize() {
         grid.getColumns().get(0).setHeader(Localizer.getLocalizedString("name"));
-        grid.getColumnByKey("date").setHeader(Localizer.getLocalizedString("date"));
-        grid.getColumnByKey("time").setHeader(Localizer.getLocalizedString("time"));
+        grid.getColumnByKey("technician").setHeader(Localizer.getLocalizedString("technician"));
     }
 
-    public void setItems(final List<SampleTemplate> items) {
+    public void setItems(final List<ExecutionTemplate> items) {
         value.clear();
+        technicians.clear();
         grid.setItems(value);
-        sampleSelect.setItems(items);
+        executionSelect.setItems(items);
+        technicians.addAll(dataService.getAll(User.class));
     }
 
-    public void setValue(final List<Sample> value) {
+    public void setValue(final List<Execution> value) {
         this.value.clear();
         this.value.addAll(value);
         grid.setItems(value);
     }
 
-    public List<Sample> getValue() {
+    public List<Execution> getValue() {
         return new ArrayList<>(value);
     }
 
     private void add() {
-        sampleSelect.getOptionalValue()
+        executionSelect.getOptionalValue()
                 .ifPresent(v -> {
-                    final Sample newSample = new Sample();
-                    newSample.setTemplate(v);
-                    value.add(newSample);
+                    final Execution newExecution = new Execution();
+                    newExecution.setTemplate(v);
+                    value.add(newExecution);
                     grid.setItems(value);
                 });
     }
 
-    private void remove(final Sample item) {
+    private void remove(final Execution item) {
         value.remove(item);
         grid.setItems(value);
     }
 
-    private DatePicker addDatePickerColumn(final Sample sample) {
-        final DatePicker datePicker = new DatePicker();
-        datePicker.setValue(sample.getDate());
-        datePicker.addValueChangeListener(e -> sample.setDate(e.getValue()));
-        datePicker.setWidth("10em");
-        return datePicker;
-    }
-
-    private TimePicker addTimePickerColumn(final Sample sample) {
-        final TimePicker timePicker = new TimePicker();
-        timePicker.setValue(sample.getTime());
-        timePicker.addValueChangeListener(e -> sample.setTime(e.getValue()));
-        return timePicker;
+    private ComboBox<User> addTechnicianColumn(final Execution execution) {
+        final ComboBox<User> technician = new ComboBox<>();
+        technician.setItems(technicians);
+        technician.setValue(execution.getTechnician());
+        technician.addValueChangeListener(e -> execution.setTechnician(e.getValue()));
+        technician.setWidth("10em");
+        technician.setPreventInvalidInput(true);
+        technician.setAllowCustomValue(false);
+        return technician;
     }
 }

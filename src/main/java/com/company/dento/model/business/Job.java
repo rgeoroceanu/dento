@@ -28,8 +28,6 @@ public class Job extends Base {
 	private JobTemplate template;
 	@ManyToOne(fetch = FetchType.EAGER)
 	private Order order;
-	@ManyToOne
-	private User technician;
 	@Basic
 	private int price;
 	@Basic

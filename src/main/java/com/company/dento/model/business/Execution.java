@@ -28,4 +28,6 @@ public class Execution extends Base {
 	private int price;
 	@Basic
 	private int count = 1;
+	@ManyToOne
+	private User technician;
 }

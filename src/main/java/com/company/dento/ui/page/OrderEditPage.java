@@ -2,6 +2,7 @@ package com.company.dento.ui.page;
 
 import com.company.dento.model.business.*;
 import com.company.dento.service.DataService;
+import com.company.dento.ui.component.common.ExecutionSelect;
 import com.company.dento.ui.component.common.JobSelect;
 import com.company.dento.ui.component.common.SampleSelect;
 import com.company.dento.ui.component.common.TeethSelect;
@@ -54,6 +55,7 @@ public class OrderEditPage extends Page implements Localizable, AfterNavigationO
     private final JobSelect jobSelect = new JobSelect();
     private final TeethSelect teethSelect = new TeethSelect();
     private final SampleSelect sampleSelect = new SampleSelect();
+    private final ExecutionSelect executionSelect;
 
     private final Binder<Order> binder = new Binder<>();
 
@@ -68,6 +70,7 @@ public class OrderEditPage extends Page implements Localizable, AfterNavigationO
     private final Label jobSelectLabel = new Label();
     private final Label teethSelectLabel = new Label();
     private final Label sampleSelectLabel = new Label();
+    private final Label executionSelectLabel = new Label();
 
     private final FormLayout generalLayout = new FormLayout();
     private final FormLayout jobsLayout = new FormLayout();
@@ -76,6 +79,8 @@ public class OrderEditPage extends Page implements Localizable, AfterNavigationO
 
     public OrderEditPage(final DataService dataService) {
         super(dataService);
+        executionSelect = new ExecutionSelect(dataService);
+
         final VerticalLayout layout = new VerticalLayout();
         final HorizontalLayout buttonsLayout = new HorizontalLayout();
         final Div footerDiv = new Div();
@@ -113,6 +118,7 @@ public class OrderEditPage extends Page implements Localizable, AfterNavigationO
     public void afterNavigation(AfterNavigationEvent afterNavigationEvent) {
         jobSelect.setItems(dataService.getAll(JobTemplate.class));
         sampleSelect.setItems(dataService.getAll(SampleTemplate.class));
+        executionSelect.setItems(dataService.getAll(ExecutionTemplate.class));
         doctorField.setItems(dataService.getAll(Doctor.class));
         generalTab.setSelected(true);
         toggleTabSelection(0);
@@ -137,6 +143,7 @@ public class OrderEditPage extends Page implements Localizable, AfterNavigationO
         jobSelectLabel.setText(Localizer.getLocalizedString("jobs"));
         teethSelectLabel.setText(Localizer.getLocalizedString("teeth"));
         sampleSelectLabel.setText(Localizer.getLocalizedString("samples"));
+        executionSelectLabel.setText(Localizer.getLocalizedString("executions"));
     }
 
     private void initGeneralTab() {
@@ -173,8 +180,11 @@ public class OrderEditPage extends Page implements Localizable, AfterNavigationO
 
     private void initExecutionsSamplesTab() {
         executionsSamplesLayout.addFormItem(sampleSelect, sampleSelectLabel).getStyle().set("align-items", "initial");
-        sampleSelect.setHeight("25em");
+        executionsSamplesLayout.addFormItem(executionSelect, executionSelectLabel).getStyle().set("align-items", "initial");
+        sampleSelect.setHeight("20em");
         sampleSelect.setWidth("54em");
+        executionSelect.setHeight("20em");
+        executionSelect.setWidth("54em");
         executionsSamplesLayout.addClassName("dento-form-layout");
     }
 
