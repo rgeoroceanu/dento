@@ -17,11 +17,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.PostConstruct;
-import java.time.LocalDateTime;
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
+import java.time.LocalDate;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -39,6 +36,7 @@ public class DataServiceImpl implements DataService {
 	private final DoctorDao doctorDao;
 	private final UserDao userDao;
 	private final ClinicDao clinicDao;
+	private final ColorDao colorDao;
 	private final PasswordEncoder passwordEncoder;
 
 	public DataServiceImpl(final JobDao jobDao, final JobTemplateDao jobTemplateDao,
@@ -46,7 +44,7 @@ public class DataServiceImpl implements DataService {
 						   final ExecutionTemplateDao executionTemplateDao, final ExecutionDao executionDao,
 						   final OrderDao orderDao, final SampleDao sampleDao,
 						   final SampleTemplateDao sampleTemplateDao, final DoctorDao doctorDao, final UserDao userDao,
-						   final ClinicDao clinicDao, final PasswordEncoder passwordEncoder) {
+						   final ClinicDao clinicDao, final PasswordEncoder passwordEncoder, final ColorDao colorDao) {
 
 		this.jobDao = jobDao;
 		this.jobTemplateDao = jobTemplateDao;
@@ -60,6 +58,7 @@ public class DataServiceImpl implements DataService {
 		this.userDao = userDao;
 		this.clinicDao = clinicDao;
 		this.passwordEncoder = passwordEncoder;
+		this.colorDao = colorDao;
 	}
 
 	@PostConstruct
@@ -113,7 +112,7 @@ public class DataServiceImpl implements DataService {
 			saveEntity(doctor);
 
 			Order order = new Order();
-			order.setDeliveryDate(LocalDateTime.now());
+			order.setDate(LocalDate.now());
 			order.setDoctor(doctor);
 			order.setPatient("Gheorghe");
 			order.setClinic(clinic);
@@ -122,7 +121,7 @@ public class DataServiceImpl implements DataService {
 
 
 			Order order2 = new Order();
-			order2.setDeliveryDate(LocalDateTime.now());
+			order2.setDate(LocalDate.now());
 			order2.setDoctor(doctor);
 			order2.setPrice(111);
 			order2.setPatient("Gheorghe");
@@ -210,8 +209,8 @@ public class DataServiceImpl implements DataService {
 
 	@Override
 	@Transactional
-	public <T extends Base> T getEntity(final Long entityId, final Class<T> entityClass)
-			throws InvalidDataTypeException, DataDoesNotExistException {
+	public <T extends Base> Optional<T> getEntity(final Long entityId, final Class<T> entityClass)
+			throws InvalidDataTypeException {
 		
 		Preconditions.checkNotNull(entityClass, "Entity class cannot be null!");
 		Preconditions.checkNotNull(entityId, "Entity id cannot be null!");
@@ -219,9 +218,7 @@ public class DataServiceImpl implements DataService {
 		
 		final JpaRepository<T, Long> dao = getDaoByEntityClass(entityClass);
 		
-		return dao.findById(entityId)
-				.orElseThrow(()-> new DataDoesNotExistException(String
-						.format("Invalid id requested: %s", entityId)));
+		return dao.findById(entityId);
 	}
 
 	@Override
@@ -263,6 +260,8 @@ public class DataServiceImpl implements DataService {
 			return (JpaRepository<T, Long>) executionDao;
 		} else if (entityClass == ExecutionTemplate.class) {
 			return (JpaRepository<T, Long>) executionTemplateDao;
+		} else if (entityClass == Color.class) {
+			return (JpaRepository<T, Long>) colorDao;
 		}
 		
 		log.warn("Invalid entity type " + entityClass.getSimpleName());

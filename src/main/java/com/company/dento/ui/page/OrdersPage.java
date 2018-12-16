@@ -85,7 +85,7 @@ public class OrdersPage extends Page implements Localizable, AfterNavigationObse
         printButton.setIcon(new Icon(VaadinIcon.PRINT));
         printButton.addClassNames("dento-button-simple", "main-layout__content-menu-button");
 
-        grid.addColumn(new LocalDateRenderer<>(item -> item.getCreated().toLocalDate(), "d.M.yyyy"))
+        grid.addColumn(new LocalDateRenderer<>(Order::getDate, "d.M.yyyy"))
                 .setKey("date").setWidth("140px");
         grid.addColumn("id").setWidth("60px");
         grid.addColumn("patient");
@@ -190,7 +190,7 @@ public class OrdersPage extends Page implements Localizable, AfterNavigationObse
     }
 
     private void edit(final Order item) {
-
+        UI.getCurrent().navigate(OrderEditPage.class, item.getId());
     }
 
     private void print(final Order item) {

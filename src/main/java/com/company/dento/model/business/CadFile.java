@@ -5,13 +5,17 @@ import lombok.Setter;
 
 import javax.persistence.Basic;
 import javax.persistence.Entity;
+import javax.persistence.Lob;
 import javax.persistence.Table;
 
 @Getter
 @Setter
 @Entity
-@Table(name = "colors")
-public class Color extends Base {
+@Table(name = "cad_files")
+public class CadFile extends Base {
+
     @Basic
     private String name;
+    @Lob
+    private byte[] content;
 }

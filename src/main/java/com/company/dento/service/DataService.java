@@ -2,6 +2,7 @@ package com.company.dento.service;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 import com.company.dento.model.business.*;
 import com.company.dento.service.exception.DataDoesNotExistException;
@@ -12,7 +13,7 @@ public interface DataService {
 	
 	<T extends Base> T saveEntity(final T entity) throws InvalidDataTypeException;
 	<T extends Base> List<T> getAll(final Class<T> entityClass) throws InvalidDataTypeException;
-	<T extends Base> T getEntity(final Long entityId, final Class<T> entityClass) throws InvalidDataTypeException, DataDoesNotExistException;
+	<T extends Base> Optional<T> getEntity(final Long entityId, final Class<T> entityClass) throws InvalidDataTypeException;
 	<T extends Base> void deleteEntity(final Long entityId, final Class<T> entityClass) throws InvalidDataTypeException, DataDoesNotExistException;
 	List<Sample> getProcedureSamples(final Long procedureId);
 	List<Job> getProcedureExecutions(final Long procedureId);

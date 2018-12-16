@@ -4,7 +4,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 import javax.persistence.*;
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -22,21 +22,26 @@ public class Order extends Base {
 	private Clinic clinic;
 	@Basic
 	private int price;
-	@Column
+	@Basic
+	@Column(length = 4000)
 	private String description;
 	@ElementCollection
 	private List<Tooth> teeth = new ArrayList<>();
 	@Column
-	private LocalDateTime deliveryDate;
+	private LocalDate date;
 	@OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
 	private List<Sample> samples = new ArrayList<>();
 	@OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER, mappedBy = "order")
 	private List<Job> jobs = new ArrayList<>();
-	@ElementCollection
-	private List<String> cadFiles = new ArrayList<>();
+	@OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+	private List<CadFile> cadFiles = new ArrayList<>();
 	@Basic
 	private boolean finalized;
 	@Basic
 	private boolean paid;
+	@ManyToOne
+	private Color color;
+	@Basic
+	private int partialSum;
 
 }

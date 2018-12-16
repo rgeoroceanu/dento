@@ -8,6 +8,7 @@ import com.company.dento.ui.component.common.SampleSelect;
 import com.company.dento.ui.component.common.TeethSelect;
 import com.company.dento.ui.localization.Localizable;
 import com.company.dento.ui.localization.Localizer;
+import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.checkbox.Checkbox;
 import com.vaadin.flow.component.combobox.ComboBox;
@@ -17,6 +18,7 @@ import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.html.Label;
 import com.vaadin.flow.component.icon.Icon;
 import com.vaadin.flow.component.icon.VaadinIcon;
+import com.vaadin.flow.component.notification.Notification;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.tabs.Tab;
@@ -25,18 +27,21 @@ import com.vaadin.flow.component.textfield.TextArea;
 import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.component.upload.Upload;
 import com.vaadin.flow.data.binder.Binder;
-import com.vaadin.flow.router.AfterNavigationEvent;
-import com.vaadin.flow.router.AfterNavigationObserver;
-import com.vaadin.flow.router.Route;
+import com.vaadin.flow.data.converter.StringToIntegerConverter;
+import com.vaadin.flow.data.validator.IntegerRangeValidator;
+import com.vaadin.flow.data.validator.StringLengthValidator;
+import com.vaadin.flow.router.*;
 import com.vaadin.flow.spring.annotation.UIScope;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.security.access.annotation.Secured;
 
+import java.util.Optional;
+
 @UIScope
 @Secured(value = {"USER", "ADMIN"})
-@Route(value = "addOrder")
+@Route(value = "order")
 @Log4j2
-public class OrderEditPage extends Page implements Localizable, AfterNavigationObserver {
+public class OrderEditPage extends Page implements Localizable, AfterNavigationObserver, HasUrlParameter<Long> {
 
     private final Tabs tabs = new Tabs();
     private final Tab generalTab = new Tab();
@@ -88,10 +93,13 @@ public class OrderEditPage extends Page implements Localizable, AfterNavigationO
         initGeneralTab();
         initTeethTab();
         initExecutionsSamplesTab();
-        bindGeneralFields();
+
+        bindFields();
 
         saveButton.addClassName("dento-button-full");
         discardButton.addClassName("dento-button-simple");
+        saveButton.addClickListener(e -> this.save());
+        discardButton.addClickListener(e -> this.discard());
 
         buttonsLayout.addClassName("edit-layout__footer-buttons");
         footerDiv.addClassName("edit-layout__footer");
@@ -116,12 +124,27 @@ public class OrderEditPage extends Page implements Localizable, AfterNavigationO
 
     @Override
     public void afterNavigation(AfterNavigationEvent afterNavigationEvent) {
-        jobSelect.setItems(dataService.getAll(JobTemplate.class));
-        sampleSelect.setItems(dataService.getAll(SampleTemplate.class));
-        executionSelect.setItems(dataService.getAll(ExecutionTemplate.class));
-        doctorField.setItems(dataService.getAll(Doctor.class));
         generalTab.setSelected(true);
         toggleTabSelection(0);
+    }
+
+    @Override
+    public void setParameter(BeforeEvent beforeEvent, Long orderId) {
+        reload();
+
+        final Optional<Order> order;
+        if (orderId != null) {
+            order = dataService.getEntity(orderId, Order.class);
+
+        } else {
+            order = Optional.of(new Order());
+        }
+
+        if (order.isPresent()) {
+            binder.setBean(order.get());
+        } else {
+            beforeEvent.rerouteTo(OrdersPage.class);
+        }
     }
 
     @Override
@@ -144,6 +167,14 @@ public class OrderEditPage extends Page implements Localizable, AfterNavigationO
         teethSelectLabel.setText(Localizer.getLocalizedString("teeth"));
         sampleSelectLabel.setText(Localizer.getLocalizedString("samples"));
         executionSelectLabel.setText(Localizer.getLocalizedString("executions"));
+    }
+
+    private void reload() {
+        jobSelect.setItems(dataService.getAll(JobTemplate.class));
+        sampleSelect.setItems(dataService.getAll(SampleTemplate.class));
+        executionSelect.setItems(dataService.getAll(ExecutionTemplate.class));
+        doctorField.setItems(dataService.getAll(Doctor.class));
+        colorField.setItems(dataService.getAll(Color.class));
     }
 
     private void initGeneralTab() {
@@ -173,14 +204,12 @@ public class OrderEditPage extends Page implements Localizable, AfterNavigationO
     private void initTeethTab() {
         jobsLayout.addFormItem(jobSelect, jobSelectLabel).getStyle().set("align-items", "initial");
         jobsLayout.addFormItem(teethSelect, teethSelectLabel).getStyle().set("align-items", "initial");
-        jobSelect.setHeight("18em");
-        jobSelect.setWidth("25em");
         jobsLayout.addClassName("dento-form-layout");
     }
 
     private void initExecutionsSamplesTab() {
-        executionsSamplesLayout.addFormItem(sampleSelect, sampleSelectLabel).getStyle().set("align-items", "initial");
-        executionsSamplesLayout.addFormItem(executionSelect, executionSelectLabel).getStyle().set("align-items", "initial");
+        executionsSamplesLayout.addFormItem(sampleSelect, sampleSelectLabel).addClassName("dento-samples-executions");
+        executionsSamplesLayout.addFormItem(executionSelect, executionSelectLabel).addClassName("dento-samples-executions");
         sampleSelect.setHeight("20em");
         sampleSelect.setWidth("54em");
         executionSelect.setHeight("20em");
@@ -188,10 +217,41 @@ public class OrderEditPage extends Page implements Localizable, AfterNavigationO
         executionsSamplesLayout.addClassName("dento-form-layout");
     }
 
-    private void bindGeneralFields() {
+    private void bindFields() {
         binder.forField(doctorField)
-                .asRequired()
+                .asRequired(Localizer.getLocalizedString("requiredValidation"))
                 .bind(Order::getDoctor, Order::setDoctor);
+
+        binder.forField(patientField)
+                .asRequired(Localizer.getLocalizedString("requiredValidation"))
+                .withValidator(new StringLengthValidator(String.format(Localizer
+                        .getLocalizedString("stringLengthValidation"), 5, 255), 5, 255))
+                .bind(Order::getPatient, Order::setPatient);
+
+        binder.forField(dateField)
+                .asRequired(Localizer.getLocalizedString("requiredValidation"))
+                .bind(Order::getDate, Order::setDate);
+
+        binder.forField(colorField)
+                .bind(Order::getColor, Order::setColor);
+
+        binder.forField(partialSumField)
+                .withConverter(new StringToIntegerConverter(Localizer.getLocalizedString("integerRangeValidation")))
+                .withValidator(new IntegerRangeValidator("integerRangeValidation", 0, 100000))
+                .bind(Order::getPartialSum, Order::setPartialSum);
+
+        binder.forField(paidField)
+                .bind(Order::isPaid, Order::setPaid);
+
+        binder.forField(observationsField)
+                .withValidator(new StringLengthValidator(String.format(Localizer
+                        .getLocalizedString("stringLengthValidation"), 0, 4000), 0, 4000))
+                .bind(Order::getDescription, Order::setDescription);
+
+        binder.forField(jobSelect)
+                .asRequired(Localizer.getLocalizedString("requiredValidation"))
+                .bind(Order::getJobs, Order::setJobs);
+
     }
 
     private void toggleTabSelection(final int index) {
@@ -212,5 +272,20 @@ public class OrderEditPage extends Page implements Localizable, AfterNavigationO
                 executionsSamplesLayout.setVisible(true);
                 break;
         }
+    }
+
+    private void save() {
+        if (binder.isValid()) {
+            final Order item = binder.getBean();
+            dataService.saveEntity(item);
+            UI.getCurrent().navigate(OrdersPage.class);
+        } else {
+            Notification.show(Localizer.getLocalizedString("validationError"),
+                    5000, Notification.Position.BOTTOM_CENTER);
+        }
+    }
+
+    private void discard() {
+        UI.getCurrent().navigate(OrdersPage.class);
     }
 }
