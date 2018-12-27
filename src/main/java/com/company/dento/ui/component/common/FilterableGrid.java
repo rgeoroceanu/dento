@@ -29,6 +29,7 @@ public class FilterableGrid<T extends Base, V extends Specification<T>> extends 
     }
 
     public void refresh(final V criteria) {
+        this.setDataProvider(filterableDataProvider);
         filterableDataProvider.setFilter(criteria);
         filterableDataProvider.refreshAll();
     }

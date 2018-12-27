@@ -26,7 +26,7 @@ public class Job extends Base {
 	
 	@ManyToOne(optional = false)
 	private JobTemplate template;
-	@ManyToOne(fetch = FetchType.EAGER)
+	@ManyToOne(fetch = FetchType.EAGER, optional = false)
 	private Order order;
 	@Basic
 	private int price;

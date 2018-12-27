@@ -69,7 +69,7 @@ public class JobSelect extends AbstractCompositeField<VerticalLayout, JobSelect,
     }
 
     @Override
-    protected void setPresentationValue(List<Job> jobs) {
+    protected void setPresentationValue(final List<Job> jobs) {
         this.value.clear();
         this.value.addAll(jobs);
         grid.setItems(value);

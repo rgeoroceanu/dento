@@ -35,6 +35,7 @@ import com.vaadin.flow.spring.annotation.UIScope;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.security.access.annotation.Secured;
 
+import java.util.List;
 import java.util.Optional;
 
 @UIScope
@@ -135,7 +136,6 @@ public class OrderEditPage extends Page implements Localizable, AfterNavigationO
         final Optional<Order> order;
         if (orderId != null) {
             order = dataService.getEntity(orderId, Order.class);
-
         } else {
             order = Optional.of(new Order());
         }
@@ -250,8 +250,17 @@ public class OrderEditPage extends Page implements Localizable, AfterNavigationO
 
         binder.forField(jobSelect)
                 .asRequired(Localizer.getLocalizedString("requiredValidation"))
-                .bind(Order::getJobs, Order::setJobs);
+                .bind(Order::getJobs, this::updateJobs);
 
+        binder.forField(teethSelect)
+                //.asRequired(Localizer.getLocalizedString("requiredValidation"))
+                .bind(Order::getTeeth, Order::setTeeth);
+
+    }
+
+    private void updateJobs(final Order order, final List<Job> jobs) {
+        jobs.forEach(j -> j.setOrder(order));
+        order.setJobs(jobs);
     }
 
     private void toggleTabSelection(final int index) {

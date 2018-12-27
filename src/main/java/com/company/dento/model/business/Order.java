@@ -6,7 +6,9 @@ import lombok.Setter;
 import javax.persistence.*;
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @Getter
 @Setter
@@ -25,8 +27,8 @@ public class Order extends Base {
 	@Basic
 	@Column(length = 4000)
 	private String description;
-	@ElementCollection
-	private List<Tooth> teeth = new ArrayList<>();
+	@ElementCollection(fetch = FetchType.EAGER)
+	private Set<Tooth> teeth = new HashSet<>();
 	@Column
 	private LocalDate date;
 	@OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)

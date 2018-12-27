@@ -3,6 +3,7 @@ package com.company.dento.ui.component.common;
 import com.company.dento.model.business.Tooth;
 import com.company.dento.model.type.ToothProperty;
 import com.company.dento.model.type.ToothType;
+import com.vaadin.flow.component.AbstractCompositeField;
 import com.vaadin.flow.component.ClickEvent;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.html.Div;
@@ -12,39 +13,70 @@ import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.radiobutton.RadioButtonGroup;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
+import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
-public class TeethSelect extends Div {
+public class TeethSelect extends AbstractCompositeField<Div, TeethSelect, Set<Tooth>> {
+
+    private final Map<Integer, ToothItem> items = new HashMap<>();
 
     public TeethSelect() {
-        this.addClassName("dento-teeth-select");
+        super(null);
         IntStream.range(11, 19).forEach(this::addTooth);
         IntStream.range(21, 29).forEach(this::addTooth);
         IntStream.range(31, 39).forEach(this::addTooth);
         IntStream.range(41, 49).forEach(this::addTooth);
+
+        this.getContent().addClassName("dento-teeth-select");
     }
 
     private void addTooth(int toothNumber) {
         final ToothItem tooth = new ToothItem(toothNumber);
-        this.add(tooth);
+        tooth.addValueChangeListener(e -> this.setModelValue(getValue(), true));
+        items.put(toothNumber, tooth);
+        this.getContent().add(tooth);
     }
 
-    private static class ToothItem extends Div {
+    @Override
+    protected void setPresentationValue(final Set<Tooth> teeth) {
+        teeth.stream()
+                .filter(t -> items.containsKey(t.getNumber()))
+                .forEach(tooth -> items.get(tooth.getNumber()).setValue(tooth));
+    }
+
+    @Override
+    public Set<Tooth> getValue() {
+        return items.values().stream()
+                .filter(ti -> ti.getOptionalValue().isPresent())
+                .map(ToothItem::getValue)
+                .filter(ti -> ti.getProperty() != null && ti.getType() != null)
+                .collect(Collectors.toSet());
+    }
+
+
+    private static class ToothItem extends AbstractCompositeField<Div, ToothItem, Tooth> {
 
         private final Button button;
         private final Icon icon;
         private final Label text;
+        private final ToothPropertySelect toothPropertySelect;
+        private final ToothPropertyDisplay toothPropertyDisplay;
+        private final int toothNumber;
+
         private boolean active = false;
         private Tooth value;
-        private final ToothPropertySelect toothPropertySelect;
-        private ToothPropertyDisplay toothPropertyDisplay;
 
         ToothItem(final int toothNumber) {
+            super(null);
+
             button = new Button();
             icon = new Icon(VaadinIcon.TOOTH);
             toothPropertySelect = new ToothPropertySelect();
-            toothPropertySelect.addSelectionListener(this::setProperties);
+            toothPropertySelect.addSelectionListener(this::handleSelection);
             toothPropertySelect.setVisible(false);
             toothPropertySelect.addClassNames(String.format("tooth%d-elem", toothNumber));
             toothPropertyDisplay = new ToothPropertyDisplay();
@@ -54,43 +86,58 @@ public class TeethSelect extends Div {
             icon.setSize("1.8em");
             button.setIcon(icon);
             button.addClassNames("dento-teeth-select-tooth-button", String.format("tooth%d-elem", toothNumber));
-            button.addClickListener(this::selectProperties);
+            button.addClickListener(e -> selectProperties());
             text = new Label(String.valueOf(toothNumber));
-            this.add(toothPropertyDisplay, button, text, toothPropertySelect);
-            this.addClassNames(String.format("tooth%d", toothNumber), "dento-teeth-select-tooth");
+            this.getContent().add(toothPropertyDisplay, button, text, toothPropertySelect);
+            this.getContent().addClassNames(String.format("tooth%d", toothNumber), "dento-teeth-select-tooth");
             text.addClassNames("tooth-text", String.format("tooth%d-elem", toothNumber));
-            value = new Tooth();
-            value.setNumber(toothNumber);
+
+            this.toothNumber = toothNumber;
         }
 
-        Tooth getValue() {
+        @Override
+        public Tooth getValue() {
             return value;
         }
 
-        void setValue(final Tooth value) {
+        @Override
+        public void setPresentationValue(final Tooth value) {
             this.value = value;
+            active = value == null;
+            updateDisplay();
         }
 
-        private void selectProperties(final ClickEvent e) {
+        private void selectProperties() {
             if (active) {
                 toggleState();
-                value.setType(null);
-                value.setProperty(null);
+                value = null;
+                setModelValue(value, true);
                 toothPropertySelect.clear();
                 toothPropertyDisplay.setVisible(false);
             } else {
+                value = new Tooth();
+                value.setNumber(toothNumber);
                 toothPropertySelect.setVisible(true);
             }
         }
 
-        private void setProperties(final ToothType p1, final ToothProperty p2) {
-            value.setType(p1);
-            value.setProperty(p2);
+        private void updateDisplay() {
             toggleState();
-            toothPropertyDisplay.setValue(p1, p2);
+            toothPropertyDisplay.setValue(value.getType(), value.getProperty());
             toothPropertyDisplay.setVisible(true);
             toothPropertySelect.setVisible(false);
             toothPropertySelect.clear();
+        }
+
+        private void updateValue(final ToothType p1, final ToothProperty p2) {
+            value.setType(p1);
+            value.setProperty(p2);
+        }
+
+        private void handleSelection(final ToothType p1, final ToothProperty p2) {
+            updateValue(p1, p2);
+            updateDisplay();
+            setModelValue(value, true);
         }
 
         private void toggleState() {
