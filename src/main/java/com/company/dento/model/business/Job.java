@@ -1,17 +1,13 @@
 package com.company.dento.model.business;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import javax.persistence.Basic;
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
-import javax.persistence.Table;
-
 import lombok.Getter;
 import lombok.Setter;
+import org.hibernate.annotations.Fetch;
+import org.hibernate.annotations.FetchMode;
+
+import javax.persistence.*;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * 
@@ -34,6 +30,10 @@ public class Job extends Base {
 	private int count = 1;
 	@OneToMany
 	private List<MaterialTemplate> usedMaterials = new ArrayList<>();
+	@OneToMany(fetch = FetchType.LAZY, mappedBy = "job", orphanRemoval = true, cascade = CascadeType.ALL)
+	private List<Execution> executions = new ArrayList<>();
+	@OneToMany(fetch = FetchType.LAZY, mappedBy = "job", orphanRemoval = true, cascade = CascadeType.ALL)
+	private List<Sample> samples = new ArrayList<>();
 	
 	public String toString() {
 		if (template != null && order != null) {

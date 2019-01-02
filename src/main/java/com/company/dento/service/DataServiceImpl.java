@@ -128,17 +128,47 @@ public class DataServiceImpl implements DataService {
 			order2.setClinic(clinic);
 			saveEntity(order2);
 
-			
+			Execution execution1 = new Execution();
+			execution1.setCount(1);
+			execution1.setPrice(executionTemplate1.getStandardPrice());
+			execution1.setTemplate(executionTemplate1);
+			execution1.setTechnician(user);
+
+			Execution execution2 = new Execution();
+			execution2.setCount(2);
+			execution2.setPrice(executionTemplate2.getStandardPrice());
+			execution2.setTemplate(executionTemplate2);
+			execution2.setTechnician(user);
+
+			for (int i=0; i<200; i++) {
+				Execution execution3 = new Execution();
+				execution3.setCount(1);
+				execution3.setPrice(executionTemplate2.getStandardPrice());
+				execution3.setTemplate(executionTemplate2);
+				execution3.setTechnician(user);
+			}
+
+			Sample sample = new Sample();
+			sample.setTemplate(sampleTemplate1);
+
 			Job job1 = new Job();
 			job1.setTemplate(jobTemplate1);
 			job1.setOrder(order);
 			job1.setPrice(100);
+			job1.setExecutions(Arrays.asList(execution1));
+			execution1.setJob(job1);
+
+			sample.setJob(job1);
+
+			job1.getSamples().add(sample);
             saveEntity(job1);
 			
 			Job job2 = new Job();
 			job2.setTemplate(jobTemplate1);
 			job2.setOrder(order);
 			job2.setPrice(150);
+			job2.setExecutions(Arrays.asList(execution2));
+			execution2.setJob(job2);
             saveEntity(job2);
 			
 			Job job3 = new Job();
@@ -146,40 +176,8 @@ public class DataServiceImpl implements DataService {
 			job3.setTemplate(jobTemplate1);
 			job3.setOrder(order2);
 			job3.setPrice(200);
+
             saveEntity(job3);
-
-			Execution execution1 = new Execution();
-			execution1.setCount(1);
-			execution1.setJob(job1);
-			execution1.setPrice(executionTemplate1.getStandardPrice());
-			execution1.setTemplate(executionTemplate1);
-			execution1.setTechnician(user);
-            saveEntity(execution1);
-
-            Execution execution2 = new Execution();
-            execution2.setCount(2);
-            execution2.setJob(job2);
-            execution2.setPrice(executionTemplate2.getStandardPrice());
-            execution2.setTemplate(executionTemplate2);
-			execution2.setTechnician(user);
-            saveEntity(execution2);
-
-            for (int i=0; i<200; i++) {
-				Execution execution3 = new Execution();
-				execution3.setCount(1);
-				execution3.setJob(job3);
-				execution3.setPrice(executionTemplate2.getStandardPrice());
-				execution3.setTemplate(executionTemplate2);
-				execution3.setTechnician(user);
-				saveEntity(execution3);
-			}
-
-			Sample sample = new Sample();
-			sample.setTemplate(sampleTemplate1);
-			sample.setOrder(order);
-			
-			order.getSamples().add(sample);
-			//order.getJobs().addAll(Arrays.asList(execution1, execution2, execution3));
 			
 			saveEntity(order);
 		}
@@ -197,7 +195,7 @@ public class DataServiceImpl implements DataService {
 	}
 
 	@Override
-	@Transactional
+	@Transactional(readOnly = true)
 	public <T extends Base> List<T> getAll(final Class<T> entityClass) throws InvalidDataTypeException {
 		Preconditions.checkNotNull(entityClass, "Entity class cannot be null!");
 		log.info("Retrieving all entitities of type " + entityClass.getSimpleName());
@@ -208,7 +206,7 @@ public class DataServiceImpl implements DataService {
 	}
 
 	@Override
-	@Transactional
+	@Transactional(readOnly = true)
 	public <T extends Base> Optional<T> getEntity(final Long entityId, final Class<T> entityClass)
 			throws InvalidDataTypeException {
 		
@@ -269,17 +267,17 @@ public class DataServiceImpl implements DataService {
 	}
 
 	@Override
-	public List<Sample> getProcedureSamples(final Long procedureId) {
-		Preconditions.checkNotNull(procedureId, "Procedure id cannot be null!");
-		log.info("Retrieve samples for procedure " + procedureId);
-		return sampleDao.findByOrderId(procedureId);
+	public List<Sample> getOrderSamples(final Long orderId) {
+		Preconditions.checkNotNull(orderId, "Order id cannot be null!");
+		log.info("Retrieve samples for order " + orderId);
+		return sampleDao.findByJobOrderId(orderId);
 	}
 
 	@Override
-	public List<Job> getProcedureExecutions(final Long procedureId) {
-		Preconditions.checkNotNull(procedureId, "Procedure id cannot be null!");
-		log.info("Retrieve executions for procedure " + procedureId);
-		return jobDao.findByOrderId(procedureId);
+	public List<Job> getOrderExecutions(final Long orderId) {
+		Preconditions.checkNotNull(orderId, "Order id cannot be null!");
+		log.info("Retrieve executions for order " + orderId);
+		return jobDao.findByOrderId(orderId);
 	}
 
 	@Override

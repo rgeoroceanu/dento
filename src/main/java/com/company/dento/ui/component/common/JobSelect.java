@@ -40,6 +40,8 @@ public class JobSelect extends AbstractCompositeField<VerticalLayout, JobSelect,
             return removeButton;
         });
 
+        grid.addClassName("dento-grid");
+
         final Button addButton = new Button();
         addButton.setIcon(new Icon(VaadinIcon.PLUS));
         addButton.addClassNames("dento-button-simple",  "main-layout__content-menu-button");

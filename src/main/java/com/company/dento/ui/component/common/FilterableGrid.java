@@ -5,7 +5,6 @@ import com.company.dento.service.DataService;
 import com.company.dento.ui.localization.Localizable;
 import com.company.dento.ui.localization.Localizer;
 import com.vaadin.flow.component.grid.Grid;
-import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.data.provider.*;
 import org.springframework.data.jpa.domain.Specification;
 
@@ -38,12 +37,7 @@ public class FilterableGrid<T extends Base, V extends Specification<T>> extends 
     public void localize() {
         this.getColumns().stream()
                 .filter(column -> !Arrays.asList("remove", "add", "edit", "print").contains(column.getKey()))
-                .forEach(column -> {
-                    final Div headerCell = new Div();
-                    headerCell.addClassName("dento-grid-header");
-                    headerCell.setText(Localizer.getLocalizedString(column.getKey()));
-                    column.setHeader(headerCell);
-                });
+                .forEach(column -> column.setHeader(Localizer.getLocalizedString(column.getKey())));
     }
 
     private void initGrid() {

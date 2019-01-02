@@ -1,6 +1,7 @@
 package com.company.dento.ui.page;
 
 import com.company.dento.model.business.*;
+import com.company.dento.model.type.Role;
 import com.company.dento.service.DataService;
 import com.company.dento.ui.component.common.ExecutionSelect;
 import com.company.dento.ui.component.common.JobSelect;
@@ -37,6 +38,7 @@ import org.springframework.security.access.annotation.Secured;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @UIScope
 @Secured(value = {"USER", "ADMIN"})
@@ -61,7 +63,7 @@ public class OrderEditPage extends Page implements Localizable, AfterNavigationO
     private final JobSelect jobSelect = new JobSelect();
     private final TeethSelect teethSelect = new TeethSelect();
     private final SampleSelect sampleSelect = new SampleSelect();
-    private final ExecutionSelect executionSelect;
+    private final ExecutionSelect executionSelect = new ExecutionSelect();
 
     private final Binder<Order> binder = new Binder<>();
 
@@ -85,7 +87,6 @@ public class OrderEditPage extends Page implements Localizable, AfterNavigationO
 
     public OrderEditPage(final DataService dataService) {
         super(dataService);
-        executionSelect = new ExecutionSelect(dataService);
 
         final VerticalLayout layout = new VerticalLayout();
         final HorizontalLayout buttonsLayout = new HorizontalLayout();
@@ -171,8 +172,9 @@ public class OrderEditPage extends Page implements Localizable, AfterNavigationO
 
     private void reload() {
         jobSelect.setItems(dataService.getAll(JobTemplate.class));
-        sampleSelect.setItems(dataService.getAll(SampleTemplate.class));
-        executionSelect.setItems(dataService.getAll(ExecutionTemplate.class));
+        executionSelect.setTechnicians(dataService.getAll(User.class).stream()
+                .filter(u -> u.getRoles().contains(Role.TECHNICIAN))
+                .collect(Collectors.toList()));
         doctorField.setItems(dataService.getAll(Doctor.class));
         colorField.setItems(dataService.getAll(Color.class));
     }
@@ -210,10 +212,6 @@ public class OrderEditPage extends Page implements Localizable, AfterNavigationO
     private void initExecutionsSamplesTab() {
         executionsSamplesLayout.addFormItem(sampleSelect, sampleSelectLabel).addClassName("dento-samples-executions");
         executionsSamplesLayout.addFormItem(executionSelect, executionSelectLabel).addClassName("dento-samples-executions");
-        sampleSelect.setHeight("20em");
-        sampleSelect.setWidth("54em");
-        executionSelect.setHeight("20em");
-        executionSelect.setWidth("54em");
         executionsSamplesLayout.addClassName("dento-form-layout");
     }
 
@@ -256,6 +254,28 @@ public class OrderEditPage extends Page implements Localizable, AfterNavigationO
                 //.asRequired(Localizer.getLocalizedString("requiredValidation"))
                 .bind(Order::getTeeth, Order::setTeeth);
 
+        binder.forField(executionSelect)
+                //.asRequired(Localizer.getLocalizedString("requiredValidation"))
+                .bind(this::extractExecutions, null);
+
+        binder.forField(sampleSelect)
+                //.asRequired(Localizer.getLocalizedString("requiredValidation"))
+                .bind(this::extractSamples, null);
+
+    }
+
+    private List<Execution> extractExecutions(final Order order) {
+        return order.getJobs().stream()
+                .map(Job::getExecutions)
+                .flatMap(List::stream)
+                .collect(Collectors.toList());
+    }
+
+    private List<Sample> extractSamples(final Order order) {
+        return order.getJobs().stream()
+                .map(Job::getSamples)
+                .flatMap(List::stream)
+                .collect(Collectors.toList());
     }
 
     private void updateJobs(final Order order, final List<Job> jobs) {

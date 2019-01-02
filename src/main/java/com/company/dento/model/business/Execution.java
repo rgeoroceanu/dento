@@ -22,7 +22,7 @@ public class Execution extends Base {
 	
 	@ManyToOne(optional = false)
 	private ExecutionTemplate template;
-	@ManyToOne(fetch = FetchType.EAGER)
+	@ManyToOne(optional = false)
 	private Job job;
 	@Basic
 	private int price;

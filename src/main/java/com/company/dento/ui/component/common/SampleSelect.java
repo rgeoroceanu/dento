@@ -4,6 +4,7 @@ import com.company.dento.model.business.Sample;
 import com.company.dento.model.business.SampleTemplate;
 import com.company.dento.ui.localization.Localizable;
 import com.company.dento.ui.localization.Localizer;
+import com.vaadin.flow.component.AbstractCompositeField;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.combobox.ComboBox;
 import com.vaadin.flow.component.datepicker.DatePicker;
@@ -16,67 +17,40 @@ import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import java.util.ArrayList;
 import java.util.List;
 
-public class SampleSelect extends VerticalLayout implements Localizable {
+public class SampleSelect extends AbstractCompositeField<VerticalLayout, SampleSelect, List<Sample>> implements Localizable {
 
-    private final ComboBox<SampleTemplate> sampleSelect;
     private final List<Sample> value = new ArrayList<>();
     private final Grid<Sample> grid;
 
     public SampleSelect() {
-        final HorizontalLayout buttons = new HorizontalLayout();
+        super(null);
 
         grid = new Grid<>(Sample.class);
         grid.getElement().setAttribute("theme", "row-stripes");
         grid.getColumns().forEach(grid::removeColumn);
+        grid.addColumn("job.template.name").setWidth("18em").setSortable(false);
         grid.addColumn("template.name").setWidth("18em").setSortable(false);
         grid.addComponentColumn(this::addDatePickerColumn).setKey("date").setWidth("12em").setSortable(false);
         grid.addComponentColumn(this::addTimePickerColumn).setKey("time").setWidth("17em").setSortable(false);
+        grid.addClassName("dento-grid");
 
-        grid.addComponentColumn(jb -> {
-            final Button removeButton = new Button();
-            final Icon icon = new Icon(VaadinIcon.TRASH);
-            icon.addClassName("dento-grid-icon");
-            icon.setSize("1.4em");
-            removeButton.addClassName("dento-grid-action");
-            removeButton.addClickListener(e -> remove(jb));
-            removeButton.setIcon(icon);
-            return removeButton;
-        }).setWidth("4em");
-
-        final Button addButton = new Button();
-        addButton.setIcon(new Icon(VaadinIcon.PLUS));
-        addButton.addClassNames("dento-button-simple",  "main-layout__content-menu-button");
-        addButton.addClickListener(e -> add());
-
-        sampleSelect = new ComboBox<>();
-        sampleSelect.setWidth("18em");
-        sampleSelect.setPreventInvalidInput(true);
-        sampleSelect.setAllowCustomValue(false);
-        sampleSelect.setItemLabelGenerator(SampleTemplate::getName);
-
-        buttons.add(sampleSelect, addButton);
-        buttons.setPadding(false);
-        buttons.setWidth("100%");
-
-        this.add(buttons, grid);
-        this.setPadding(false);
-        this.getStyle().set("margin-bottom", "15px");
+        this.getContent().add(grid);
+        this.getContent().setPadding(false);
+        this.getContent().getStyle().set("margin-bottom", "15px");
+        this.getContent().setHeight("20em");
+        this.getContent().setWidth("54em");
     }
 
     @Override
     public void localize() {
-        grid.getColumns().get(0).setHeader(Localizer.getLocalizedString("name"));
+        grid.getColumns().get(0).setHeader(Localizer.getLocalizedString("job"));
+        grid.getColumns().get(1).setHeader(Localizer.getLocalizedString("name"));
         grid.getColumnByKey("date").setHeader(Localizer.getLocalizedString("date"));
         grid.getColumnByKey("time").setHeader(Localizer.getLocalizedString("time"));
     }
 
-    public void setItems(final List<SampleTemplate> items) {
-        value.clear();
-        grid.setItems(value);
-        sampleSelect.setItems(items);
-    }
-
-    public void setValue(final List<Sample> value) {
+    @Override
+    public void setPresentationValue(final List<Sample> value) {
         this.value.clear();
         this.value.addAll(value);
         grid.setItems(value);
@@ -86,26 +60,12 @@ public class SampleSelect extends VerticalLayout implements Localizable {
         return new ArrayList<>(value);
     }
 
-    private void add() {
-        sampleSelect.getOptionalValue()
-                .ifPresent(v -> {
-                    final Sample newSample = new Sample();
-                    newSample.setTemplate(v);
-                    value.add(newSample);
-                    grid.setItems(value);
-                });
-    }
-
-    private void remove(final Sample item) {
-        value.remove(item);
-        grid.setItems(value);
-    }
-
     private DatePicker addDatePickerColumn(final Sample sample) {
         final DatePicker datePicker = new DatePicker();
         datePicker.setValue(sample.getDate());
         datePicker.addValueChangeListener(e -> sample.setDate(e.getValue()));
         datePicker.setWidth("10em");
+        datePicker.addClassNames("dento-grid-filter-small", "dento-grid-date-picker");
         return datePicker;
     }
 

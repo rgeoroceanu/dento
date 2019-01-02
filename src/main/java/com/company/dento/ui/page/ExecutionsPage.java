@@ -70,11 +70,13 @@ public class ExecutionsPage extends Page implements Localizable, AfterNavigation
 
         grid.addColumn(new LocalDateRenderer<>(item -> item.getCreated().toLocalDate(), "d.M.yyyy"))
                 .setKey("date");
+
         grid.addColumn("job.order.id");
         grid.addColumn("template.name");
         grid.addColumn("technician");
         grid.addColumn("count");
         grid.addColumn("price");
+
         grid.addComponentColumn(item -> {
             final Icon icon = new Icon(item.getJob().getOrder().isFinalized() ? VaadinIcon.CHECK : VaadinIcon.CLOSE_SMALL);
             icon.addClassName("dento-grid-icon");
@@ -82,6 +84,7 @@ public class ExecutionsPage extends Page implements Localizable, AfterNavigation
             icon.setColor(color);
             return icon;
         }).setKey("jobFinalized");
+
         grid.addComponentColumn(item -> {
             final Icon icon = new Icon(VaadinIcon.TRASH);
             final Button remove = new Button();

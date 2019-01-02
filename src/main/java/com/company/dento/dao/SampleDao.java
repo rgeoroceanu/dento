@@ -7,5 +7,5 @@ import java.util.List;
 
 @Repository
 public interface SampleDao extends PageableRepository<Sample, Long> {
-	List<Sample> findByOrderId(final Long orderId);
+	List<Sample> findByJobOrderId(final Long orderId);
 }

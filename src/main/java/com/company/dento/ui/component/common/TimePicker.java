@@ -22,16 +22,19 @@ public class TimePicker extends AbstractCompositeField<HorizontalLayout, TimePic
         hour.setItems(IntStream.range(0, 24).boxed());
         hour.setPreventInvalidInput(true);
         hour.setAllowCustomValue(false);
+        hour.addClassName("dento-grid-filter-small");
         minutes = new ComboBox<>();
         minutes.setItems(MINUTES);
         minutes.setPreventInvalidInput(true);
         minutes.setAllowCustomValue(false);
+        minutes.addClassName("dento-grid-filter-small");
         final Label delimiter = new Label(":");
         getContent().add(hour, delimiter, minutes);
         hour.setWidth("6.5em");
         minutes.setWidth("6.5em");
         hour.addValueChangeListener(e -> changeValue());
         minutes.addValueChangeListener(e -> changeValue());
+
         getContent().getStyle().set("align-items", "center");
     }
 

@@ -5,6 +5,18 @@
                 font-size: 13px;
                 color: grey;
             }
+
+            :host(.dento-grid) th[part~="cell"] {
+                color: #0b8793;
+                font-weight: bold!important;
+                font-size: 13px!important;
+            }
+
+            :host(.dento-grid) [part~="header-cell"] ::slotted(vaadin-grid-cell-content) {
+                color: #0b8793;
+                font-weight: bold!important;
+                font-size: 13px!important;
+            }
         </style>
     </template>
 </dom-module>

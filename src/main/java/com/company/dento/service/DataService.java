@@ -15,8 +15,8 @@ public interface DataService {
 	<T extends Base> List<T> getAll(final Class<T> entityClass) throws InvalidDataTypeException;
 	<T extends Base> Optional<T> getEntity(final Long entityId, final Class<T> entityClass) throws InvalidDataTypeException;
 	<T extends Base> void deleteEntity(final Long entityId, final Class<T> entityClass) throws InvalidDataTypeException, DataDoesNotExistException;
-	List<Sample> getProcedureSamples(final Long procedureId);
-	List<Job> getProcedureExecutions(final Long procedureId);
+	List<Sample> getOrderSamples(final Long orderId);
+	List<Job> getOrderExecutions(final Long orderId);
 	User getUser(final String username) throws DataDoesNotExistException;
 	User saveUserAndEncodePassword(final User user);
 	<T extends Base> List<T> getByCriteria(final Class<T> itemClass,
