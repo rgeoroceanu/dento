@@ -189,9 +189,6 @@ public class OrderEditPage extends Page implements Localizable, AfterNavigationO
         generalLayout.addFormItem(observationsField, observationsLabel);
         generalLayout.addFormItem(cadField, cadLabel);
 
-        cadField.setAutoUpload(true);
-        cadField.setDropAllowed(false);
-
         final Button upload = new Button();
         upload.addClassName("dento-button-simple");
         upload.setIcon(new Icon(VaadinIcon.UPLOAD));
