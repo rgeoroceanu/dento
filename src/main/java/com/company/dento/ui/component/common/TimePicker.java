@@ -28,14 +28,16 @@ public class TimePicker extends AbstractCompositeField<HorizontalLayout, TimePic
         minutes.setPreventInvalidInput(true);
         minutes.setAllowCustomValue(false);
         minutes.addClassName("dento-grid-filter-small");
-        final Label delimiter = new Label(":");
+        final Label delimiter = new Label("  :  ");
         getContent().add(hour, delimiter, minutes);
-        hour.setWidth("6.5em");
-        minutes.setWidth("6.5em");
+        hour.setWidth("6em");
+        minutes.setWidth("6em");
         hour.addValueChangeListener(e -> changeValue());
         minutes.addValueChangeListener(e -> changeValue());
 
         getContent().getStyle().set("align-items", "center");
+        getContent().setSpacing(false);
+        getContent().setPadding(false);
     }
 
     @Override

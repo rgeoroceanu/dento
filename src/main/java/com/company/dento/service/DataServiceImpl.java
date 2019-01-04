@@ -8,6 +8,7 @@ import com.company.dento.service.exception.DataDoesNotExistException;
 import com.company.dento.service.exception.InvalidDataTypeException;
 import com.google.common.base.Preconditions;
 import lombok.extern.log4j.Log4j2;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -37,14 +38,16 @@ public class DataServiceImpl implements DataService {
 	private final UserDao userDao;
 	private final ClinicDao clinicDao;
 	private final ColorDao colorDao;
-	private final PasswordEncoder passwordEncoder;
+
+	@Autowired
+	private PasswordEncoder passwordEncoder;
 
 	public DataServiceImpl(final JobDao jobDao, final JobTemplateDao jobTemplateDao,
 						   final MaterialTemplateDao materialTemplateDao,
 						   final ExecutionTemplateDao executionTemplateDao, final ExecutionDao executionDao,
 						   final OrderDao orderDao, final SampleDao sampleDao,
 						   final SampleTemplateDao sampleTemplateDao, final DoctorDao doctorDao, final UserDao userDao,
-						   final ClinicDao clinicDao, final PasswordEncoder passwordEncoder, final ColorDao colorDao) {
+						   final ClinicDao clinicDao, final ColorDao colorDao) {
 
 		this.jobDao = jobDao;
 		this.jobTemplateDao = jobTemplateDao;
@@ -57,7 +60,7 @@ public class DataServiceImpl implements DataService {
 		this.doctorDao = doctorDao;
 		this.userDao = userDao;
 		this.clinicDao = clinicDao;
-		this.passwordEncoder = passwordEncoder;
+		//this.passwordEncoder = passwordEncoder;
 		this.colorDao = colorDao;
 	}
 

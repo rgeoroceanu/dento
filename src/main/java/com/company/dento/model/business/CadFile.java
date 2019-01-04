@@ -1,18 +1,18 @@
 package com.company.dento.model.business;
 
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
 
 import javax.persistence.Basic;
-import javax.persistence.Entity;
+import javax.persistence.Embeddable;
 import javax.persistence.Lob;
-import javax.persistence.Table;
 
 @Getter
 @Setter
-@Entity
-@Table(name = "cad_files")
-public class CadFile extends Base {
+@Embeddable
+@EqualsAndHashCode
+public class CadFile {
 
     @Basic
     private String name;

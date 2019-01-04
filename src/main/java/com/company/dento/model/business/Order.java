@@ -27,14 +27,14 @@ public class Order extends Base {
 	@Basic
 	@Column(length = 4000)
 	private String description;
-	@ElementCollection(fetch = FetchType.EAGER)
+	@ElementCollection(fetch = FetchType.LAZY)
 	private Set<Tooth> teeth = new HashSet<>();
 	@Column
 	private LocalDate date;
 	@OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY, mappedBy = "order")
 	private List<Job> jobs = new ArrayList<>();
-	@OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
-	private List<CadFile> cadFiles = new ArrayList<>();
+	@ElementCollection(fetch = FetchType.LAZY)
+	private Set<CadFile> cadFiles = new HashSet<>();
 	@Basic
 	private boolean finalized;
 	@Basic

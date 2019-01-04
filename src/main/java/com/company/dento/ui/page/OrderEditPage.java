@@ -3,10 +3,7 @@ package com.company.dento.ui.page;
 import com.company.dento.model.business.*;
 import com.company.dento.model.type.Role;
 import com.company.dento.service.DataService;
-import com.company.dento.ui.component.common.ExecutionSelect;
-import com.company.dento.ui.component.common.JobSelect;
-import com.company.dento.ui.component.common.SampleSelect;
-import com.company.dento.ui.component.common.TeethSelect;
+import com.company.dento.ui.component.common.*;
 import com.company.dento.ui.localization.Localizable;
 import com.company.dento.ui.localization.Localizer;
 import com.vaadin.flow.component.UI;
@@ -17,8 +14,6 @@ import com.vaadin.flow.component.datepicker.DatePicker;
 import com.vaadin.flow.component.formlayout.FormLayout;
 import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.html.Label;
-import com.vaadin.flow.component.icon.Icon;
-import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.component.notification.Notification;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
@@ -26,7 +21,6 @@ import com.vaadin.flow.component.tabs.Tab;
 import com.vaadin.flow.component.tabs.Tabs;
 import com.vaadin.flow.component.textfield.TextArea;
 import com.vaadin.flow.component.textfield.TextField;
-import com.vaadin.flow.component.upload.Upload;
 import com.vaadin.flow.data.binder.Binder;
 import com.vaadin.flow.data.converter.StringToIntegerConverter;
 import com.vaadin.flow.data.validator.IntegerRangeValidator;
@@ -57,7 +51,7 @@ public class OrderEditPage extends Page implements Localizable, AfterNavigationO
     private final ComboBox<Color> colorField = new ComboBox<>();
     private final TextArea observationsField = new TextArea();
     private final DatePicker dateField = new DatePicker();
-    private final Upload cadField = new Upload();
+    private final UploadField uploadField = new UploadField();
     private final Checkbox paidField = new Checkbox();
     private final TextField partialSumField = new TextField();
     private final JobSelect jobSelect = new JobSelect();
@@ -131,7 +125,7 @@ public class OrderEditPage extends Page implements Localizable, AfterNavigationO
     }
 
     @Override
-    public void setParameter(BeforeEvent beforeEvent, Long orderId) {
+    public void setParameter(BeforeEvent beforeEvent, @OptionalParameter Long orderId) {
         reload();
 
         final Optional<Order> order;
@@ -187,14 +181,8 @@ public class OrderEditPage extends Page implements Localizable, AfterNavigationO
         generalLayout.addFormItem(partialSumField, partialSumLabel);
         generalLayout.addFormItem(paidField, paidLabel);
         generalLayout.addFormItem(observationsField, observationsLabel);
-        generalLayout.addFormItem(cadField, cadLabel);
+        generalLayout.addFormItem(uploadField, cadLabel);
 
-        final Button upload = new Button();
-        upload.addClassName("dento-button-simple");
-        upload.setIcon(new Icon(VaadinIcon.UPLOAD));
-        upload.setText("");
-
-        cadField.setUploadButton(upload);
         observationsField.setWidth("22em");
         observationsField.setHeight("8em");
         generalLayout.addClassName("dento-form-layout");
@@ -258,6 +246,10 @@ public class OrderEditPage extends Page implements Localizable, AfterNavigationO
         binder.forField(sampleSelect)
                 //.asRequired(Localizer.getLocalizedString("requiredValidation"))
                 .bind(this::extractSamples, null);
+
+        binder.forField(uploadField)
+                //.asRequired(Localizer.getLocalizedString("requiredValidation"))
+                .bind(Order::getCadFiles, Order::setCadFiles);
 
     }
 
