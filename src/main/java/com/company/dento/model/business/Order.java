@@ -5,6 +5,7 @@ import lombok.Setter;
 
 import javax.persistence.*;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -43,5 +44,7 @@ public class Order extends Base {
 	private Color color;
 	@Basic
 	private int partialSum;
+	@Basic
+	private LocalDateTime deliveryDate;
 
 }
