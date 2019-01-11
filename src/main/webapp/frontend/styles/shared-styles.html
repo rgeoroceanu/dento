@@ -331,10 +331,23 @@
     margin-left: 0px;
   }
 
+  @media screen and (orientation: portrait) {
+    .app-sidebar {
+        width: 50px;
+    }
+    .app-sidebar:hover  {
+        width: 250px;
+    }
+  }
+  @media screen and (orientation: landscape) {
+    .app-sidebar {
+        width: 251px;
+    }
+  }
   .app-sidebar, .off-canvas-sidebar {
   font-family: "Montserrat", "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
   z-index: 4;
-  width: 250px;
+
   height: 100vh;
   box-shadow: 2px 10px 30px 0px rgba(0, 0, 0, 0.42), 0 4px 25px 0px rgba(0, 0, 0, 0.12), 0 8px 10px -5px rgba(0, 0, 0, 0.2);
   -webkit-transition: width 0.3s cubic-bezier(0, 0, 0.2, 1);
@@ -413,7 +426,7 @@
         display: block;
         overflow: hidden;
         line-height: 2rem;
-        padding: 10px 30px 10px 14px;
+        padding: 10px 30px 10px 10px;
         margin: 5px 0;
         background-color: transparent;
         color: #fff;
@@ -518,7 +531,7 @@
     color: #fff;
     line-height: 20px;
     font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
-    margin-left: 15px;
+    margin-left: 10px;
 	margin-top: 30px;
 	margin-bottom: 10px; }
     .app-sidebar .logo .logo-text,
