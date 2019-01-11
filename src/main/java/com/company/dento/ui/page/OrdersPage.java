@@ -5,6 +5,8 @@ import com.company.dento.model.business.Clinic;
 import com.company.dento.model.business.Doctor;
 import com.company.dento.model.business.Order;
 import com.company.dento.service.DataService;
+import com.company.dento.service.ReportService;
+import com.company.dento.service.exception.CannotGenerateReportException;
 import com.company.dento.service.exception.DataDoesNotExistException;
 import com.company.dento.ui.component.common.ConfirmDialog;
 import com.company.dento.ui.component.common.FilterableGrid;
@@ -16,6 +18,7 @@ import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.combobox.ComboBox;
 import com.vaadin.flow.component.datepicker.DatePicker;
 import com.vaadin.flow.component.grid.HeaderRow;
+import com.vaadin.flow.component.html.Anchor;
 import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.html.Paragraph;
 import com.vaadin.flow.component.icon.Icon;
@@ -29,12 +32,16 @@ import com.vaadin.flow.data.value.ValueChangeMode;
 import com.vaadin.flow.router.AfterNavigationEvent;
 import com.vaadin.flow.router.AfterNavigationObserver;
 import com.vaadin.flow.router.Route;
+import com.vaadin.flow.server.StreamResource;
 import com.vaadin.flow.spring.annotation.UIScope;
 import lombok.extern.log4j.Log4j2;
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.springframework.security.access.annotation.Secured;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Arrays;
@@ -62,9 +69,12 @@ public class OrdersPage extends Page implements Localizable, AfterNavigationObse
     private final ConfirmDialog confirmDialog;
     private final Button addButton;
     private final Button printButton;
+    private final ReportService reportService;
 
-	public OrdersPage(final DataService dataService) {
+	public OrdersPage(final DataService dataService, final ReportService reportService) {
 	    super(dataService);
+	    this.reportService = reportService;
+
 		grid = new FilterableGrid<>(Order.class, dataService);
 
         clinicFilter = new ComboBox<>();
@@ -87,6 +97,7 @@ public class OrdersPage extends Page implements Localizable, AfterNavigationObse
 
         grid.addColumn(new LocalDateRenderer<>(Order::getDate, "d.M.yyyy"))
                 .setKey("date").setWidth("140px");
+
         grid.addColumn("id").setWidth("60px");
         grid.addColumn("patient");
         grid.addColumn("clinic.name");
@@ -98,6 +109,7 @@ public class OrdersPage extends Page implements Localizable, AfterNavigationObse
             icon.setColor(color);
             return icon;
         }).setKey("finalized").setWidth("60px");
+
         grid.addComponentColumn(item -> {
             final Icon icon = new Icon(item.isPaid() ? VaadinIcon.CHECK : VaadinIcon.CLOSE_SMALL);
             icon.addClassName("dento-grid-icon");
@@ -105,15 +117,19 @@ public class OrdersPage extends Page implements Localizable, AfterNavigationObse
             icon.setColor(color);
             return icon;
         }).setKey("paid").setWidth("60px");
+
         grid.addColumn("price").setWidth("60px");
+
         grid.addComponentColumn(item -> createCollectionColumn(item.getJobs().stream()
                 .map(job -> job.getTemplate().getName())
                 .collect(Collectors.toList())))
                 .setKey("job.template.name");
+
         grid.addComponentColumn(item -> createCollectionColumn(item.getJobs().stream()
                 .map(job -> String.valueOf(job.getCount()))
                 .collect(Collectors.toList())))
                 .setKey("count").setWidth("60px");
+
         grid.addComponentColumn(item -> createCollectionColumn(item.getJobs().stream()
                 .map(job -> String.valueOf(job.getPrice()))
                 .collect(Collectors.toList())))
@@ -122,15 +138,7 @@ public class OrdersPage extends Page implements Localizable, AfterNavigationObse
                 .map(job -> String.valueOf(job.getPrice() * job.getCount()))
                 .collect(Collectors.toList())))
                 .setKey("job.price.total").setWidth("60px");
-        grid.addComponentColumn(item -> {
-            final Icon icon = new Icon(VaadinIcon.PRINT);
-            final Button print = new Button();
-            print.setIcon(icon);
-            print.addClickListener(e -> print(item));
-            icon.addClassName("dento-grid-icon");
-            print.addClassName("dento-grid-action");
-            return print;
-        }).setKey("print").setWidth("18px");
+        grid.addComponentColumn(this::createPrintComponent).setKey("print").setWidth("18px");
         grid.addComponentColumn(item -> {
             final Icon icon = new Icon(VaadinIcon.EDIT);
             final Button edit = new Button();
@@ -140,6 +148,7 @@ public class OrdersPage extends Page implements Localizable, AfterNavigationObse
             edit.addClassName("dento-grid-action");
             return edit;
         }).setKey("edit").setWidth("18px");
+
         grid.addComponentColumn(item -> {
             final Icon icon = new Icon(VaadinIcon.TRASH);
             final Button remove = new Button();
@@ -179,6 +188,33 @@ public class OrdersPage extends Page implements Localizable, AfterNavigationObse
 	    confirmDialog.open();
     }
 
+    private Component createPrintComponent(final Order item) {
+        final Icon icon = new Icon(VaadinIcon.PRINT);
+        final Button print = new Button();
+        print.setIcon(icon);
+
+        final String filename = String.format("order_%s.xls", item.getId());
+        final Anchor download = new Anchor(new StreamResource(filename, () -> generateReport(item)), "");
+        download.getElement().setAttribute("download", true);
+        download.add(print);
+
+        icon.addClassName("dento-grid-icon");
+        print.addClassName("dento-grid-action");
+        return download;
+    }
+
+    private InputStream generateReport(final Order item) {
+
+	    InputStream reportStream = null;
+        try {
+            reportStream = FileUtils.openInputStream(reportService.createOrderReport(item));
+        } catch (IOException | CannotGenerateReportException e) {
+            log.error("Error generating report for order {}", item.getId());
+            Notification.show("", 5000, Notification.Position.BOTTOM_CENTER);
+        }
+        return reportStream;
+    }
+
     private void remove(final Order item) {
         try {
             dataService.deleteEntity(item.getId(), Order.class);
@@ -191,10 +227,6 @@ public class OrdersPage extends Page implements Localizable, AfterNavigationObse
 
     private void edit(final Order item) {
         UI.getCurrent().navigate(OrderEditPage.class, item.getId());
-    }
-
-    private void print(final Order item) {
-
     }
 
     private void refresh() {

@@ -19,6 +19,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.PostConstruct;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -114,12 +115,18 @@ public class DataServiceImpl implements DataService {
 			doctor.setClinic(clinic);
 			saveEntity(doctor);
 
+			final Color color = new Color();
+			color.setName("A2");
+			saveEntity(color);
+
 			Order order = new Order();
 			order.setDate(LocalDate.now());
 			order.setDoctor(doctor);
 			order.setPatient("Gheorghe");
 			order.setClinic(clinic);
 			order.setPrice(450);
+			order.setColor(color);
+			order.setDeliveryDate(LocalDateTime.now());
 			saveEntity(order);
 
 
@@ -129,6 +136,8 @@ public class DataServiceImpl implements DataService {
 			order2.setPrice(111);
 			order2.setPatient("Gheorghe");
 			order2.setClinic(clinic);
+			order2.setColor(color);
+			order2.setDeliveryDate(LocalDateTime.now());
 			saveEntity(order2);
 
 			Execution execution1 = new Execution();

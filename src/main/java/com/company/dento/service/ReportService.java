@@ -96,8 +96,12 @@ public class ReportService {
 
         final Cell cell = getCellById(workbook, cellId);
         final String cellText = cell.getStringCellValue();
-        final String updated = cellText.replace(placeholder, text);
-        cell.setCellValue(updated);
+        final String toWrite = text != null ? text : "";
+
+        if (cellText != null) {
+            final String updated = cellText.replace(placeholder, toWrite);
+            cell.setCellValue(updated);
+        }
     }
 
     private Cell getCellById(final Workbook workbook, final String id) {
