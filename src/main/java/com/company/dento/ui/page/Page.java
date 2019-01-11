@@ -14,8 +14,11 @@ import com.vaadin.flow.component.icon.Icon;
 import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
+import com.vaadin.flow.component.page.LoadingIndicatorConfiguration;
 import com.vaadin.flow.router.BeforeEnterEvent;
 import com.vaadin.flow.router.BeforeEnterObserver;
+import com.vaadin.flow.server.InitialPageSettings;
+import com.vaadin.flow.server.PageConfigurator;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -39,7 +42,7 @@ import java.util.stream.Collectors;
 @HtmlImport("frontend://styles/dento-filterable-grid.html")
 @HtmlImport("frontend://styles/dento-noheader-grid.html")
 @HtmlImport("frontend://styles/upload-display-button.html")
-public abstract class Page extends HorizontalLayout implements Localizable, BeforeEnterObserver {
+public abstract class Page extends HorizontalLayout implements Localizable, BeforeEnterObserver, PageConfigurator {
 	private static final long serialVersionUID = 1L;
 	
 	protected DataService dataService;
@@ -61,7 +64,13 @@ public abstract class Page extends HorizontalLayout implements Localizable, Befo
 		initLayout();
 		Localizer.setLocale(ROMANIAN_LOCALE);
 	}
-	
+
+	@Override
+	public void configurePage(InitialPageSettings initialPageSettings) {
+		final LoadingIndicatorConfiguration conf = initialPageSettings.getLoadingIndicatorConfiguration();
+		conf.setApplyDefaultTheme(false);
+	}
+
 	@Override
 	public void beforeEnter(BeforeEnterEvent event) {
 		localizeRecursive(this);

@@ -1,5 +1,60 @@
 <custom-style>
   <style>
+    .v-loading-indicator {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      pointer-events: auto;
+      z-index: 2147483647;
+    }
+    .v-loading-indicator:before {
+      width: 150px;
+      height: 60px;
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      margin: -38px 0 0 -38px;
+      border-radius: 100%;
+
+      content: "";
+      opacity: .8;
+      filter: alpha(opacity=80);
+      font-size: 12px;
+      font-weight: bold;
+      background: transparent url(frontend/images/loading_indicator.gif);
+      background-repeat: no-repeat;
+      background-size: 40px;
+      background-position-y: bottom;
+      background-position-x: center;
+    }
+
+    .v-loading-indicator.first:before {
+      animation: bouncedelay 1.2s infinite 0.4s ease-in-out both;
+    }
+    .v-loading-indicator.second:before {
+      animation: none;
+    }
+    .v-loading-indicator.third:before {
+      animation: none;
+    }
+    @keyframes bouncedelay {
+      0% {
+        transform: scale(0);
+      } 40% {
+        transform: scale(1.0);
+      }
+    }
+    @keyframes fadein {
+      0% {
+        background: rgba(0,0,0,0);
+      }
+      100% {
+        background: rgba(0,0,0,.5); /* Darkens the UI */
+      }
+    }
+
     vaadin-tab {
         --lumo-primary-color: #0b8793 !important;
         --lumo-primary-text-color: #0b8793 !important;
