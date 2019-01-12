@@ -45,12 +45,13 @@ public class UploadField extends AbstractCompositeField<VerticalLayout, UploadFi
         button.setText("");
 
         upload.setUploadButton(button);
-        upload.setWidth("20em");
+        upload.setWidth("100%");
         upload.addSucceededListener(this::processUpload);
 
         this.getContent().add(upload, valuesList);
         this.getContent().setPadding(false);
         this.getContent().setSpacing(false);
+        this.getContent().addClassName("dento-form-field");
     }
 
     @Override
@@ -91,6 +92,7 @@ public class UploadField extends AbstractCompositeField<VerticalLayout, UploadFi
         remove.addClassName("upload-remove-button");
 
         hl.add(display, remove);
+        hl.setWidth("100%");
         valuesList.add(hl);
     }
 

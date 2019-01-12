@@ -56,7 +56,7 @@ public class JobSelect extends AbstractCompositeField<VerticalLayout, JobSelect,
         this.getContent().add(buttons, grid);
         this.getContent().setPadding(false);
         this.getContent().setHeight("18em");
-        this.getContent().setWidth("25em");
+        this.getContent().addClassName("dento-form-field");
     }
 
     public void setItems(final List<JobTemplate> items) {

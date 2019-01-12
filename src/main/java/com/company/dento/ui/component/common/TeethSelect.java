@@ -6,6 +6,7 @@ import com.company.dento.model.type.ToothType;
 import com.vaadin.flow.component.AbstractCompositeField;
 import com.vaadin.flow.component.ClickEvent;
 import com.vaadin.flow.component.button.Button;
+import com.vaadin.flow.component.dialog.Dialog;
 import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.html.Label;
 import com.vaadin.flow.component.icon.Icon;
@@ -32,6 +33,7 @@ public class TeethSelect extends AbstractCompositeField<Div, TeethSelect, Set<To
         IntStream.range(41, 49).forEach(this::addTooth);
 
         this.getContent().addClassName("dento-teeth-select");
+        this.getContent().addClassName("dento-form-field");
     }
 
     private void addTooth(int toothNumber) {
@@ -66,6 +68,7 @@ public class TeethSelect extends AbstractCompositeField<Div, TeethSelect, Set<To
         private final ToothPropertySelect toothPropertySelect;
         private final ToothPropertyDisplay toothPropertyDisplay;
         private final int toothNumber;
+        private final Dialog select;
 
         private boolean active = false;
         private Tooth value;
@@ -75,10 +78,10 @@ public class TeethSelect extends AbstractCompositeField<Div, TeethSelect, Set<To
 
             button = new Button();
             icon = new Icon(VaadinIcon.TOOTH);
+            select = new Dialog();
             toothPropertySelect = new ToothPropertySelect();
             toothPropertySelect.addSelectionListener(this::handleSelection);
-            toothPropertySelect.setVisible(false);
-            toothPropertySelect.addClassNames(String.format("tooth%d-elem", toothNumber));
+            select.add(toothPropertySelect);
             toothPropertyDisplay = new ToothPropertyDisplay();
             toothPropertyDisplay.setVisible(false);
             toothPropertyDisplay.addClassNames("dento-teeth-select-properties-display", String.format("tooth%d-elem", toothNumber));
@@ -88,7 +91,7 @@ public class TeethSelect extends AbstractCompositeField<Div, TeethSelect, Set<To
             button.addClassNames("dento-teeth-select-tooth-button", String.format("tooth%d-elem", toothNumber));
             button.addClickListener(e -> selectProperties());
             text = new Label(String.valueOf(toothNumber));
-            this.getContent().add(toothPropertyDisplay, button, text, toothPropertySelect);
+            this.getContent().add(toothPropertyDisplay, button, text);
             this.getContent().addClassNames(String.format("tooth%d", toothNumber), "dento-teeth-select-tooth");
             text.addClassNames("tooth-text", String.format("tooth%d-elem", toothNumber));
 
@@ -117,7 +120,8 @@ public class TeethSelect extends AbstractCompositeField<Div, TeethSelect, Set<To
             } else {
                 value = new Tooth();
                 value.setNumber(toothNumber);
-                toothPropertySelect.setVisible(true);
+                //toothPropertySelect.setVisible(true);
+                select.open();
             }
         }
 
@@ -125,7 +129,8 @@ public class TeethSelect extends AbstractCompositeField<Div, TeethSelect, Set<To
             toggleState();
             toothPropertyDisplay.setValue(value.getType(), value.getProperty());
             toothPropertyDisplay.setVisible(true);
-            toothPropertySelect.setVisible(false);
+            //toothPropertySelect.setVisible(false);
+            select.close();
             toothPropertySelect.clear();
         }
 

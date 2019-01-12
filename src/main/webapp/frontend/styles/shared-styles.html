@@ -119,6 +119,11 @@
         float: right;
         margin-right: 25px;
    }
+   .dento-form-field {
+      width: 90%!important;
+      max-width: 320px;
+      min-width: 200px;
+   }
   .dento-confirm-dialog-header {
       color: grey;
       background-color: #e7ebef;
@@ -184,8 +189,12 @@
     position: relative;
 	width: 23em;
 	height: 23em;
-	margin-top: 4em;
 	margin-bottom: 4em;
+	--teeth-select-radius: 11.5em;
+	--teeth-select-padding-top: 10em;
+	--teeth-select-padding-left: 0px;
+	padding-left: var(--teeth-select-padding-left);
+	padding-top: var(--teeth-select-padding-top);
   }
   .dento-teeth-select-tooth {
 	display: block;
@@ -206,7 +215,7 @@
     font-family: var(--lumo-font-family);
     font-size: 16px;
     font-weight: unset;
-    width: 20em;
+    width: 12em;
 }
 .upload-remove-button {
     background: transparent;
@@ -233,12 +242,10 @@
     flex-direction: column;
 }
 .dento-teeth-select-properties {
-   background: rgba(11, 135, 147, 0.9);
-   font-size: 11px;
-   position: absolute;
-   top: 15em;
-   left: -5em;
-   color: white;
+    background: rgba(11, 135, 147);
+    font-size: 9px;
+    width: 200px;
+    color: white;
 }
 
 .dento-teeth-select-properties-display {
@@ -247,44 +254,46 @@
       width: fit-content;
       height: fit-content;
       position: absolute;
-      top: -2em;
-      left: 1.5em;
+      --teeth-select-prop-top: -2em;
+      --teeth-select-prop-left: 1.5em;
+      top: var(--teeth-select-prop-top);
+      left: var(--teeth-select-prop-left);
       color: #0b8793;
 }
 
-.tooth11 { transform: rotate(264.375deg) translate(13.5em) rotate(90deg);  }
-.tooth12 { transform: rotate(253.125deg) translate(13.5em) rotate(90deg);  }
-.tooth13 { transform: rotate(241.875deg) translate(13.5em) rotate(90deg);  }
-.tooth14 { transform: rotate(230.625deg) translate(13.5em) rotate(90deg);  }
-.tooth15 { transform: rotate(219.375deg) translate(13.5em) rotate(90deg);  }
-.tooth16 { transform: rotate(208.125deg) translate(13.5em) rotate(90deg);  }
-.tooth17 { transform: rotate(196.875deg) translate(13.5em) rotate(90deg);  }
-.tooth18 { transform: rotate(185.625deg) translate(13.5em) rotate(90deg);  }
-.tooth21 { transform: rotate(-84.375deg) translate(13.5em) rotate(90deg);  }
-.tooth22 { transform: rotate(-73.125deg) translate(13.5em) rotate(90deg);  }
-.tooth23 { transform: rotate(-61.875deg) translate(13.5em) rotate(90deg);  }
-.tooth24 { transform: rotate(-50.625deg) translate(13.5em) rotate(90deg);  }
-.tooth25 { transform: rotate(-39.375deg) translate(13.5em) rotate(90deg);  }
-.tooth26 { transform: rotate(-28.125deg) translate(13.5em) rotate(90deg);  }
-.tooth27 { transform: rotate(-16.875deg) translate(13.5em) rotate(90deg);  }
-.tooth28 { transform: rotate(-5.625deg) translate(13.5em) rotate(90deg);  }
+.tooth11 { transform: rotate(264.375deg) translate(var(--teeth-select-radius)) rotate(90deg);  }
+.tooth12 { transform: rotate(253.125deg) translate(var(--teeth-select-radius)) rotate(90deg);  }
+.tooth13 { transform: rotate(241.875deg) translate(var(--teeth-select-radius)) rotate(90deg);  }
+.tooth14 { transform: rotate(230.625deg) translate(var(--teeth-select-radius)) rotate(90deg);  }
+.tooth15 { transform: rotate(219.375deg) translate(var(--teeth-select-radius)) rotate(90deg);  }
+.tooth16 { transform: rotate(208.125deg) translate(var(--teeth-select-radius)) rotate(90deg);  }
+.tooth17 { transform: rotate(196.875deg) translate(var(--teeth-select-radius)) rotate(90deg);  }
+.tooth18 { transform: rotate(185.625deg) translate(var(--teeth-select-radius)) rotate(90deg);  }
+.tooth21 { transform: rotate(-84.375deg) translate(var(--teeth-select-radius)) rotate(90deg);  }
+.tooth22 { transform: rotate(-73.125deg) translate(var(--teeth-select-radius)) rotate(90deg);  }
+.tooth23 { transform: rotate(-61.875deg) translate(var(--teeth-select-radius)) rotate(90deg);  }
+.tooth24 { transform: rotate(-50.625deg) translate(var(--teeth-select-radius)) rotate(90deg);  }
+.tooth25 { transform: rotate(-39.375deg) translate(var(--teeth-select-radius)) rotate(90deg);  }
+.tooth26 { transform: rotate(-28.125deg) translate(var(--teeth-select-radius)) rotate(90deg);  }
+.tooth27 { transform: rotate(-16.875deg) translate(var(--teeth-select-radius)) rotate(90deg);  }
+.tooth28 { transform: rotate(-5.625deg) translate(var(--teeth-select-radius)) rotate(90deg);  }
 
-.tooth41 { transform: rotate(-264.375deg) translate(13.5em) rotate(90deg);  }
-.tooth42 { transform: rotate(-253.125deg) translate(13.5em) rotate(90deg);  }
-.tooth43 { transform: rotate(-241.875deg) translate(13.5em) rotate(90deg);  }
-.tooth44 { transform: rotate(-230.625deg) translate(13.5em) rotate(90deg);  }
-.tooth45 { transform: rotate(-219.375deg) translate(13.5em) rotate(90deg);  }
-.tooth46 { transform: rotate(-208.125deg) translate(13.5em) rotate(90deg);  }
-.tooth47 { transform: rotate(-196.875deg) translate(13.5em) rotate(90deg);  }
-.tooth48 { transform: rotate(-185.625deg) translate(13.5em) rotate(90deg);  }
-.tooth31 { transform: rotate(84.375deg) translate(13.5em) rotate(90deg);  }
-.tooth32 { transform: rotate(73.125deg) translate(13.5em) rotate(90deg);  }
-.tooth33 { transform: rotate(61.875deg) translate(13.5em) rotate(90deg);  }
-.tooth34 { transform: rotate(50.625deg) translate(13.5em) rotate(90deg);  }
-.tooth35 { transform: rotate(39.375deg) translate(13.5em) rotate(90deg);  }
-.tooth36 { transform: rotate(28.125deg) translate(13.5em) rotate(90deg);  }
-.tooth37 { transform: rotate(16.875deg) translate(13.5em) rotate(90deg);  }
-.tooth38 { transform: rotate(5.625deg) translate(13.5em) rotate(90deg);  }
+.tooth41 { transform: rotate(-264.375deg) translate(var(--teeth-select-radius)) rotate(90deg);  }
+.tooth42 { transform: rotate(-253.125deg) translate(var(--teeth-select-radius)) rotate(90deg);  }
+.tooth43 { transform: rotate(-241.875deg) translate(var(--teeth-select-radius)) rotate(90deg);  }
+.tooth44 { transform: rotate(-230.625deg) translate(var(--teeth-select-radius)) rotate(90deg);  }
+.tooth45 { transform: rotate(-219.375deg) translate(var(--teeth-select-radius)) rotate(90deg);  }
+.tooth46 { transform: rotate(-208.125deg) translate(var(--teeth-select-radius)) rotate(90deg);  }
+.tooth47 { transform: rotate(-196.875deg) translate(var(--teeth-select-radius)) rotate(90deg);  }
+.tooth48 { transform: rotate(-185.625deg) translate(var(--teeth-select-radius)) rotate(90deg);  }
+.tooth31 { transform: rotate(84.375deg) translate(var(--teeth-select-radius)) rotate(90deg);  }
+.tooth32 { transform: rotate(73.125deg) translate(var(--teeth-select-radius)) rotate(90deg);  }
+.tooth33 { transform: rotate(61.875deg) translate(var(--teeth-select-radius)) rotate(90deg);  }
+.tooth34 { transform: rotate(50.625deg) translate(var(--teeth-select-radius)) rotate(90deg);  }
+.tooth35 { transform: rotate(39.375deg) translate(var(--teeth-select-radius)) rotate(90deg);  }
+.tooth36 { transform: rotate(28.125deg) translate(var(--teeth-select-radius)) rotate(90deg);  }
+.tooth37 { transform: rotate(16.875deg) translate(var(--teeth-select-radius)) rotate(90deg);  }
+.tooth38 { transform: rotate(5.625deg) translate(var(--teeth-select-radius)) rotate(90deg);  }
 
 .tooth11-elem { transform: rotate(5.625deg)  }
 .tooth12-elem { transform: rotate(16.875deg)  }
@@ -323,6 +332,7 @@
 .tooth-text {
   margin-left: 0.9em;
   position: absolute;
+  font-size: 14px;
 }
 
   .dento-samples-executions {
@@ -337,6 +347,25 @@
     }
     .app-sidebar:hover  {
         width: 250px;
+    }
+    .app-sidebar .logo {
+       justify-content: center!important;
+       margin-left: 0px!important;
+    }
+    .app-sidebar .logo .logo-text {
+        display: none!important;
+    }
+    .app-sidebar .logo .logo-img {
+        margin-right: 0px!important;
+    }
+    .dento-teeth-select {
+	    --teeth-select-radius: 8.5em;
+	    --teeth-select-padding-top: 0px;
+	    --teeth-select-padding-left: 4em;
+    }
+    .dento-teeth-select-properties-display {
+      --teeth-select-prop-top: -1.7em;
+      --teeth-select-prop-left: 1.2em;
     }
   }
   @media screen and (orientation: landscape) {

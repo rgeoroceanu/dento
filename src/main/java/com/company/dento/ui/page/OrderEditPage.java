@@ -30,6 +30,7 @@ import com.vaadin.flow.spring.annotation.UIScope;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.security.access.annotation.Secured;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -182,10 +183,14 @@ public class OrderEditPage extends Page implements Localizable, AfterNavigationO
         generalLayout.addFormItem(paidField, paidLabel);
         generalLayout.addFormItem(observationsField, observationsLabel);
         generalLayout.addFormItem(uploadField, cadLabel);
-
-        observationsField.setWidth("22em");
-        observationsField.setHeight("8em");
         generalLayout.addClassName("dento-form-layout");
+        doctorField.addClassName("dento-form-field");
+        dateField.addClassName("dento-form-field");
+        patientField.addClassName("dento-form-field");
+        colorField.addClassName("dento-form-field");
+        partialSumField.addClassName("dento-form-field");
+        paidField.addClassName("dento-form-field");
+        observationsField.addClassName("dento-form-field");
     }
 
     private void initTeethTab() {
