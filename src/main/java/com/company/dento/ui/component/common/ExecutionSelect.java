@@ -30,7 +30,7 @@ public class ExecutionSelect extends AbstractCompositeField<VerticalLayout, Exec
         grid = new Grid<>(Execution.class);
         grid.getElement().setAttribute("theme", "row-stripes");
         grid.getColumns().forEach(grid::removeColumn);
-        grid.addColumn("template.name").setSortable(false);
+        grid.addColumn("template.name").setWidth("300px").setSortable(false);
         grid.addColumn("job.template.name").setSortable(false);
         grid.addComponentColumn(this::addTechnicianColumn).setKey("technician").setSortable(false);
         grid.addClassName("dento-grid");

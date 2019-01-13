@@ -30,7 +30,7 @@ public class SampleSelect extends AbstractCompositeField<VerticalLayout, SampleS
         grid = new Grid<>(Sample.class);
         grid.getElement().setAttribute("theme", "row-stripes");
         grid.getColumns().forEach(grid::removeColumn);
-        grid.addColumn("template.name").setSortable(false);
+        grid.addColumn("template.name").setWidth("300px").setSortable(false);
         grid.addColumn("job.template.name").setSortable(false);
         grid.addComponentColumn(this::addDatePickerColumn).setKey("date").setWidth("12em").setSortable(false);
         grid.addComponentColumn(this::addTimePickerColumn).setKey("time").setWidth("17em").setSortable(false);
