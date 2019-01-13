@@ -30,7 +30,6 @@ import com.vaadin.flow.spring.annotation.UIScope;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.security.access.annotation.Secured;
 
-import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -78,12 +77,11 @@ public class OrderEditPage extends Page implements Localizable, AfterNavigationO
     private final FormLayout generalLayout = new FormLayout();
     private final FormLayout jobsLayout = new FormLayout();
     private final FormLayout executionsSamplesLayout = new FormLayout();
-
+    private final VerticalLayout contentLayout = new VerticalLayout();
 
     public OrderEditPage(final DataService dataService) {
         super(dataService);
 
-        final VerticalLayout layout = new VerticalLayout();
         final HorizontalLayout buttonsLayout = new HorizontalLayout();
         final Div footerDiv = new Div();
 
@@ -101,10 +99,10 @@ public class OrderEditPage extends Page implements Localizable, AfterNavigationO
         buttonsLayout.addClassName("edit-layout__footer-buttons");
         footerDiv.addClassName("edit-layout__footer");
 
-        layout.setSizeFull();
-        layout.setPadding(false);
-        layout.setMargin(false);
-        layout.add(tabs, generalLayout, jobsLayout, executionsSamplesLayout, footerDiv);
+        contentLayout.setSizeFull();
+        contentLayout.setPadding(false);
+        contentLayout.setMargin(false);
+        contentLayout.add(tabs, generalLayout, footerDiv);
 
         generalLayout.setSizeFull();
         jobsLayout.setSizeFull();
@@ -114,7 +112,7 @@ public class OrderEditPage extends Page implements Localizable, AfterNavigationO
         tabs.add(generalTab, jobsTab, executionsSamplesTab);
         tabs.addSelectedChangeListener(e -> toggleTabSelection(e.getSource().getSelectedIndex()));
 
-        this.setContent(layout);
+        this.setContent(contentLayout);
         this.setMargin(false);
         this.setPadding(false);
     }
@@ -191,18 +189,29 @@ public class OrderEditPage extends Page implements Localizable, AfterNavigationO
         partialSumField.addClassName("dento-form-field");
         paidField.addClassName("dento-form-field");
         observationsField.addClassName("dento-form-field");
+        observationsField.setHeight("6em");
     }
 
     private void initTeethTab() {
-        jobsLayout.addFormItem(jobSelect, jobSelectLabel).getStyle().set("align-items", "initial");
-        jobsLayout.addFormItem(teethSelect, teethSelectLabel).getStyle().set("align-items", "initial");
+        final FormLayout.FormItem fi1 = jobsLayout.addFormItem(jobSelect, jobSelectLabel);
+        final FormLayout.FormItem fi2 = jobsLayout.addFormItem(teethSelect, teethSelectLabel);
         jobsLayout.addClassName("dento-form-layout");
+        fi1.getStyle().set("align-items", "initial");
+        fi2.getStyle().set("align-items", "initial");
+        FormLayout.ResponsiveStep rs1 = new FormLayout.ResponsiveStep("0", 1, FormLayout.ResponsiveStep.LabelsPosition.TOP);
+        FormLayout.ResponsiveStep rs2 = new FormLayout.ResponsiveStep("500px", 2, FormLayout.ResponsiveStep.LabelsPosition.ASIDE);
+        jobsLayout.setResponsiveSteps(rs1, rs2);
     }
 
     private void initExecutionsSamplesTab() {
-        executionsSamplesLayout.addFormItem(sampleSelect, sampleSelectLabel).addClassName("dento-samples-executions");
-        executionsSamplesLayout.addFormItem(executionSelect, executionSelectLabel).addClassName("dento-samples-executions");
+        final FormLayout.FormItem fi1 = executionsSamplesLayout.addFormItem(sampleSelect, sampleSelectLabel);
+        final FormLayout.FormItem fi2 = executionsSamplesLayout.addFormItem(executionSelect, executionSelectLabel);
         executionsSamplesLayout.addClassName("dento-form-layout");
+        fi1.getStyle().set("align-items", "initial");
+        fi2.getStyle().set("align-items", "initial");
+        FormLayout.ResponsiveStep rs1 = new FormLayout.ResponsiveStep("0", 1, FormLayout.ResponsiveStep.LabelsPosition.TOP);
+        FormLayout.ResponsiveStep rs2 = new FormLayout.ResponsiveStep("500px", 1, FormLayout.ResponsiveStep.LabelsPosition.ASIDE);
+        executionsSamplesLayout.setResponsiveSteps(rs1, rs2);
     }
 
     private void bindFields() {
@@ -280,19 +289,13 @@ public class OrderEditPage extends Page implements Localizable, AfterNavigationO
     private void toggleTabSelection(final int index) {
         switch (index) {
             case 0:
-                generalLayout.setVisible(true);
-                jobsLayout.setVisible(false);
-                executionsSamplesLayout.setVisible(false);
+                contentLayout.replace(contentLayout.getComponentAt(1), generalLayout);
                 break;
             case 1:
-                generalLayout.setVisible(false);
-                jobsLayout.setVisible(true);
-                executionsSamplesLayout.setVisible(false);
+                contentLayout.replace(contentLayout.getComponentAt(1), jobsLayout);
                 break;
             case 2:
-                generalLayout.setVisible(false);
-                jobsLayout.setVisible(false);
-                executionsSamplesLayout.setVisible(true);
+                contentLayout.replace(contentLayout.getComponentAt(1), executionsSamplesLayout);
                 break;
         }
     }

@@ -30,22 +30,23 @@ public class ExecutionSelect extends AbstractCompositeField<VerticalLayout, Exec
         grid = new Grid<>(Execution.class);
         grid.getElement().setAttribute("theme", "row-stripes");
         grid.getColumns().forEach(grid::removeColumn);
-        grid.addColumn("job.template.name").setWidth("18em").setSortable(false);
-        grid.addColumn("template.name").setWidth("18em").setSortable(false);
-        grid.addComponentColumn(this::addTechnicianColumn).setKey("technician").setWidth("12em").setSortable(false);
+        grid.addColumn("template.name").setSortable(false);
+        grid.addColumn("job.template.name").setSortable(false);
+        grid.addComponentColumn(this::addTechnicianColumn).setKey("technician").setSortable(false);
         grid.addClassName("dento-grid");
 
         this.getContent().add(grid);
         this.getContent().setPadding(false);
         this.getContent().getStyle().set("margin-bottom", "15px");
         this.getContent().setHeight("20em");
-        this.getContent().setWidth("54em");
+        this.getContent().setWidth("90%");
+        this.getContent().getStyle().set("min-width", "200px");
     }
 
     @Override
     public void localize() {
-        grid.getColumns().get(0).setHeader(Localizer.getLocalizedString("job"));
-        grid.getColumns().get(1).setHeader(Localizer.getLocalizedString("name"));
+        grid.getColumns().get(1).setHeader(Localizer.getLocalizedString("job"));
+        grid.getColumns().get(0).setHeader(Localizer.getLocalizedString("name"));
         grid.getColumnByKey("technician").setHeader(Localizer.getLocalizedString("technician"));
     }
 

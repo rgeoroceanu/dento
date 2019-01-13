@@ -9,10 +9,12 @@ import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.combobox.ComboBox;
 import com.vaadin.flow.component.datepicker.DatePicker;
 import com.vaadin.flow.component.grid.Grid;
+import com.vaadin.flow.component.html.Label;
 import com.vaadin.flow.component.icon.Icon;
 import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
+import com.vaadin.flow.data.renderer.ComponentRenderer;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -28,23 +30,30 @@ public class SampleSelect extends AbstractCompositeField<VerticalLayout, SampleS
         grid = new Grid<>(Sample.class);
         grid.getElement().setAttribute("theme", "row-stripes");
         grid.getColumns().forEach(grid::removeColumn);
-        grid.addColumn("job.template.name").setWidth("18em").setSortable(false);
-        grid.addColumn("template.name").setWidth("18em").setSortable(false);
+        grid.addColumn("template.name").setSortable(false);
+        grid.addColumn("job.template.name").setSortable(false);
         grid.addComponentColumn(this::addDatePickerColumn).setKey("date").setWidth("12em").setSortable(false);
         grid.addComponentColumn(this::addTimePickerColumn).setKey("time").setWidth("17em").setSortable(false);
         grid.addClassName("dento-grid");
+        grid.setItemDetailsRenderer(new ComponentRenderer<>(person -> {
+            VerticalLayout layout = new VerticalLayout();
+            layout.add(new Label("Test"));
+            layout.add(new Label("Test"));
+            return layout;
+        }));
 
         this.getContent().add(grid);
         this.getContent().setPadding(false);
         this.getContent().getStyle().set("margin-bottom", "15px");
         this.getContent().setHeight("20em");
-        this.getContent().setWidth("54em");
+        this.getContent().setWidth("90%");
+        this.getContent().getStyle().set("min-width", "200px");
     }
 
     @Override
     public void localize() {
-        grid.getColumns().get(0).setHeader(Localizer.getLocalizedString("job"));
-        grid.getColumns().get(1).setHeader(Localizer.getLocalizedString("name"));
+        grid.getColumns().get(1).setHeader(Localizer.getLocalizedString("job"));
+        grid.getColumns().get(0).setHeader(Localizer.getLocalizedString("name"));
         grid.getColumnByKey("date").setHeader(Localizer.getLocalizedString("date"));
         grid.getColumnByKey("time").setHeader(Localizer.getLocalizedString("time"));
     }
