@@ -17,7 +17,6 @@ import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.combobox.ComboBox;
 import com.vaadin.flow.component.datepicker.DatePicker;
-import com.vaadin.flow.component.grid.HeaderRow;
 import com.vaadin.flow.component.html.Anchor;
 import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.html.Paragraph;
@@ -46,6 +45,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -69,6 +69,7 @@ public class OrdersPage extends Page implements Localizable, AfterNavigationObse
     private final ConfirmDialog confirmDialog;
     private final Button addButton;
     private final Button printButton;
+    private final Button filterButton;
     private final ReportService reportService;
 
 	public OrdersPage(final DataService dataService, final ReportService reportService) {
@@ -94,11 +95,14 @@ public class OrdersPage extends Page implements Localizable, AfterNavigationObse
         printButton = new Button();
         printButton.setIcon(new Icon(VaadinIcon.PRINT));
         printButton.addClassNames("dento-button-simple", "main-layout__content-menu-button");
+        filterButton = new Button();
+        filterButton.setIcon(new Icon(VaadinIcon.SEARCH));
+        filterButton.addClassNames("dento-button-simple", "main-layout__content-menu-button");
 
         grid.addColumn(new LocalDateRenderer<>(Order::getDate, "d.M.yyyy"))
-                .setKey("date").setWidth("140px");
+                .setKey("date").setWidth("60px");
 
-        grid.addColumn("id").setWidth("60px");
+        grid.addColumn("id").setWidth("20px");
         grid.addColumn("patient");
         grid.addColumn("clinic.name");
         grid.addColumn("doctor");
@@ -108,7 +112,7 @@ public class OrdersPage extends Page implements Localizable, AfterNavigationObse
             final String color = item.isFinalized() ? "green": "red";
             icon.setColor(color);
             return icon;
-        }).setKey("finalized").setWidth("60px");
+        }).setKey("finalized");
 
         grid.addComponentColumn(item -> {
             final Icon icon = new Icon(item.isPaid() ? VaadinIcon.CHECK : VaadinIcon.CLOSE_SMALL);
@@ -116,9 +120,9 @@ public class OrdersPage extends Page implements Localizable, AfterNavigationObse
             final String color = item.isPaid() ? "green": "red";
             icon.setColor(color);
             return icon;
-        }).setKey("paid").setWidth("60px");
+        }).setKey("paid");
 
-        grid.addColumn("price").setWidth("60px");
+        grid.addColumn("price");
 
         grid.addComponentColumn(item -> createCollectionColumn(item.getJobs().stream()
                 .map(job -> job.getTemplate().getName())
@@ -128,17 +132,20 @@ public class OrdersPage extends Page implements Localizable, AfterNavigationObse
         grid.addComponentColumn(item -> createCollectionColumn(item.getJobs().stream()
                 .map(job -> String.valueOf(job.getCount()))
                 .collect(Collectors.toList())))
-                .setKey("count").setWidth("60px");
+                .setKey("count");
 
         grid.addComponentColumn(item -> createCollectionColumn(item.getJobs().stream()
                 .map(job -> String.valueOf(job.getPrice()))
                 .collect(Collectors.toList())))
-                .setKey("job.price.element").setWidth("60px");
+                .setKey("job.price.element");
+
         grid.addComponentColumn(item -> createCollectionColumn(item.getJobs().stream()
                 .map(job -> String.valueOf(job.getPrice() * job.getCount()))
                 .collect(Collectors.toList())))
-                .setKey("job.price.total").setWidth("60px");
-        grid.addComponentColumn(this::createPrintComponent).setKey("print").setWidth("18px");
+                .setKey("job.price.total");
+
+        grid.addComponentColumn(this::createPrintComponent).setKey("print").setWidth("15px");
+
         grid.addComponentColumn(item -> {
             final Icon icon = new Icon(VaadinIcon.EDIT);
             final Button edit = new Button();
@@ -147,7 +154,7 @@ public class OrdersPage extends Page implements Localizable, AfterNavigationObse
             icon.addClassName("dento-grid-icon");
             edit.addClassName("dento-grid-action");
             return edit;
-        }).setKey("edit").setWidth("18px");
+        }).setKey("edit").setWidth("15px");
 
         grid.addComponentColumn(item -> {
             final Icon icon = new Icon(VaadinIcon.TRASH);
@@ -157,7 +164,11 @@ public class OrdersPage extends Page implements Localizable, AfterNavigationObse
             icon.addClassName("dento-grid-icon");
             remove.addClassName("dento-grid-action");
             return remove;
-        }).setKey("remove").setWidth("18px");
+        }).setKey("remove").setWidth("15px");
+
+        grid.setItemDetailsProviders(Map.of("Pacient", Order::getPatient, "Doctor", Order::getDoctor));
+
+        grid.setNonResponsiveColumns(grid.getColumns().get(0), grid.getColumns().get(1));
 
         initFilters();
         initLayout();
@@ -283,17 +294,6 @@ public class OrdersPage extends Page implements Localizable, AfterNavigationObse
         priceFilter.setValueChangeMode(ValueChangeMode.EAGER);
         patientFilter.setValueChangeMode(ValueChangeMode.EAGER);
         dateFilterLayout.add(fromDateFilter, toDateFilter);
-        final HeaderRow menuRow = grid.prependHeaderRow();
-        menuRow.getCells().get(0).setComponent(new HorizontalLayout(addButton, printButton));
-        final HeaderRow filterRow = grid.appendHeaderRow();
-        filterRow.getCells().get(0).setComponent(dateFilterLayout);
-        filterRow.getCells().get(1).setComponent(idFilter);
-        filterRow.getCells().get(2).setComponent(patientFilter);
-        filterRow.getCells().get(3).setComponent(clinicFilter);
-        filterRow.getCells().get(4).setComponent(doctorFilter);
-        filterRow.getCells().get(5).setComponent(paidFilter);
-        filterRow.getCells().get(6).setComponent(finalizedFilter);
-        filterRow.getCells().get(7).setComponent(priceFilter);
         fromDateFilter.addClassNames("dento-grid-filter-small", "dento-grid-date-picker");
         toDateFilter.addClassNames("dento-grid-filter-small", "dento-grid-date-picker");
         priceFilter.addClassName("dento-grid-filter-small");
@@ -309,9 +309,11 @@ public class OrdersPage extends Page implements Localizable, AfterNavigationObse
 
 	private void initLayout() {
 	    final VerticalLayout layout = new VerticalLayout();
-        layout.add(grid);
+        final HorizontalLayout menuLayout = new HorizontalLayout(filterButton, addButton, printButton);
+        layout.add(menuLayout, grid);
         layout.setHeight("100%");
         layout.setPadding(false);
+        layout.setSpacing(false);
         this.setContent(layout);
     }
 
