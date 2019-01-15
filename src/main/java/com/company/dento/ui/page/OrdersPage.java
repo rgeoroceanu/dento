@@ -9,7 +9,6 @@ import com.company.dento.service.ReportService;
 import com.company.dento.service.exception.CannotGenerateReportException;
 import com.company.dento.service.exception.DataDoesNotExistException;
 import com.company.dento.ui.component.common.ConfirmDialog;
-import com.company.dento.ui.component.common.FilterableGrid;
 import com.company.dento.ui.localization.Localizable;
 import com.company.dento.ui.localization.Localizer;
 import com.vaadin.flow.component.Component;
@@ -53,10 +52,10 @@ import java.util.stream.Collectors;
 @Secured(value = {"USER", "ADMIN"})
 @Route(value = "orders")
 @Log4j2
-public class OrdersPage extends Page implements Localizable, AfterNavigationObserver {
+public class OrdersPage extends ListPage<Order, OrderSpecification> implements Localizable, AfterNavigationObserver {
 
 	private static final long serialVersionUID = 1L;
-	private final FilterableGrid<Order, OrderSpecification> grid;
+
     private final DatePicker fromDateFilter;
     private final DatePicker toDateFilter;
     private final ComboBox<Boolean> finalizedFilter;
@@ -67,16 +66,11 @@ public class OrdersPage extends Page implements Localizable, AfterNavigationObse
     private final ComboBox<Doctor> doctorFilter;
     private final TextField priceFilter;
     private final ConfirmDialog confirmDialog;
-    private final Button addButton;
-    private final Button printButton;
-    private final Button filterButton;
     private final ReportService reportService;
 
 	public OrdersPage(final DataService dataService, final ReportService reportService) {
-	    super(dataService);
+	    super(Order.class, dataService);
 	    this.reportService = reportService;
-
-		grid = new FilterableGrid<>(Order.class, dataService);
 
         clinicFilter = new ComboBox<>();
         doctorFilter = new ComboBox<>();
@@ -88,16 +82,6 @@ public class OrdersPage extends Page implements Localizable, AfterNavigationObse
         patientFilter = new TextField();
         priceFilter = new TextField();
         confirmDialog = new ConfirmDialog();
-        addButton = new Button();
-        addButton.setIcon(new Icon(VaadinIcon.PLUS));
-        addButton.addClassNames("dento-button-simple", "main-layout__content-menu-button");
-        addButton.addClickListener(e -> addOrder());
-        printButton = new Button();
-        printButton.setIcon(new Icon(VaadinIcon.PRINT));
-        printButton.addClassNames("dento-button-simple", "main-layout__content-menu-button");
-        filterButton = new Button();
-        filterButton.setIcon(new Icon(VaadinIcon.SEARCH));
-        filterButton.addClassNames("dento-button-simple", "main-layout__content-menu-button");
 
         grid.addColumn(new LocalDateRenderer<>(Order::getDate, "d.M.yyyy"))
                 .setKey("date").setWidth("60px");
@@ -106,22 +90,9 @@ public class OrdersPage extends Page implements Localizable, AfterNavigationObse
         grid.addColumn("patient");
         grid.addColumn("clinic.name");
         grid.addColumn("doctor");
-        grid.addComponentColumn(item -> {
-            final Icon icon = new Icon(item.isFinalized() ? VaadinIcon.CHECK : VaadinIcon.CLOSE_SMALL);
-            icon.addClassName("dento-grid-icon");
-            final String color = item.isFinalized() ? "green": "red";
-            icon.setColor(color);
-            return icon;
-        }).setKey("finalized");
 
-        grid.addComponentColumn(item -> {
-            final Icon icon = new Icon(item.isPaid() ? VaadinIcon.CHECK : VaadinIcon.CLOSE_SMALL);
-            icon.addClassName("dento-grid-icon");
-            final String color = item.isPaid() ? "green": "red";
-            icon.setColor(color);
-            return icon;
-        }).setKey("paid");
-
+        grid.addComponentColumn(this::createFinalizedComponent).setKey("finalized");
+        grid.addComponentColumn(this::createPaidComponent).setKey("paid");
         grid.addColumn("price");
 
         grid.addComponentColumn(item -> createCollectionColumn(item.getJobs().stream()
@@ -146,25 +117,8 @@ public class OrdersPage extends Page implements Localizable, AfterNavigationObse
 
         grid.addComponentColumn(this::createPrintComponent).setKey("print").setWidth("15px");
 
-        grid.addComponentColumn(item -> {
-            final Icon icon = new Icon(VaadinIcon.EDIT);
-            final Button edit = new Button();
-            edit.setIcon(icon);
-            edit.addClickListener(e -> edit(item));
-            icon.addClassName("dento-grid-icon");
-            edit.addClassName("dento-grid-action");
-            return edit;
-        }).setKey("edit").setWidth("15px");
-
-        grid.addComponentColumn(item -> {
-            final Icon icon = new Icon(VaadinIcon.TRASH);
-            final Button remove = new Button();
-            remove.setIcon(icon);
-            remove.addClickListener(e -> confirmRemove(item));
-            icon.addClassName("dento-grid-icon");
-            remove.addClassName("dento-grid-action");
-            return remove;
-        }).setKey("remove").setWidth("15px");
+        addEditColumn();
+        addRemoveColumn();
 
         grid.setItemDetailsProviders(Map.of("Pacient", Order::getPatient, "Doctor", Order::getDoctor));
 
@@ -190,13 +144,41 @@ public class OrdersPage extends Page implements Localizable, AfterNavigationObse
         refresh();
     }
 
-    private void confirmRemove(final Order item) {
+    protected void confirmRemove(final Order item) {
 	    confirmDialog.setHeader(String.format(Localizer.getLocalizedString("confirmRemove.header"),
                 Localizer.getLocalizedString("order")));
         confirmDialog.setText(String.format(Localizer.getLocalizedString("confirmRemove.text") + "%s",
                 "comanda numarul %s", item.getId()));
 	    confirmDialog.addConfirmListener(e -> remove(item));
 	    confirmDialog.open();
+    }
+
+    protected void refresh() {
+        final OrderSpecification criteria = new OrderSpecification();
+        final Optional<LocalDateTime> startDate = fromDateFilter.getOptionalValue().map(LocalDate::atStartOfDay);
+        final Optional<LocalDateTime> endDate = toDateFilter.getOptionalValue().map(val -> val.plusDays(1).atStartOfDay());
+        criteria.setStartDate(startDate.orElse(null));
+        criteria.setEndDate(endDate.orElse(null));
+        criteria.setDoctor(doctorFilter.getOptionalValue().orElse(null));
+        criteria.setClinic(clinicFilter.getOptionalValue().orElse(null));
+        criteria.setFinalized(finalizedFilter.getOptionalValue().orElse(null));
+        criteria.setPaid(paidFilter.getOptionalValue().orElse(null));
+        criteria.setId(idFilter.getOptionalValue()
+                .filter(StringUtils::isNumeric)
+                .map(Long::valueOf).orElse(null));
+        criteria.setPatient(patientFilter.getOptionalValue().filter(val -> !val.isEmpty()).orElse(null));
+        criteria.setPrice(priceFilter.getOptionalValue()
+                .filter(NumberUtils::isCreatable)
+                .map(Integer::valueOf).orElse(null));
+        grid.refresh(criteria);
+    }
+
+    protected void add() {
+        UI.getCurrent().navigate(OrderEditPage.class);
+    }
+
+    protected void edit(final Order item) {
+        UI.getCurrent().navigate(OrderEditPage.class, item.getId());
     }
 
     private Component createPrintComponent(final Order item) {
@@ -212,6 +194,22 @@ public class OrdersPage extends Page implements Localizable, AfterNavigationObse
         icon.addClassName("dento-grid-icon");
         print.addClassName("dento-grid-action");
         return download;
+    }
+
+    private Component createFinalizedComponent(final Order item) {
+        final Icon icon = new Icon(item.isFinalized() ? VaadinIcon.CHECK : VaadinIcon.CLOSE_SMALL);
+        icon.addClassName("dento-grid-icon");
+        final String color = item.isFinalized() ? "green": "red";
+        icon.setColor(color);
+        return icon;
+    }
+
+    private Component createPaidComponent(final Order item) {
+        final Icon icon = new Icon(item.isPaid() ? VaadinIcon.CHECK : VaadinIcon.CLOSE_SMALL);
+        icon.addClassName("dento-grid-icon");
+        final String color = item.isPaid() ? "green": "red";
+        icon.setColor(color);
+        return icon;
     }
 
     private InputStream generateReport(final Order item) {
@@ -236,31 +234,6 @@ public class OrdersPage extends Page implements Localizable, AfterNavigationObse
                 item.getId()), 3000, Notification.Position.BOTTOM_CENTER);
     }
 
-    private void edit(final Order item) {
-        UI.getCurrent().navigate(OrderEditPage.class, item.getId());
-    }
-
-    private void refresh() {
-	    final OrderSpecification criteria = new OrderSpecification();
-	    final Optional<LocalDateTime> startDate = fromDateFilter.getOptionalValue().map(LocalDate::atStartOfDay);
-        final Optional<LocalDateTime> endDate = toDateFilter.getOptionalValue().map(val -> val.plusDays(1).atStartOfDay());
-	    criteria.setStartDate(startDate.orElse(null));
-        criteria.setEndDate(endDate.orElse(null));
-        criteria.setDoctor(doctorFilter.getOptionalValue().orElse(null));
-        criteria.setClinic(clinicFilter.getOptionalValue().orElse(null));
-        criteria.setFinalized(finalizedFilter.getOptionalValue().orElse(null));
-        criteria.setPaid(paidFilter.getOptionalValue().orElse(null));
-        criteria.setId(idFilter.getOptionalValue()
-                .filter(StringUtils::isNumeric)
-                .map(Long::valueOf).orElse(null));
-        criteria.setPatient(patientFilter.getOptionalValue().filter(val -> !val.isEmpty()).orElse(null));
-        criteria.setPrice(priceFilter.getOptionalValue()
-                .filter(NumberUtils::isCreatable)
-                .map(Integer::valueOf).orElse(null));
-        grid.refresh(criteria);
-    }
-    
-
     private void clearFilters() {
 	    doctorFilter.setItems(dataService.getAll(Doctor.class));
         clinicFilter.setItems(dataService.getAll(Clinic.class));
@@ -275,7 +248,7 @@ public class OrdersPage extends Page implements Localizable, AfterNavigationObse
         priceFilter.setValue("");
     }
 
-	private void initFilters() {
+	protected void initFilters() {
         final HorizontalLayout dateFilterLayout = new HorizontalLayout();
         dateFilterLayout.setWidth("100%");
         finalizedFilter.setItems(Arrays.asList(true, false));
@@ -321,9 +294,5 @@ public class OrdersPage extends Page implements Localizable, AfterNavigationObse
 	    final Div div = new Div();
 	    values.stream().map(Paragraph::new).forEach(div::add);
 	    return div;
-    }
-
-    private void addOrder() {
-        UI.getCurrent().navigate(OrderEditPage.class);
     }
 }

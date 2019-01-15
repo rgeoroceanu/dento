@@ -6,7 +6,6 @@ import com.company.dento.ui.localization.Localizable;
 import com.company.dento.ui.localization.Localizer;
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.UI;
-import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.formlayout.FormLayout;
 import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.html.Label;
@@ -42,10 +41,6 @@ public class FilterableGrid<T extends Base, V extends Specification<T>> extends 
         this.setDataProvider(filterableDataProvider);
         filterableDataProvider.setFilter(criteria);
         filterableDataProvider.refreshAll();
-    }
-
-    public void setFilterButton(final Button button) {
-
     }
 
     public void setNonResponsiveColumns(final Column... columns) {
