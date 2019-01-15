@@ -23,10 +23,8 @@ import com.vaadin.flow.component.icon.Icon;
 import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.component.notification.Notification;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
-import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.data.renderer.LocalDateRenderer;
-import com.vaadin.flow.data.value.ValueChangeMode;
 import com.vaadin.flow.router.AfterNavigationEvent;
 import com.vaadin.flow.router.AfterNavigationObserver;
 import com.vaadin.flow.router.Route;
@@ -125,7 +123,6 @@ public class OrdersPage extends ListPage<Order, OrderSpecification> implements L
         grid.setNonResponsiveColumns(grid.getColumns().get(0), grid.getColumns().get(1));
 
         initFilters();
-        initLayout();
 	}
 	
 	@Override
@@ -253,41 +250,15 @@ public class OrdersPage extends ListPage<Order, OrderSpecification> implements L
         dateFilterLayout.setWidth("100%");
         finalizedFilter.setItems(Arrays.asList(true, false));
         paidFilter.setItems(Arrays.asList(true, false));
-        fromDateFilter.addValueChangeListener(event -> refresh());
-        toDateFilter.addValueChangeListener(event -> refresh());
-        idFilter.addValueChangeListener(event -> refresh());
-        finalizedFilter.addValueChangeListener(event -> refresh());
-        paidFilter.addValueChangeListener(event -> refresh());
-        patientFilter.addValueChangeListener(event -> refresh());
-        doctorFilter.addValueChangeListener(event -> refresh());
-        clinicFilter.addValueChangeListener(event -> refresh());
-        priceFilter.addValueChangeListener(event -> refresh());
-
-        idFilter.setValueChangeMode(ValueChangeMode.EAGER);
-        priceFilter.setValueChangeMode(ValueChangeMode.EAGER);
-        patientFilter.setValueChangeMode(ValueChangeMode.EAGER);
         dateFilterLayout.add(fromDateFilter, toDateFilter);
-        fromDateFilter.addClassNames("dento-grid-filter-small", "dento-grid-date-picker");
-        toDateFilter.addClassNames("dento-grid-filter-small", "dento-grid-date-picker");
-        priceFilter.addClassName("dento-grid-filter-small");
-        patientFilter.addClassName("dento-grid-filter-large");
-        doctorFilter.addClassName("dento-grid-filter-large");
-        clinicFilter.addClassName("dento-grid-filter-large");
-        idFilter.addClassName("dento-grid-filter-small");
-        finalizedFilter.addClassName("dento-grid-filter-small");
-        paidFilter.addClassName("dento-grid-filter-small");
-        fromDateFilter.setWidth("65px");
-        toDateFilter.setWidth("65px");
-    }
-
-	private void initLayout() {
-	    final VerticalLayout layout = new VerticalLayout();
-        final HorizontalLayout menuLayout = new HorizontalLayout(filterButton, addButton, printButton);
-        layout.add(menuLayout, grid);
-        layout.setHeight("100%");
-        layout.setPadding(false);
-        layout.setSpacing(false);
-        this.setContent(layout);
+        filterDialog.addFilter("Data", dateFilterLayout);
+        filterDialog.addFilter("Id", idFilter);
+        filterDialog.addFilter("Pacient", patientFilter);
+        filterDialog.addFilter("Clinica", clinicFilter);
+        filterDialog.addFilter("Doctor", doctorFilter);
+        filterDialog.addFilter("Platit", paidFilter);
+        filterDialog.addFilter("Finalizat", finalizedFilter);
+        filterDialog.addFilter("Pret", priceFilter);
     }
 
     private Component createCollectionColumn(final Collection<String> values) {

@@ -2,10 +2,13 @@ package com.company.dento.ui.page;
 
 import com.company.dento.model.business.Base;
 import com.company.dento.service.DataService;
+import com.company.dento.ui.component.common.FilterDialog;
 import com.company.dento.ui.component.common.FilterableGrid;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.icon.Icon;
 import com.vaadin.flow.component.icon.VaadinIcon;
+import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
+import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import org.springframework.data.jpa.domain.Specification;
 
 public abstract class ListPage<T extends Base, V extends Specification<T>> extends Page {
@@ -14,11 +17,15 @@ public abstract class ListPage<T extends Base, V extends Specification<T>> exten
     protected final Button printButton;
     protected final Button filterButton;
     protected final FilterableGrid<T, V> grid;
+    protected final FilterDialog filterDialog;
 
     public ListPage(final Class<T> itemClass, final DataService dataService) {
         super(dataService);
 
         grid = new FilterableGrid<T, V>(itemClass, dataService);
+
+        filterDialog = new FilterDialog();
+        filterDialog.addApplyFilterListener(e -> refresh());
 
         addButton = new Button();
         addButton.setIcon(new Icon(VaadinIcon.PLUS));
@@ -32,6 +39,15 @@ public abstract class ListPage<T extends Base, V extends Specification<T>> exten
         filterButton = new Button();
         filterButton.setIcon(new Icon(VaadinIcon.SEARCH));
         filterButton.addClassNames("dento-button-simple", "main-layout__content-menu-button");
+        filterButton.addClickListener(e -> filterDialog.open());
+
+        initLayout();
+    }
+
+    @Override
+    public void localize() {
+        super.localize();
+        filterDialog.localize();
     }
 
     protected void addEditColumn() {
@@ -63,5 +79,15 @@ public abstract class ListPage<T extends Base, V extends Specification<T>> exten
     protected abstract void confirmRemove(final T item);
     protected abstract void edit(final T item);
     protected abstract void refresh();
+
+    private void initLayout() {
+        final VerticalLayout layout = new VerticalLayout();
+        final HorizontalLayout menuLayout = new HorizontalLayout(filterButton, addButton, printButton);
+        layout.add(menuLayout, grid);
+        layout.setHeight("100%");
+        layout.setPadding(false);
+        layout.setSpacing(false);
+        this.setContent(layout);
+    }
 
 }
