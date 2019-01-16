@@ -33,11 +33,10 @@ public class ConfirmDialog extends Dialog implements Localizable {
         confirmButton.addClassNames("dento-button-full", "dento-confirm-dialog-confirm");
         buttonsLayout.add(cancelButton, confirmButton);
         buttonsLayout.setMargin(true);
-        buttonsLayout.setWidth("100%");
+        buttonsLayout.addClassName("dento-dialog-buttons");
         content.add(header, text, buttonsLayout);
         content.setPadding(false);
         this.add(content);
-        this.setWidth("20em");
     }
 
     public void setHeader(final String header) {

@@ -144,8 +144,8 @@ public class OrdersPage extends ListPage<Order, OrderSpecification> implements L
     protected void confirmRemove(final Order item) {
 	    confirmDialog.setHeader(String.format(Localizer.getLocalizedString("confirmRemove.header"),
                 Localizer.getLocalizedString("order")));
-        confirmDialog.setText(String.format(Localizer.getLocalizedString("confirmRemove.text") + "%s",
-                "comanda numarul %s", item.getId()));
+        confirmDialog.setText(String.format(Localizer.getLocalizedString("confirmRemove.text"),
+                "comanda numarul " +  item.getId()));
 	    confirmDialog.addConfirmListener(e -> remove(item));
 	    confirmDialog.open();
     }
