@@ -247,10 +247,12 @@ public class OrdersPage extends ListPage<Order, OrderSpecification> implements L
 
 	protected void initFilters() {
         final HorizontalLayout dateFilterLayout = new HorizontalLayout();
-        dateFilterLayout.setWidth("100%");
+        dateFilterLayout.setMargin(false);
         finalizedFilter.setItems(Arrays.asList(true, false));
         paidFilter.setItems(Arrays.asList(true, false));
         dateFilterLayout.add(fromDateFilter, toDateFilter);
+        fromDateFilter.setWidth("47%");
+        toDateFilter.setWidth("47%");
         filterDialog.addFilter("Data", dateFilterLayout);
         filterDialog.addFilter("Id", idFilter);
         filterDialog.addFilter("Pacient", patientFilter);
