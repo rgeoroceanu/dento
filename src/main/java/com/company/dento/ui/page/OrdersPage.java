@@ -42,7 +42,6 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -118,7 +117,7 @@ public class OrdersPage extends ListPage<Order, OrderSpecification> implements L
         addEditColumn();
         addRemoveColumn();
 
-        grid.setItemDetailsProviders(Map.of("Pacient", Order::getPatient, "Doctor", Order::getDoctor));
+       // grid.setItemDetailsProviders(Map.of("Pacient", Order::getPatient, "Doctor", Order::getDoctor));
 
         grid.setNonResponsiveColumns(grid.getColumns().get(0), grid.getColumns().get(1));
 

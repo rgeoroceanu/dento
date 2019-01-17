@@ -23,18 +23,36 @@ public class FilterableGrid<T extends Base, V extends Specification<T>> extends 
     private final DataService dataService;
     private final Class<T> itemClass;
     private final List<Column> nonResponsiveColumns = new ArrayList<>();
-    private Map<String, ValueProvider<T, ?>> valueProviders = new LinkedHashMap<>();
+    private final Map<Column<T>, ValueProvider<T, ?>> valueProviders;
 
     public FilterableGrid(final Class<T> itemClass, final DataService dataService) {
         super(itemClass);
         this.itemClass = itemClass;
         this.dataService = dataService;
         filterableDataProvider = initDataProvider();
+        valueProviders = new LinkedHashMap<>();
 
         initGrid();
 
         UI.getCurrent().getPage().addBrowserWindowResizeListener(e -> handleSizeChange(e.getHeight() > e.getWidth()));
         UI.getCurrent().getPage().executeJavaScript("window.dispatchEvent(new Event('resize'));");
+    }
+
+    @Override
+    public Column<T> addColumn(final ValueProvider<T, ?> valueProvider) {
+         final Column<T> column = super.addColumn(valueProvider);
+         if (valueProviders != null && column != null) {
+             valueProviders.put(column, valueProvider);
+         }
+         return column;
+    }
+
+    @Override
+    public void removeColumn(Column<T> column) {
+        super.removeColumn(column);
+        if (valueProviders != null) {
+            valueProviders.remove(column);
+        }
     }
 
     public void refresh(final V criteria) {
@@ -47,18 +65,15 @@ public class FilterableGrid<T extends Base, V extends Specification<T>> extends 
         nonResponsiveColumns.addAll(Arrays.asList(columns));
     }
 
-
-    public void setItemDetailsProviders(final Map<String, ValueProvider<T, ?>> valueProviders) {
-        this.valueProviders.clear();
-        this.valueProviders.putAll(valueProviders);
-    }
-
     private Component createItemDetails(final T item) {
         final FormLayout layout = new FormLayout();
         layout.setResponsiveSteps(new FormLayout.ResponsiveStep("0", 1, FormLayout.ResponsiveStep.LabelsPosition.ASIDE));
 
-        valueProviders.forEach((field, getter) -> {
-            final Label fieldName = new Label(field);
+        valueProviders.forEach((column, getter) -> {
+            if (nonResponsiveColumns.contains(column)) {
+                return;
+            }
+            final Label fieldName = new Label(Localizer.getLocalizedString(column.getKey()));
             final String value = String.format("%s", getter.apply(item));
             final Label valueLabel = new Label(value);
             layout.addFormItem(valueLabel, fieldName);
@@ -72,6 +87,7 @@ public class FilterableGrid<T extends Base, V extends Specification<T>> extends 
         this.getColumns().stream()
                 .filter(column -> !Arrays.asList("remove", "add", "edit", "print").contains(column.getKey()))
                 .forEach(column -> column.setHeader(Localizer.getLocalizedString(column.getKey())));
+        this.setItemDetailsRenderer(new ComponentRenderer<>(this::createItemDetails));
     }
 
     private void handleSizeChange(boolean smallScreen) {
