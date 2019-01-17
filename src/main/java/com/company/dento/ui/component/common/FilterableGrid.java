@@ -36,6 +36,7 @@ public class FilterableGrid<T extends Base, V extends Specification<T>> extends 
 
         UI.getCurrent().getPage().addBrowserWindowResizeListener(e -> handleSizeChange(e.getHeight() > e.getWidth()));
         UI.getCurrent().getPage().executeJavaScript("window.dispatchEvent(new Event('resize'));");
+        this.addItemClickListener(e -> this.getElement().executeJavaScript("requestAnimationFrame((function() { this.notifyResize(); }).bind(this))"));
     }
 
     @Override
@@ -59,6 +60,7 @@ public class FilterableGrid<T extends Base, V extends Specification<T>> extends 
         this.setDataProvider(filterableDataProvider);
         filterableDataProvider.setFilter(criteria);
         filterableDataProvider.refreshAll();
+        this.getElement().executeJavaScript("this.notifyResize()");
     }
 
     public void setNonResponsiveColumns(final Column... columns) {
