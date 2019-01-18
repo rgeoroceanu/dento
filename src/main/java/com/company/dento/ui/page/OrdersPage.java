@@ -25,8 +25,6 @@ import com.vaadin.flow.component.notification.Notification;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.data.renderer.LocalDateRenderer;
-import com.vaadin.flow.router.AfterNavigationEvent;
-import com.vaadin.flow.router.AfterNavigationObserver;
 import com.vaadin.flow.router.Route;
 import com.vaadin.flow.server.StreamResource;
 import com.vaadin.flow.spring.annotation.UIScope;
@@ -49,7 +47,7 @@ import java.util.stream.Collectors;
 @Secured(value = {"USER", "ADMIN"})
 @Route(value = "orders")
 @Log4j2
-public class OrdersPage extends ListPage<Order, OrderSpecification> implements Localizable, AfterNavigationObserver {
+public class OrdersPage extends ListPage<Order, OrderSpecification> implements Localizable {
 
 	private static final long serialVersionUID = 1L;
 
@@ -131,12 +129,6 @@ public class OrdersPage extends ListPage<Order, OrderSpecification> implements L
         paidFilter.setItemLabelGenerator(item ->
                 item ? Localizer.getLocalizedString("yes") : Localizer.getLocalizedString("no"));
 	}
-
-    @Override
-    public void afterNavigation(final AfterNavigationEvent event) {
-        clearFilters();
-        refresh();
-    }
 
     protected void confirmRemove(final Order item) {
 	    confirmDialog.setHeader(String.format(Localizer.getLocalizedString("confirmRemove.header"),
@@ -228,7 +220,7 @@ public class OrdersPage extends ListPage<Order, OrderSpecification> implements L
                 item.getId()), 3000, Notification.Position.BOTTOM_CENTER);
     }
 
-    private void clearFilters() {
+    protected void clearFilters() {
 	    doctorFilter.setItems(dataService.getAll(Doctor.class));
         clinicFilter.setItems(dataService.getAll(Clinic.class));
         patientFilter.setValue("");

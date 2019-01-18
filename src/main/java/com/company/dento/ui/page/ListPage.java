@@ -9,9 +9,11 @@ import com.vaadin.flow.component.icon.Icon;
 import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
+import com.vaadin.flow.router.AfterNavigationEvent;
+import com.vaadin.flow.router.AfterNavigationObserver;
 import org.springframework.data.jpa.domain.Specification;
 
-public abstract class ListPage<T extends Base, V extends Specification<T>> extends Page {
+public abstract class ListPage<T extends Base, V extends Specification<T>> extends Page implements AfterNavigationObserver {
 
     protected final Button addButton;
     protected final Button printButton;
@@ -42,6 +44,12 @@ public abstract class ListPage<T extends Base, V extends Specification<T>> exten
         filterButton.addClickListener(e -> filterDialog.open());
 
         initLayout();
+    }
+
+    @Override
+    public void afterNavigation(final AfterNavigationEvent event) {
+        clearFilters();
+        refresh();
     }
 
     @Override
@@ -79,6 +87,7 @@ public abstract class ListPage<T extends Base, V extends Specification<T>> exten
     protected abstract void confirmRemove(final T item);
     protected abstract void edit(final T item);
     protected abstract void refresh();
+    protected abstract void clearFilters();
 
     private void initLayout() {
         final VerticalLayout layout = new VerticalLayout();

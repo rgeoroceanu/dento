@@ -329,8 +329,8 @@ public class DataServiceImpl implements DataService {
 	@Transactional(readOnly = true)
 	@Override
 	public <T extends Base>  int countByCriteria(final Class<T> itemClass, final Specification<T> spec) {
-		Preconditions.checkNotNull(spec, "Search criteria must not be null!");
-		log.info("Count by search criteria " + spec.toString());
+		Preconditions.checkNotNull(spec, "Search specification must not be null!");
+		log.info("Count by search specification " + spec.toString());
 
 		final JpaSpecificationExecutor dao = (JpaSpecificationExecutor) getDaoByEntityClass(itemClass);
         return Math.toIntExact(dao.count(spec));

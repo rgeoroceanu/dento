@@ -9,13 +9,16 @@ import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.formlayout.FormLayout;
 import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.html.Label;
-import com.vaadin.flow.data.provider.*;
+import com.vaadin.flow.data.provider.CallbackDataProvider;
+import com.vaadin.flow.data.provider.ConfigurableFilterDataProvider;
+import com.vaadin.flow.data.provider.DataProvider;
+import com.vaadin.flow.data.provider.SortDirection;
 import com.vaadin.flow.data.renderer.ComponentRenderer;
 import com.vaadin.flow.function.ValueProvider;
 import org.springframework.data.jpa.domain.Specification;
 
 import java.util.*;
-import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public class FilterableGrid<T extends Base, V extends Specification<T>> extends Grid<T> implements Localizable {
 
@@ -118,16 +121,24 @@ public class FilterableGrid<T extends Base, V extends Specification<T>> extends 
     }
 
     private ConfigurableFilterDataProvider<T, Void, V> initDataProvider() {
-        final CallbackDataProvider<T, V> dataProvider = DataProvider.fromFilteringCallbacks(query -> {
-                    Map<String, Boolean> sortOrder = query.getSortOrders().stream()
-                            .collect(Collectors.toMap(SortOrder::getSorted,
-                                    sort -> sort.getDirection() == SortDirection.ASCENDING));
+        final CallbackDataProvider<T, V> dataProvider = DataProvider.fromFilteringCallbacks(query ->
+                {
+                    final Map<String, Boolean> sortOrder = new LinkedHashMap<>();
+                    query.getSortOrders()
+                            .forEach(sort -> sortOrder.put(sort.getSorted(),
+                                    sort.getDirection() == SortDirection.ASCENDING));
 
-                    final V filter = query.getFilter().orElse(null);
+                    final int offset = query.getOffset();
+                    final int limit = query.getLimit();
 
-                    return dataService.getByCriteria(itemClass, filter, query.getOffset(), query.getLimit(), sortOrder).stream();
+                    return query.getFilter()
+                            .map(f -> dataService.getByCriteria(itemClass, f, offset, limit, sortOrder).stream())
+                            .orElse(Stream.empty());
                 },
-                query -> dataService.countByCriteria(itemClass, query.getFilter().orElse(null)));
+
+                query -> query.getFilter()
+                        .map(f ->  dataService.countByCriteria(itemClass, f))
+                        .orElse(0));
 
         return dataProvider.withConfigurableFilter();
     }
