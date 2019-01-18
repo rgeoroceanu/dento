@@ -81,9 +81,9 @@ public class OrdersPage extends ListPage<Order, OrderSpecification> implements L
         confirmDialog = new ConfirmDialog();
 
         grid.addColumn(new LocalDateRenderer<>(Order::getDate, "d.M.yyyy"))
-                .setKey("date").setWidth("60px");
+                .setKey("date");
 
-        grid.addColumn("id").setWidth("20px");
+        grid.addColumn("id");
         grid.addColumn("patient");
         grid.addColumn("clinic.name");
         grid.addColumn("doctor");
@@ -112,12 +112,10 @@ public class OrdersPage extends ListPage<Order, OrderSpecification> implements L
                 .collect(Collectors.toList())))
                 .setKey("job.price.total");
 
-        grid.addComponentColumn(this::createPrintComponent).setKey("print").setWidth("15px");
+        grid.addComponentColumn(this::createPrintComponent).setKey("print").setFlexGrow(0).setWidth("50px").setFrozen(true);;
 
         addEditColumn();
         addRemoveColumn();
-
-       // grid.setItemDetailsProviders(Map.of("Pacient", Order::getPatient, "Doctor", Order::getDoctor));
 
         grid.setNonResponsiveColumns(grid.getColumns().get(0), grid.getColumns().get(1));
 

@@ -59,7 +59,7 @@ public abstract class ListPage<T extends Base, V extends Specification<T>> exten
             icon.addClassName("dento-grid-icon");
             edit.addClassName("dento-grid-action");
             return edit;
-        }).setKey("edit").setWidth("15px");
+        }).setKey("edit").setFlexGrow(0).setWidth("50px");
     }
 
     protected void addRemoveColumn() {
@@ -71,7 +71,7 @@ public abstract class ListPage<T extends Base, V extends Specification<T>> exten
             icon.addClassName("dento-grid-icon");
             remove.addClassName("dento-grid-action");
             return remove;
-        }).setKey("remove").setWidth("15px");
+        }).setKey("remove").setFlexGrow(0).setWidth("50px");
     }
 
     protected abstract void add();

@@ -97,7 +97,12 @@ public class FilterableGrid<T extends Base, V extends Specification<T>> extends 
                 .filter(column -> !Arrays.asList("remove", "add", "edit", "print").contains(column.getKey()))
                 .forEach(column -> column.setVisible(!smallScreen));
 
-        nonResponsiveColumns.forEach(c -> c.setVisible(true));
+        nonResponsiveColumns.forEach(c -> {
+            c.setVisible(true);
+            final String width = smallScreen ? "50px" : "unset";
+            c.setWidth(width);
+        });
+
         this.setDetailsVisibleOnClick(smallScreen);
     }
 
