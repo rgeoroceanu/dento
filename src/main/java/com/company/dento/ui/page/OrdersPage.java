@@ -24,6 +24,7 @@ import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.component.notification.Notification;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.textfield.TextField;
+import com.vaadin.flow.data.provider.Query;
 import com.vaadin.flow.data.renderer.LocalDateRenderer;
 import com.vaadin.flow.router.Route;
 import com.vaadin.flow.server.StreamResource;
@@ -86,8 +87,6 @@ public class OrdersPage extends ListPage<Order, OrderSpecification> implements L
         grid.addColumn("clinic.name");
         grid.addColumn("doctor");
 
-        grid.addComponentColumn(this::createFinalizedComponent).setKey("finalized");
-        grid.addComponentColumn(this::createPaidComponent).setKey("paid");
         grid.addColumn("price");
 
         grid.addComponentColumn(item -> createCollectionColumn(item.getJobs().stream()
@@ -112,8 +111,13 @@ public class OrdersPage extends ListPage<Order, OrderSpecification> implements L
 
         grid.addComponentColumn(this::createPrintComponent).setKey("print").setFlexGrow(0).setWidth("50px").setFrozen(true);;
 
+        grid.addComponentColumn(this::createFinalizedComponent).setKey("finalized");
+        grid.addComponentColumn(this::createPaidComponent).setKey("paid");
+
         addEditColumn();
         addRemoveColumn();
+
+        this.addPrintButton("raport_lucrari");
 
         grid.setNonResponsiveColumns(grid.getColumns().get(0), grid.getColumns().get(1));
 
@@ -200,9 +204,15 @@ public class OrdersPage extends ListPage<Order, OrderSpecification> implements L
 
     private InputStream generateReport(final Order item) {
 
+	    final Optional<Order> fullOrder = dataService.getEntity(item.getId(), Order.class);
+
+	    if (!fullOrder.isPresent()) {
+	        return null;
+        }
+
 	    InputStream reportStream = null;
         try {
-            reportStream = FileUtils.openInputStream(reportService.createOrderReport(item));
+            reportStream = FileUtils.openInputStream(reportService.createOrderReport(fullOrder.get()));
         } catch (IOException | CannotGenerateReportException e) {
             log.error("Error generating report for order {}", item.getId());
             Notification.show("", 5000, Notification.Position.BOTTOM_CENTER);
@@ -234,7 +244,18 @@ public class OrdersPage extends ListPage<Order, OrderSpecification> implements L
         priceFilter.setValue("");
     }
 
-	protected void initFilters() {
+    @Override
+    protected InputStream createPrintContent() {
+        try {
+            return FileUtils.openInputStream(reportService
+                    .createOrdersReport(grid.getDataProvider().fetch(new Query<>()).collect(Collectors.toList())));
+        } catch (CannotGenerateReportException | IOException e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    protected void initFilters() {
         final HorizontalLayout dateFilterLayout = new HorizontalLayout();
         dateFilterLayout.setMargin(false);
         finalizedFilter.setItems(Arrays.asList(true, false));

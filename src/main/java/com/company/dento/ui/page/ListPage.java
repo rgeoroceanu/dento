@@ -5,21 +5,25 @@ import com.company.dento.service.DataService;
 import com.company.dento.ui.component.common.FilterDialog;
 import com.company.dento.ui.component.common.FilterableGrid;
 import com.vaadin.flow.component.button.Button;
+import com.vaadin.flow.component.html.Anchor;
 import com.vaadin.flow.component.icon.Icon;
 import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.router.AfterNavigationEvent;
 import com.vaadin.flow.router.AfterNavigationObserver;
+import com.vaadin.flow.server.StreamResource;
 import org.springframework.data.jpa.domain.Specification;
+
+import java.io.InputStream;
 
 public abstract class ListPage<T extends Base, V extends Specification<T>> extends Page implements AfterNavigationObserver {
 
     protected final Button addButton;
-    protected final Button printButton;
     protected final Button filterButton;
     protected final FilterableGrid<T, V> grid;
     protected final FilterDialog filterDialog;
+    private HorizontalLayout menuLayout;
 
     public ListPage(final Class<T> itemClass, final DataService dataService) {
         super(dataService);
@@ -33,10 +37,6 @@ public abstract class ListPage<T extends Base, V extends Specification<T>> exten
         addButton.setIcon(new Icon(VaadinIcon.PLUS));
         addButton.addClassNames("dento-button-simple", "main-layout__content-menu-button");
         addButton.addClickListener(e -> add());
-
-        printButton = new Button();
-        printButton.setIcon(new Icon(VaadinIcon.PRINT));
-        printButton.addClassNames("dento-button-simple", "main-layout__content-menu-button");
 
         filterButton = new Button();
         filterButton.setIcon(new Icon(VaadinIcon.SEARCH));
@@ -82,21 +82,37 @@ public abstract class ListPage<T extends Base, V extends Specification<T>> exten
         }).setKey("remove").setFlexGrow(0).setWidth("50px");
     }
 
+    protected void addPrintButton(final String printFilePrefix) {
+        final Button printButton = new Button();
+        printButton.setIcon(new Icon(VaadinIcon.PRINT));
+        printButton.addClassNames("dento-button-simple", "main-layout__content-menu-button");
+        final Icon icon = new Icon(VaadinIcon.PRINT);
+        final Button print = new Button();
+        print.setIcon(icon);
+
+        final String filename = printFilePrefix;
+        final Anchor anchor = new Anchor(new StreamResource(filename, this::createPrintContent), "");
+        anchor.getElement().setAttribute("download", true);
+        anchor.add(print);
+
+        menuLayout.add(anchor);
+    }
+
     protected abstract void add();
     protected abstract void initFilters();
     protected abstract void confirmRemove(final T item);
     protected abstract void edit(final T item);
     protected abstract void refresh();
     protected abstract void clearFilters();
+    protected abstract InputStream createPrintContent();
 
     private void initLayout() {
         final VerticalLayout layout = new VerticalLayout();
-        final HorizontalLayout menuLayout = new HorizontalLayout(filterButton, addButton, printButton);
+        menuLayout = new HorizontalLayout(filterButton, addButton);
         layout.add(menuLayout, grid);
         layout.setHeight("100%");
         layout.setPadding(false);
         layout.setSpacing(false);
         this.setContent(layout);
     }
-
 }

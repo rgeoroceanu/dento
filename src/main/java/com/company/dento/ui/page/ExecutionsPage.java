@@ -24,6 +24,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.springframework.security.access.annotation.Secured;
 
+import java.io.InputStream;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Arrays;
@@ -155,7 +156,12 @@ public class ExecutionsPage extends ListPage<Execution, ExecutionSpecification> 
         finalizedFilter.setValue(null);
     }
 
-	protected void initFilters() {
+    @Override
+    protected InputStream createPrintContent() {
+        return null;
+    }
+
+    protected void initFilters() {
         final HorizontalLayout dateFilterLayout = new HorizontalLayout();
         dateFilterLayout.setMargin(false);
         fromDateFilter.setWidth("47%");
