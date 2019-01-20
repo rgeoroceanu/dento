@@ -76,8 +76,8 @@ public class ExcelWriter {
                 .forEach(index -> {
                     final int columnIndex = (startColumnIndex + index) * columnDistance;
                     final Cell cell = row.createCell(columnIndex);
-                    workbook.getSheetAt(0).addMergedRegion(
-                            new CellRangeAddress(rowIndex, rowIndex, columnIndex, columnIndex + columnDistance - 1));
+                    //workbook.getSheetAt(0).addMergedRegion(
+                    //        new CellRangeAddress(rowIndex, rowIndex, columnIndex, columnIndex + columnDistance - 1));
                     cell.setCellValue(columns.get(index));
                     cell.setCellStyle(header ? headerStyle : rowStyle);
                 });

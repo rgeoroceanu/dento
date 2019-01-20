@@ -109,11 +109,10 @@ public class OrdersPage extends ListPage<Order, OrderSpecification> implements L
                 .collect(Collectors.toList())))
                 .setKey("job.price.total");
 
-        grid.addComponentColumn(this::createPrintComponent).setKey("print").setFlexGrow(0).setWidth("50px").setFrozen(true);;
-
         grid.addComponentColumn(this::createFinalizedComponent).setKey("finalized");
         grid.addComponentColumn(this::createPaidComponent).setKey("paid");
 
+        grid.addComponentColumn(this::createPrintComponent).setKey("print").setFlexGrow(0).setWidth("50px").setFrozen(true);;
         addEditColumn();
         addRemoveColumn();
 

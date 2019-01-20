@@ -90,7 +90,7 @@ public abstract class ListPage<T extends Base, V extends Specification<T>> exten
         final Button print = new Button();
         print.setIcon(icon);
 
-        final String filename = printFilePrefix;
+        final String filename = printFilePrefix + ".xlsx";
         final Anchor anchor = new Anchor(new StreamResource(filename, this::createPrintContent), "");
         anchor.getElement().setAttribute("download", true);
         anchor.add(print);
