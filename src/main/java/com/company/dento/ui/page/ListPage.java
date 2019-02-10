@@ -85,7 +85,6 @@ public abstract class ListPage<T extends Base, V extends Specification<T>> exten
     protected void addPrintButton(final String printFilePrefix) {
         final Button printButton = new Button();
         printButton.setIcon(new Icon(VaadinIcon.PRINT));
-        printButton.addClassNames("dento-button-simple", "main-layout__content-menu-button");
         final Icon icon = new Icon(VaadinIcon.PRINT);
         final Button print = new Button();
         print.setIcon(icon);
@@ -95,6 +94,7 @@ public abstract class ListPage<T extends Base, V extends Specification<T>> exten
         anchor.getElement().setAttribute("download", true);
         anchor.add(print);
 
+        printButton.addClassNames("dento-button-simple", "main-layout__content-menu-button");
         menuLayout.add(anchor);
     }
 

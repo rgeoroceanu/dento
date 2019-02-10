@@ -175,7 +175,7 @@ public class OrdersPage extends ListPage<Order, OrderSpecification> implements L
         final Button print = new Button();
         print.setIcon(icon);
 
-        final String filename = String.format("order_%s.xls", item.getId());
+        final String filename = String.format("order_%s.pdf", item.getId());
         final Anchor download = new Anchor(new StreamResource(filename, () -> generateReport(item)), "");
         download.getElement().setAttribute("download", true);
         download.add(print);
@@ -233,7 +233,7 @@ public class OrdersPage extends ListPage<Order, OrderSpecification> implements L
 	    doctorFilter.setItems(dataService.getAll(Doctor.class));
         clinicFilter.setItems(dataService.getAll(Clinic.class));
         patientFilter.setValue("");
-        fromDateFilter.setValue(LocalDate.now().minusDays(LocalDate.now().getDayOfMonth() - 1));
+        fromDateFilter.setValue(null);
         toDateFilter.setValue(null);
         finalizedFilter.setValue(null);
         paidFilter.setValue(null);

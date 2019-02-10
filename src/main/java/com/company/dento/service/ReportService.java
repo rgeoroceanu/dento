@@ -2,115 +2,67 @@ package com.company.dento.service;
 
 import com.company.dento.model.business.Job;
 import com.company.dento.model.business.Order;
-import com.company.dento.report.ExcelWriter;
+import com.company.dento.report.JasperWriter;
 import com.company.dento.service.exception.CannotGenerateReportException;
+import com.google.common.base.Preconditions;
 import lombok.extern.log4j.Log4j2;
-import org.apache.poi.ss.usermodel.Workbook;
+import net.sf.jasperreports.engine.JRException;
+import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Service;
-import org.springframework.util.ResourceUtils;
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
 @Log4j2
 public class ReportService {
 
-    private static final String TEMPLATES_FOLDER = "classpath:templates/";
-    private static final String ORDER_TEMPLATE = TEMPLATES_FOLDER + "order_template.xlt";
-    private static final String JOBS_REPORT_TEMPLATE = TEMPLATES_FOLDER + "jobs_report_template.xlt";
-    private static final String ORDER_ID_PLACEHOLDER = "%OrderId%";
-    private static final String DATE_PLACEHOLDER = "%Date%";
-    private static final String CLINIC_PLACEHOLDER = "%Clinic%";
-    private static final String DOCTOR_PLACEHOLDER = "%Doctor%";
-    private static final String PACIENT_PLACEHOLDER = "%Pacient%";
-    private static final String COLOR_PLACEHOLDER = "%Color%";
-    private static final String DELIVERY_DATE_PLACEHOLDER = "%DeliveryDate%";
-    private static final String OBSERVATIONS_PLACEHOLDER = "%Observations%";
-    private static final String JOBS_PLACEHOLDER = "%Jobs%";
-    private static final List<String> SAMPLES_TABLE_HEADER = Arrays.asList("Proba", "Lucrare", "Data");
-    private static final List<String> EXECUTIONS_TABLE_HEADER = Arrays.asList("Manoperă", "Lucrare", "Tehnician");
-    private static final List<String> JOBS_REPORT_TABLE_HEADER = Arrays.asList("Dată", "Nr.Fișă", "Pacient", "Clinicä / Doctor",
-            "Preț", "Tip Lucrare", "Preț pe Element", "Preț pe Lucrare", "Stadiu", "Status");
+    private final JasperWriter jasperWriter;
+    private final Resource orderReportTemplate;
 
-    private final ExcelWriter excelWriter;
-
-    public ReportService(final ExcelWriter excelWriter) {
-        this.excelWriter = excelWriter;
+    public ReportService(final JasperWriter jasperWriter, final Resource orderReportTemplate) {
+        this.jasperWriter = jasperWriter;
+        this.orderReportTemplate = orderReportTemplate;
     }
 
     public File createOrderReport(final Order order) throws CannotGenerateReportException {
+        Preconditions.checkNotNull(order, "Order cannot be null");
         log.info("Creating order report {}", order);
 
-        final Workbook workbook = openTemplateWorkbook(ORDER_TEMPLATE);
-
-        excelWriter.replaceCellText(workbook, ORDER_ID_PLACEHOLDER, String.valueOf(order.getId()), "P2");
-        excelWriter.replaceCellText(workbook, DATE_PLACEHOLDER, formatDate(order.getDate()), "P3");
-        excelWriter.replaceCellText(workbook, CLINIC_PLACEHOLDER, order.getClinic().getName(), "B8");
-        excelWriter.replaceCellText(workbook, DOCTOR_PLACEHOLDER, String.format("%s %s", order.getDoctor().getFirstName(),
-                order.getDoctor().getLastName()), "B9");
-        excelWriter.replaceCellText(workbook, PACIENT_PLACEHOLDER, order.getPatient(), "L8");
-        excelWriter.replaceCellText(workbook, COLOR_PLACEHOLDER, order.getColor() != null ? order.getColor().getName() : "", "A21");
-        excelWriter.replaceCellText(workbook, DELIVERY_DATE_PLACEHOLDER, formatDateTime(order.getDeliveryDate()), "A22");
-        excelWriter.replaceCellText(workbook, OBSERVATIONS_PLACEHOLDER, order.getDescription(), "J19");
-
-        excelWriter.replaceCellText(workbook, JOBS_PLACEHOLDER, extractJobNames(order), "B20");
-
-        excelWriter.createTable(workbook, 25, SAMPLES_TABLE_HEADER, extractSampleRows(order));
-
-        excelWriter.createTable(workbook, workbook.getSheetAt(0).getLastRowNum() + 2,
-                EXECUTIONS_TABLE_HEADER, extractExecutionRows(order));
-
-        return saveWorkbook(workbook);
+        try {
+            return jasperWriter.writeReport(orderReportTemplate.getFile(), constructOrderParameters(order));
+        } catch (final JRException e) {
+            e.printStackTrace();
+        } catch (final IOException e) {
+            e.printStackTrace();
+        }
+        return null;
     }
 
     public File createOrdersReport(final List<Order> orders) throws CannotGenerateReportException {
         log.info("Creating jobs report for {} orders", orders.size());
 
-        final Workbook workbook = openTemplateWorkbook(JOBS_REPORT_TEMPLATE);
-
-        excelWriter.createTable(workbook, 9, JOBS_REPORT_TABLE_HEADER, extractOrdersRows(orders));
-
-        return saveWorkbook(workbook);
+       return null;
     }
 
-    private Workbook openTemplateWorkbook(final String templatePath) throws CannotGenerateReportException {
-        final File template;
-        final Workbook workbook;
-
-        try {
-            template = ResourceUtils.getFile(templatePath);
-            workbook = excelWriter.openTemplate(template);
-        } catch (final FileNotFoundException e) {
-            log.error("Error loading template", e);
-            throw new CannotGenerateReportException("Error loading template", e);
-        } catch (final IOException e) {
-            log.error("Error generating report", e);
-            throw new CannotGenerateReportException("Error generating report", e);
-        }
-
-        return workbook;
-    }
-
-    private File saveWorkbook(final Workbook workbook) throws CannotGenerateReportException {
-        final File report;
-        try {
-            report = excelWriter.saveWorkbook(workbook);
-        } catch (final IOException e) {
-            log.error("Error saving report", e);
-            throw new CannotGenerateReportException("Error saving report", e);
-        }
-
-        return report;
+    private Map<String, Object> constructOrderParameters(final Order order) {
+        final Map<String, Object> parameters = new HashMap<>();
+        parameters.put("COMPANY_NAME", "Dento");
+        parameters.put("ADDRESS1", "Aici adresa");
+        parameters.put("ADDRESS2", "Oras, cod");
+        parameters.put("CONTACT", "Telefon, mail");
+        parameters.put("CLINIC", order.getClinic().getName());
+        parameters.put("DOCTOR", order.getDoctor().toString());
+        parameters.put("ORDER_NO", order.getId());
+        parameters.put("COLOR", order.getColor().getName());
+        parameters.put("DELIVERY_DATE", order.getDeliveryDate().toLocalDate());
+        parameters.put("JOBS", order.getJobs().stream().map(j -> j.getTemplate()).collect(Collectors.toList()));
+        return parameters;
     }
 
     private String formatDateTime(final LocalDateTime dateTime) {
@@ -121,10 +73,10 @@ public class ReportService {
         return date != null ? DateTimeFormatter.ofPattern("dd.MM.yyyy").format(date) : "";
     }
 
-    private String extractJobNames(final Order order) {
+    private List<String> extractJobNames(final Order order) {
         return order.getJobs().stream()
                 .map(job -> job.getTemplate().getName())
-                .collect(Collectors.joining(System.lineSeparator()));
+                .collect(Collectors.toList());
     }
 
     private String extractPricesPerJob(final Order order) {
@@ -172,7 +124,7 @@ public class ReportService {
         columns.add(order.getPatient());
         columns.add(String.format("%s%n%s", order.getClinic().getName(), order.getDoctor().toString()));
         columns.add(String.format("%d", order.getPrice()));
-        columns.add(extractJobNames(order));
+        columns.add(extractJobNames(order).stream().collect(Collectors.joining(System.lineSeparator())));
         columns.add(extractPricesPerJob(order));
         columns.add(extractPricesTotal(order));
         columns.add(order.isFinalized() ? "Finalizată" : "Nefinalizată");

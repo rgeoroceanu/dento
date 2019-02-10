@@ -1,13 +1,12 @@
 package com.company.dento.report;
 
-import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.ss.usermodel.*;
-import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.ss.util.CellReference;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.stereotype.Component;
 
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -19,7 +18,7 @@ public class ExcelWriter {
 
     private static final String REPORT_EXTENSION = ".xlsx";
 
-    public File saveWorkbook(final Workbook workbook) throws IOException {
+    public File saveWorkbook(final XSSFWorkbook workbook) throws IOException {
         final File destination = Files.createTempFile("report", REPORT_EXTENSION).toFile();
         final FileOutputStream out = new FileOutputStream(destination);
         workbook.write(out);
@@ -27,12 +26,11 @@ public class ExcelWriter {
         return destination;
     }
 
-    public Workbook openTemplate(final File templateFile) throws IOException {
-        final FileInputStream inputStream = new FileInputStream(templateFile);
-        return new HSSFWorkbook(inputStream);
+    public XSSFWorkbook openTemplate(final File templateFile) throws IOException, InvalidFormatException {
+        return new XSSFWorkbook(templateFile);
     }
 
-    public void replaceCellText(final Workbook workbook, final String placeholder,
+    public void replaceCellText(final XSSFWorkbook workbook, final String placeholder,
                                 final String text, final String cellId) {
 
         final Cell cell = getCellById(workbook, cellId);
@@ -45,13 +43,13 @@ public class ExcelWriter {
         }
     }
 
-    public Cell getCellById(final Workbook workbook, final String id) {
+    public Cell getCellById(final XSSFWorkbook workbook, final String id) {
         final CellReference cr = new CellReference(id);
         final Row row = workbook.getSheetAt(0).getRow(cr.getRow());
         return row != null ? row.getCell(cr.getCol()) : null;
     }
 
-    public void createTable(final Workbook workbook, final int startRow,
+    public void createTable(final XSSFWorkbook workbook, final int startRow,
                             final List<String> headers, final List<List<String>> rows) {
 
         final CellReference cr = new CellReference(startRow, 0);
@@ -63,9 +61,9 @@ public class ExcelWriter {
                 .forEach(index -> addTableRow(workbook, row + index + 1, column, rows.get(index), false));
     }
 
-    private void addTableRow(final Workbook workbook, final int rowIndex,
-                             final int startColumnIndex, final List<String> columns,
-                             boolean header) {
+    private void addTableRow(final XSSFWorkbook workbook, final int rowIndex,
+                              final int startColumnIndex, final List<String> columns,
+                              boolean header) {
 
         final Row row = workbook.getSheetAt(0).createRow(rowIndex);
         final int columnDistance = 18 / columns.size();
@@ -80,10 +78,11 @@ public class ExcelWriter {
                     //        new CellRangeAddress(rowIndex, rowIndex, columnIndex, columnIndex + columnDistance - 1));
                     cell.setCellValue(columns.get(index));
                     cell.setCellStyle(header ? headerStyle : rowStyle);
+                    workbook.getSheetAt(0).autoSizeColumn(index);
                 });
     }
 
-    private CellStyle createTableHeaderCellStyle(final Workbook workbook) {
+    private CellStyle createTableHeaderCellStyle(final XSSFWorkbook workbook) {
         final CellStyle style = createTableCellStyle(workbook);
         style.setFillPattern(FillPatternType.SOLID_FOREGROUND);
         style.setFillForegroundColor(IndexedColors.GREY_25_PERCENT.getIndex());
