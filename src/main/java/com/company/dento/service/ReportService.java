@@ -2,6 +2,8 @@ package com.company.dento.service;
 
 import com.company.dento.model.business.Job;
 import com.company.dento.model.business.Order;
+import com.company.dento.model.business.Tooth;
+import com.company.dento.model.business.ToothDisplay;
 import com.company.dento.report.JasperWriter;
 import com.company.dento.service.exception.CannotGenerateReportException;
 import com.google.common.base.Preconditions;
@@ -17,6 +19,8 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.stream.Collectors;
+import java.util.stream.IntStream;
+import java.util.stream.Stream;
 
 @Service
 @Log4j2
@@ -61,8 +65,28 @@ public class ReportService {
         parameters.put("ORDER_NO", order.getId());
         parameters.put("COLOR", order.getColor().getName());
         parameters.put("DELIVERY_DATE", order.getDeliveryDate().toLocalDate());
-        parameters.put("JOBS", order.getJobs().stream().map(j -> j.getTemplate()).collect(Collectors.toList()));
+        parameters.put("JOBS", order.getJobs().stream()
+                .map(Job::getTemplate)
+                .collect(Collectors.toList()));
+
+        parameters.put("TEETH1", constructTeethParameters(order, 11, 18, true));
+
         return parameters;
+    }
+
+    private List<ToothDisplay> constructTeethParameters(final Order order, final int startNumber, final int endNumber,
+                                                        boolean reversed) {
+
+        final Map<Integer, Tooth> selectedTeeth = order.getTeeth().stream()
+                .collect(Collectors.toMap(Tooth::getNumber, t -> t));
+
+        final Stream<Integer> stream = IntStream.range(startNumber, endNumber + 1).boxed();
+
+        final Stream<Integer> sortedStream = reversed ? stream.sorted(Comparator.reverseOrder()) : stream;
+
+        return sortedStream.map(num -> selectedTeeth.containsKey(num) ? selectedTeeth.get(num) : new Tooth(num))
+                .map(ToothDisplay::new)
+                .collect(Collectors.toList());
     }
 
     private String formatDateTime(final LocalDateTime dateTime) {

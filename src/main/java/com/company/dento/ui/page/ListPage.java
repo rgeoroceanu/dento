@@ -85,14 +85,11 @@ public abstract class ListPage<T extends Base, V extends Specification<T>> exten
     protected void addPrintButton(final String printFilePrefix) {
         final Button printButton = new Button();
         printButton.setIcon(new Icon(VaadinIcon.PRINT));
-        final Icon icon = new Icon(VaadinIcon.PRINT);
-        final Button print = new Button();
-        print.setIcon(icon);
 
         final String filename = printFilePrefix + ".xlsx";
         final Anchor anchor = new Anchor(new StreamResource(filename, this::createPrintContent), "");
         anchor.getElement().setAttribute("download", true);
-        anchor.add(print);
+        anchor.add(printButton);
 
         printButton.addClassNames("dento-button-simple", "main-layout__content-menu-button");
         menuLayout.add(anchor);
