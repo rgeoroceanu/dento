@@ -79,11 +79,6 @@
 			<rightPen lineWidth="0.5" lineColor="#000000"/>
 		</box>
 	</style>
-	<subDataset name="tableDataset" uuid="f13e6d36-5148-4ecc-bbe3-3035def80980">
-		<queryString>
-			<![CDATA[]]>
-		</queryString>
-	</subDataset>
 	<subDataset name="JOBS" uuid="95839f08-b5fa-4588-bdd0-d3a7fa25fd3d">
 		<queryString>
 			<![CDATA[]]>

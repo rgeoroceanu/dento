@@ -13,16 +13,11 @@
 			<style mode="Opaque" backcolor="#EEEFF0"/>
 		</conditionalStyle>
 	</style>
-	<style name="Table">
-		<box>
-			<pen lineWidth="1.0" lineColor="#000000"/>
-			<topPen lineWidth="1.0" lineColor="#000000"/>
-			<leftPen lineWidth="1.0" lineColor="#000000"/>
-			<bottomPen lineWidth="1.0" lineColor="#000000"/>
-			<rightPen lineWidth="1.0" lineColor="#000000"/>
-		</box>
+	<style name="Table" fontName="DejaVu Sans">
 	</style>
-	<style name="Table_TH" mode="Opaque" backcolor="#FFFFFF">
+	<style name="Table 1_TH" mode="Opaque" backcolor="#008B8B" fontName="DejaVu Sans">
+	</style>
+	<style name="Table 1_CH" mode="Opaque" backcolor="#BFFFFF" fontName="DejaVu Sans" isBold="true">
 		<box>
 			<pen lineWidth="0.5" lineColor="#000000"/>
 			<topPen lineWidth="0.5" lineColor="#000000"/>
@@ -31,7 +26,7 @@
 			<rightPen lineWidth="0.5" lineColor="#000000"/>
 		</box>
 	</style>
-	<style name="Table_CH" mode="Opaque" backcolor="#CACED0">
+	<style name="Table 1_TD" mode="Opaque" backcolor="#FFFFFF" fontName="DejaVu Sans">
 		<box>
 			<pen lineWidth="0.5" lineColor="#000000"/>
 			<topPen lineWidth="0.5" lineColor="#000000"/>
@@ -40,74 +35,27 @@
 			<rightPen lineWidth="0.5" lineColor="#000000"/>
 		</box>
 	</style>
-	<style name="Table_TD" mode="Opaque" backcolor="#FFFFFF">
-		<box>
-			<pen lineWidth="0.5" lineColor="#000000"/>
-			<topPen lineWidth="0.5" lineColor="#000000"/>
-			<leftPen lineWidth="0.5" lineColor="#000000"/>
-			<bottomPen lineWidth="0.5" lineColor="#000000"/>
-			<rightPen lineWidth="0.5" lineColor="#000000"/>
-		</box>
-		<conditionalStyle>
-			<conditionExpression><![CDATA[$V{REPORT_COUNT}%2 == 0]]></conditionExpression>
-			<style backcolor="#D8D8D8"/>
-		</conditionalStyle>
-	</style>
-	<style name="Table 1_TH" mode="Opaque" backcolor="#008B8B">
-		<box>
-			<pen lineWidth="0.5" lineColor="#000000"/>
-			<topPen lineWidth="0.5" lineColor="#000000"/>
-			<leftPen lineWidth="0.5" lineColor="#000000"/>
-			<bottomPen lineWidth="0.5" lineColor="#000000"/>
-			<rightPen lineWidth="0.5" lineColor="#000000"/>
-		</box>
-	</style>
-	<style name="Table 1_CH" mode="Opaque" backcolor="#BFFFFF">
-		<box>
-			<pen lineWidth="0.5" lineColor="#000000"/>
-			<topPen lineWidth="0.5" lineColor="#000000"/>
-			<leftPen lineWidth="0.5" lineColor="#000000"/>
-			<bottomPen lineWidth="0.5" lineColor="#000000"/>
-			<rightPen lineWidth="0.5" lineColor="#000000"/>
-		</box>
-	</style>
-	<style name="Table 1_TD" mode="Opaque" backcolor="#FFFFFF">
-		<box>
-			<pen lineWidth="0.5" lineColor="#000000"/>
-			<topPen lineWidth="0.5" lineColor="#000000"/>
-			<leftPen lineWidth="0.5" lineColor="#000000"/>
-			<bottomPen lineWidth="0.5" lineColor="#000000"/>
-			<rightPen lineWidth="0.5" lineColor="#000000"/>
-		</box>
-	</style>
-	<subDataset name="tableDataset" uuid="f13e6d36-5148-4ecc-bbe3-3035def80980">
-		<queryString>
-			<![CDATA[]]>
-		</queryString>
-	</subDataset>
 	<subDataset name="JOBS" uuid="95839f08-b5fa-4588-bdd0-d3a7fa25fd3d">
 		<field name="name" class="java.lang.String"/>
-	</subDataset>
-	<subDataset name="Dataset1" uuid="0b473785-8717-448f-8935-daea6869077f">
-		<queryString>
-			<![CDATA[]]>
-		</queryString>
-	</subDataset>
-	<subDataset name="Dataset2" uuid="7f6188fe-02a9-4dc2-be7d-8125027486bf">
-		<queryString>
-			<![CDATA[]]>
-		</queryString>
-	</subDataset>
-	<subDataset name="Dataset3" uuid="33a48e2d-ad24-4fce-9b56-624da0cb5b52">
-		<queryString>
-			<![CDATA[]]>
-		</queryString>
 	</subDataset>
 	<subDataset name="teeth1" uuid="5a8b0d49-9ecb-4c63-a4b6-9fbd1a4367c1">
 		<field name="toothNumber" class="java.lang.String"/>
 		<field name="toothType" class="java.lang.String"/>
 		<field name="toothProperty" class="java.lang.String"/>
 	</subDataset>
+	<subDataset name="samples" uuid="2914f7c6-c2d7-448b-b0c1-090970e18ed6">
+		<field name="name" class="java.lang.String"/>
+		<field name="job" class="java.lang.String"/>
+		<field name="date" class="java.lang.String"/>
+		<field name="time" class="java.lang.String"/>
+	</subDataset>
+	<subDataset name="executions" uuid="2914f7c6-c2d7-448b-b0c1-090970e18ed7">
+		<field name="name" class="java.lang.String"/>
+		<field name="job" class="java.lang.String"/>
+		<field name="technician" class="java.lang.String"/>
+	</subDataset>
+	<parameter name="SAMPLES" class="java.util.List"/>
+	<parameter name="EXECUTIONS" class="java.util.List"/>
 	<parameter name="COMPANY_NAME" class="java.lang.String"/>
 	<parameter name="ADDRESS1" class="java.lang.String"/>
 	<parameter name="ADDRESS2" class="java.lang.String"/>
@@ -121,6 +69,9 @@
 	<parameter name="OBSERVATIONS" class="java.lang.String"/>
 	<parameter name="JOBS" class="java.util.List"/>
 	<parameter name="TEETH1" class="java.util.List"/>
+	<parameter name="TEETH2" class="java.util.List"/>
+	<parameter name="TEETH3" class="java.util.List"/>
+	<parameter name="TEETH4" class="java.util.List"/>
 	<detail>
 		<band height="595" splitType="Stretch">
 			<line>
@@ -328,58 +279,181 @@
 					<property name="com.jaspersoft.studio.table.style.table_header" value="Table 1_TH"/>
 					<property name="com.jaspersoft.studio.table.style.column_header" value="Table 1_CH"/>
 					<property name="com.jaspersoft.studio.table.style.detail" value="Table 1_TD"/>
-					<property name="net.sf.jasperreports.export.headertoolbar.table.name" value="SAMPLES"/>
+					<property name="net.sf.jasperreports.export.headertoolbar.table.name" value="PROBE"/>
 				</reportElement>
-				<jr:table xmlns:jr="http://jasperreports.sourceforge.net/jasperreports/components" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports/components http://jasperreports.sourceforge.net/xsd/components.xsd">
-					<datasetRun subDataset="tableDataset" uuid="b6d4e3bd-9d53-474a-a096-32af71960f4b"/>
+				<jr:table xmlns:jr="http://jasperreports.sourceforge.net/jasperreports/components" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports/components http://jasperreports.sourceforge.net/xsd/components.xsd" whenNoDataType="AllSectionsNoDetail">
+					<datasetRun subDataset="samples" uuid="b6d4e3bd-9d53-474a-a096-32af71960f4b">
+						<dataSourceExpression><![CDATA[new net.sf.jasperreports.engine.data.JRBeanCollectionDataSource($P{SAMPLES})]]></dataSourceExpression>
+					</datasetRun>
 					<jr:columnGroup width="554" uuid="48db1d0d-a73c-4f32-947a-118c85073a9e">
-						<property name="com.jaspersoft.studio.components.table.model.column.name" value="Columns [3]"/>
-						<jr:tableHeader style="Table 1_TH" height="30" rowSpan="1"/>
+						<property name="com.jaspersoft.studio.components.table.model.column.name" value="Columns [4]"/>
+						<jr:tableHeader style="Table 1_TH" height="30" rowSpan="1" >
+							<staticText>
+								<reportElement x="0" y="0" width="554" height="30" forecolor="#FFFFFF" uuid="f60d1675-6fb6-4569-93ca-de32b3a8e861"/>
+								<textElement textAlignment="Center" verticalAlignment="Middle" markup="none">
+									<font fontName="DejaVu Sans" size="12" isBold="true"/>
+								</textElement>
+								<text><![CDATA[Probe]]></text>
+							</staticText>
+						</jr:tableHeader>
 						<jr:column width="185" uuid="46ee58eb-2d43-450e-9460-758ef9ff7cf8">
 							<property name="com.jaspersoft.studio.components.table.model.column.name" value="Column1"/>
-							<jr:columnHeader style="Table 1_CH" height="30" rowSpan="1"/>
-							<jr:detailCell style="Table 1_TD" height="30"/>
+							<jr:columnHeader style="Table 1_CH" height="20" rowSpan="1">
+								<staticText>
+									<reportElement x="10" y="0" width="175" height="20" uuid="f60d1675-6fb6-4569-93ca-de32b3a8e861"/>
+									<textElement textAlignment="Left" verticalAlignment="Middle" markup="none">
+										<font fontName="DejaVu Sans" isBold="true"/>
+									</textElement>
+									<text><![CDATA[Nume]]></text>
+								</staticText>
+							</jr:columnHeader>
+							<jr:detailCell style="Table 1_TD" height="20">
+								<textField>
+									<reportElement x="10" y="0" width="175" height="20" uuid="f1de366a-b36f-4200-9b1e-7a0009be5373"/>
+									<textElement textAlignment="Left" verticalAlignment="Middle" markup="none"/>
+									<textFieldExpression><![CDATA[$F{name}]]></textFieldExpression>
+								</textField>
+							</jr:detailCell>
 						</jr:column>
 						<jr:column width="185" uuid="69604ada-d1c4-4355-8d45-d2dfacb942d6">
 							<property name="com.jaspersoft.studio.components.table.model.column.name" value="Column2"/>
-							<jr:columnHeader style="Table 1_CH" height="30" rowSpan="1"/>
-							<jr:detailCell style="Table 1_TD" height="30"/>
+							<jr:columnHeader style="Table 1_CH" height="20" rowSpan="1">
+								<staticText>
+									<reportElement x="10" y="0" width="175" height="20" uuid="f60d1675-6fb6-4569-93ca-de32b3a8e862"/>
+									<textElement textAlignment="Left" verticalAlignment="Middle" markup="none">
+										<font fontName="DejaVu Sans" isBold="true"/>
+									</textElement>
+									<text><![CDATA[Lucrare]]></text>
+								</staticText>
+							</jr:columnHeader>
+							<jr:detailCell style="Table 1_TD" height="20">
+								<textField>
+									<reportElement x="10" y="0" width="175" height="20" uuid="f1de366a-b36f-4200-9b1e-7a0009be5373"/>
+									<textElement textAlignment="Left" verticalAlignment="Middle" markup="none"/>
+									<textFieldExpression><![CDATA[$F{job}]]></textFieldExpression>
+								</textField>
+							</jr:detailCell>
 						</jr:column>
-						<jr:column width="184" uuid="d96170b2-717d-4ee5-8a56-a05e12c27d82">
+						<jr:column width="92" uuid="d96170b2-717d-4ee5-8a56-a05e12c27d82">
 							<property name="com.jaspersoft.studio.components.table.model.column.name" value="Column3"/>
-							<jr:columnHeader style="Table 1_CH" height="30" rowSpan="1"/>
-							<jr:detailCell style="Table 1_TD" height="30"/>
+							<jr:columnHeader style="Table 1_CH" height="20" rowSpan="1">
+								<staticText>
+									<reportElement x="10" y="0" width="82" height="20" uuid="f60d1675-6fb6-4569-93ca-de32b3a8e863"/>
+									<textElement textAlignment="Left" verticalAlignment="Middle" markup="none">
+										<font fontName="DejaVu Sans" isBold="true"/>
+									</textElement>
+									<text><![CDATA[Data]]></text>
+								</staticText>
+							</jr:columnHeader>
+							<jr:detailCell style="Table 1_TD" height="20">
+								<textField>
+									<reportElement x="10" y="0" width="82" height="20" uuid="f1de366a-b36f-4200-9b1e-7a0009be5373"/>
+									<textElement textAlignment="Left" verticalAlignment="Middle" markup="none"/>
+									<textFieldExpression><![CDATA[$F{date}]]></textFieldExpression>
+								</textField>
+							</jr:detailCell>
+						</jr:column>
+						<jr:column width="92" uuid="d96170b2-717d-4ee5-8a56-a05e12c27d83">
+							<property name="com.jaspersoft.studio.components.table.model.column.name" value="Column4"/>
+							<jr:columnHeader style="Table 1_CH" height="20" rowSpan="1">
+								<staticText>
+									<reportElement x="10" y="0" width="82" height="20" uuid="f60d1675-6fb6-4569-93ca-de32b3a8e864"/>
+									<textElement textAlignment="Left" verticalAlignment="Middle" markup="none">
+										<font fontName="DejaVu Sans" isBold="true"/>
+									</textElement>
+									<text><![CDATA[Ora]]></text>
+								</staticText>
+							</jr:columnHeader>
+							<jr:detailCell style="Table 1_TD" height="20">
+								<textField>
+									<reportElement x="10" y="0" width="82" height="20" uuid="f1de366a-b36f-4200-9b1e-7a0009be5373"/>
+									<textElement textAlignment="Left" verticalAlignment="Middle" markup="none"/>
+									<textFieldExpression><![CDATA[$F{time}]]></textFieldExpression>
+								</textField>
+							</jr:detailCell>
 						</jr:column>
 					</jr:columnGroup>
 				</jr:table>
 			</componentElement>
 			<componentElement>
-				<reportElement x="1" y="490" width="554" height="89" isPrintInFirstWholeBand="true" uuid="2a9ff60a-2a18-406e-aed1-2a843c5696b3">
+				<reportElement x="1" y="490" width="554" height="89" isPrintInFirstWholeBand="true" uuid="74b1f5cc-53ef-4d25-8c6a-986d34fb33e7">
 					<property name="com.jaspersoft.studio.layout" value="com.jaspersoft.studio.editor.layout.VerticalRowLayout"/>
 					<property name="com.jaspersoft.studio.table.style.table_header" value="Table 1_TH"/>
 					<property name="com.jaspersoft.studio.table.style.column_header" value="Table 1_CH"/>
 					<property name="com.jaspersoft.studio.table.style.detail" value="Table 1_TD"/>
-					<property name="net.sf.jasperreports.export.headertoolbar.table.name" value="EXECUTION"/>
+					<property name="net.sf.jasperreports.export.headertoolbar.table.name" value="PROBE"/>
 				</reportElement>
-				<jr:table xmlns:jr="http://jasperreports.sourceforge.net/jasperreports/components" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports/components http://jasperreports.sourceforge.net/xsd/components.xsd">
-					<datasetRun subDataset="tableDataset" uuid="3173da7a-ce50-4356-a58a-c1d7feb88cc9"/>
-					<jr:columnGroup width="554" uuid="f258ddf7-9a43-4cd3-bf17-ee38d06683f1">
-						<property name="com.jaspersoft.studio.components.table.model.column.name" value="Columns [3]"/>
-						<jr:tableHeader style="Table 1_TH" height="30" rowSpan="1"/>
-						<jr:column width="185" uuid="52cfc939-bc0c-41a9-bd77-d99d3792de04">
+				<jr:table xmlns:jr="http://jasperreports.sourceforge.net/jasperreports/components" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports/components http://jasperreports.sourceforge.net/xsd/components.xsd" whenNoDataType="AllSectionsNoDetail">
+					<datasetRun subDataset="executions" uuid="b6d4e3bd-9d53-474a-a096-32af71960f4b">
+						<dataSourceExpression><![CDATA[new net.sf.jasperreports.engine.data.JRBeanCollectionDataSource($P{EXECUTIONS})]]></dataSourceExpression>
+					</datasetRun>
+					<jr:columnGroup width="554" uuid="48db1d0d-a73c-4f32-947a-118c85073a9e">
+						<property name="com.jaspersoft.studio.components.table.model.column.name" value="Columns [§]"/>
+						<jr:tableHeader style="Table 1_TH" height="30" rowSpan="1" >
+							<staticText>
+								<reportElement x="0" y="0" width="554" height="30" forecolor="#FFFFFF" uuid="f60d1675-6fb6-4569-93ca-de32b3a8e861"/>
+								<textElement textAlignment="Center" verticalAlignment="Middle" markup="none">
+									<font fontName="DejaVu Sans" size="12" isBold="true"/>
+								</textElement>
+								<text><![CDATA[Manopere]]></text>
+							</staticText>
+						</jr:tableHeader>
+						<jr:column width="185" uuid="46ee58eb-2d43-450e-9460-758ef9ff7cf8">
 							<property name="com.jaspersoft.studio.components.table.model.column.name" value="Column1"/>
-							<jr:columnHeader style="Table 1_CH" height="30" rowSpan="1"/>
-							<jr:detailCell style="Table 1_TD" height="30"/>
+							<jr:columnHeader style="Table 1_CH" height="20" rowSpan="1">
+								<staticText>
+									<reportElement x="10" y="0" width="175" height="20" uuid="f60d1675-6fb6-4569-93ca-de32b3a8e861"/>
+									<textElement textAlignment="Left" verticalAlignment="Middle" markup="none">
+										<font fontName="DejaVu Sans" isBold="true"/>
+									</textElement>
+									<text><![CDATA[Nume]]></text>
+								</staticText>
+							</jr:columnHeader>
+							<jr:detailCell style="Table 1_TD" height="20">
+								<textField>
+									<reportElement x="10" y="0" width="175" height="20" uuid="f1de366a-b36f-4200-9b1e-7a0009be5373"/>
+									<textElement textAlignment="Left" verticalAlignment="Middle" markup="none"/>
+									<textFieldExpression><![CDATA[$F{name}]]></textFieldExpression>
+								</textField>
+							</jr:detailCell>
 						</jr:column>
-						<jr:column width="185" uuid="5ee1a83b-4e84-468f-b835-426a950df24f">
+						<jr:column width="185" uuid="69604ada-d1c4-4355-8d45-d2dfacb942d6">
 							<property name="com.jaspersoft.studio.components.table.model.column.name" value="Column2"/>
-							<jr:columnHeader style="Table 1_CH" height="30" rowSpan="1"/>
-							<jr:detailCell style="Table 1_TD" height="30"/>
+							<jr:columnHeader style="Table 1_CH" height="20" rowSpan="1">
+								<staticText>
+									<reportElement x="10" y="0" width="175" height="20" uuid="f60d1675-6fb6-4569-93ca-de32b3a8e862"/>
+									<textElement textAlignment="Left" verticalAlignment="Middle" markup="none">
+										<font fontName="DejaVu Sans" isBold="true"/>
+									</textElement>
+									<text><![CDATA[Lucrare]]></text>
+								</staticText>
+							</jr:columnHeader>
+							<jr:detailCell style="Table 1_TD" height="20">
+								<textField>
+									<reportElement x="10" y="0" width="175" height="20" uuid="f1de366a-b36f-4200-9b1e-7a0009be5373"/>
+									<textElement textAlignment="Left" verticalAlignment="Middle" markup="none"/>
+									<textFieldExpression><![CDATA[$F{job}]]></textFieldExpression>
+								</textField>
+							</jr:detailCell>
 						</jr:column>
-						<jr:column width="184" uuid="e519714c-9bc4-4e30-9bf7-57891d5e81d9">
+						<jr:column width="184" uuid="d96170b2-717d-4ee5-8a56-a05e12c27d82">
 							<property name="com.jaspersoft.studio.components.table.model.column.name" value="Column3"/>
-							<jr:columnHeader style="Table 1_CH" height="30" rowSpan="1"/>
-							<jr:detailCell style="Table 1_TD" height="30"/>
+							<jr:columnHeader style="Table 1_CH" height="20" rowSpan="1">
+								<staticText>
+									<reportElement x="10" y="0" width="174" height="20" uuid="f60d1675-6fb6-4569-93ca-de32b3a8e863"/>
+									<textElement textAlignment="Left" verticalAlignment="Middle" markup="none">
+										<font fontName="DejaVu Sans" isBold="true"/>
+									</textElement>
+									<text><![CDATA[Tehnician]]></text>
+								</staticText>
+							</jr:columnHeader>
+							<jr:detailCell style="Table 1_TD" height="20">
+								<textField>
+									<reportElement x="10" y="0" width="174" height="20" uuid="f1de366a-b36f-4200-9b1e-7a0009be5373"/>
+									<textElement textAlignment="Left" verticalAlignment="Middle" markup="none"/>
+									<textFieldExpression><![CDATA[$F{technician}]]></textFieldExpression>
+								</textField>
+							</jr:detailCell>
 						</jr:column>
 					</jr:columnGroup>
 				</jr:table>
@@ -392,7 +466,61 @@
 					</datasetRun>
 					<jr:listContents height="30" width="30">
 						<textField isBlankWhenNull="true">
-							<reportElement style="toothActive" x="0" y="10" width="20" height="30" uuid="1b92d8c3-1651-4640-b150-d795fb4bd813"/>
+							<reportElement style="toothActive" x="0" y="10" width="30" height="20" uuid="1b92d8c3-1651-4640-b150-d795fb4bd813"/>
+							<textFieldExpression><![CDATA[($F{toothType}.length() > 0 || $F{toothProperty}.length() > 0 ? $F{toothNumber} : null)]]></textFieldExpression>
+						</textField>
+						<textField isBlankWhenNull="true">
+							<reportElement x="0" y="10" width="30" height="20" uuid="1b92d8c3-1651-4640-b150-d795fb4bd813"/>
+							<textFieldExpression><![CDATA[($F{toothType}.length() == 0 && $F{toothProperty} .length() == 0 ? $F{toothNumber} : null)]]></textFieldExpression>
+						</textField>
+					</jr:listContents>
+				</jr:list>
+			</componentElement>
+			<componentElement>
+				<reportElement x="317" y="208" width="240" height="30" uuid="de98bdaf-cbea-47f2-a7be-eb863812645c"/>
+				<jr:list xmlns:jr="http://jasperreports.sourceforge.net/jasperreports/components" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports/components http://jasperreports.sourceforge.net/xsd/components.xsd" printOrder="Horizontal">
+					<datasetRun subDataset="teeth1" uuid="b0468669-a06a-4b9b-bd34-211e93e284af">
+						<dataSourceExpression><![CDATA[new net.sf.jasperreports.engine.data.JRBeanCollectionDataSource($P{TEETH2})]]></dataSourceExpression>
+					</datasetRun>
+					<jr:listContents height="30" width="30">
+						<textField isBlankWhenNull="true">
+							<reportElement style="toothActive" x="0" y="10" width="30" height="20" uuid="1b92d8c3-1651-4640-b150-d795fb4bd813"/>
+							<textFieldExpression><![CDATA[($F{toothType}.length() > 0 || $F{toothProperty}.length() > 0 ? $F{toothNumber} : null)]]></textFieldExpression>
+						</textField>
+						<textField isBlankWhenNull="true">
+							<reportElement x="0" y="10" width="30" height="20" uuid="1b92d8c3-1651-4640-b150-d795fb4bd813"/>
+							<textFieldExpression><![CDATA[($F{toothType}.length() == 0 && $F{toothProperty} .length() == 0 ? $F{toothNumber} : null)]]></textFieldExpression>
+						</textField>
+					</jr:listContents>
+				</jr:list>
+			</componentElement>
+			<componentElement>
+				<reportElement x="22" y="243" width="240" height="30" uuid="de98bdaf-cbea-47f2-a7be-eb863812645d"/>
+				<jr:list xmlns:jr="http://jasperreports.sourceforge.net/jasperreports/components" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports/components http://jasperreports.sourceforge.net/xsd/components.xsd" printOrder="Horizontal">
+					<datasetRun subDataset="teeth1" uuid="b0468669-a06a-4b9b-bd34-211e93e284af">
+						<dataSourceExpression><![CDATA[new net.sf.jasperreports.engine.data.JRBeanCollectionDataSource($P{TEETH4})]]></dataSourceExpression>
+					</datasetRun>
+					<jr:listContents height="30" width="30">
+						<textField isBlankWhenNull="true">
+							<reportElement style="toothActive" x="0" y="10" width="30" height="20" uuid="1b92d8c3-1651-4640-b150-d795fb4bd813"/>
+							<textFieldExpression><![CDATA[($F{toothType}.length() > 0 || $F{toothProperty}.length() > 0 ? $F{toothNumber} : null)]]></textFieldExpression>
+						</textField>
+						<textField isBlankWhenNull="true">
+							<reportElement x="0" y="10" width="30" height="20" uuid="1b92d8c3-1651-4640-b150-d795fb4bd813"/>
+							<textFieldExpression><![CDATA[($F{toothType}.length() == 0 && $F{toothProperty} .length() == 0 ? $F{toothNumber} : null)]]></textFieldExpression>
+						</textField>
+					</jr:listContents>
+				</jr:list>
+			</componentElement>
+			<componentElement>
+				<reportElement x="317" y="243" width="240" height="30" uuid="de98bdaf-cbea-47f2-a7be-eb863812645e"/>
+				<jr:list xmlns:jr="http://jasperreports.sourceforge.net/jasperreports/components" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports/components http://jasperreports.sourceforge.net/xsd/components.xsd" printOrder="Horizontal">
+					<datasetRun subDataset="teeth1" uuid="b0468669-a06a-4b9b-bd34-211e93e284af">
+						<dataSourceExpression><![CDATA[new net.sf.jasperreports.engine.data.JRBeanCollectionDataSource($P{TEETH3})]]></dataSourceExpression>
+					</datasetRun>
+					<jr:listContents height="30" width="30">
+						<textField isBlankWhenNull="true">
+							<reportElement style="toothActive" x="0" y="10" width="30" height="20" uuid="1b92d8c3-1651-4640-b150-d795fb4bd813"/>
 							<textFieldExpression><![CDATA[($F{toothType}.length() > 0 || $F{toothProperty}.length() > 0 ? $F{toothNumber} : null)]]></textFieldExpression>
 						</textField>
 						<textField isBlankWhenNull="true">

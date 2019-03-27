@@ -1,9 +1,6 @@
 package com.company.dento.service;
 
-import com.company.dento.model.business.Job;
-import com.company.dento.model.business.Order;
-import com.company.dento.model.business.Tooth;
-import com.company.dento.model.business.ToothDisplay;
+import com.company.dento.model.business.*;
 import com.company.dento.report.JasperWriter;
 import com.company.dento.service.exception.CannotGenerateReportException;
 import com.google.common.base.Preconditions;
@@ -65,16 +62,19 @@ public class ReportService {
         parameters.put("ORDER_NO", order.getId());
         parameters.put("COLOR", order.getColor().getName());
         parameters.put("DELIVERY_DATE", order.getDeliveryDate().toLocalDate());
-        parameters.put("JOBS", order.getJobs().stream()
-                .map(Job::getTemplate)
-                .collect(Collectors.toList()));
+        parameters.put("JOBS", constructJobsParameter(order));
 
-        parameters.put("TEETH1", constructTeethParameters(order, 11, 18, true));
+        parameters.put("TEETH1", constructTeethParameter(order, 11, 18, true));
+        parameters.put("TEETH2", constructTeethParameter(order, 21, 28, false));
+        parameters.put("TEETH3", constructTeethParameter(order, 31, 38, false));
+        parameters.put("TEETH4", constructTeethParameter(order, 41, 48, true));
+        parameters.put("SAMPLES", constructSamplesParameter(order));
+        parameters.put("EXECUTIONS", constructExecutionsParameter(order));
 
         return parameters;
     }
 
-    private List<ToothDisplay> constructTeethParameters(final Order order, final int startNumber, final int endNumber,
+    private List<ToothDisplay> constructTeethParameter(final Order order, final int startNumber, final int endNumber,
                                                         boolean reversed) {
 
         final Map<Integer, Tooth> selectedTeeth = order.getTeeth().stream()
@@ -86,6 +86,28 @@ public class ReportService {
 
         return sortedStream.map(num -> selectedTeeth.containsKey(num) ? selectedTeeth.get(num) : new Tooth(num))
                 .map(ToothDisplay::new)
+                .collect(Collectors.toList());
+    }
+
+    private List<SampleDisplay> constructSamplesParameter(final Order order) {
+        return order.getJobs().stream()
+                .map(Job::getSamples)
+                .flatMap(List::stream)
+                .map(SampleDisplay::new)
+                .collect(Collectors.toList());
+    }
+
+    private List<ExecutionDisplay> constructExecutionsParameter(final Order order) {
+        return order.getJobs().stream()
+                .map(Job::getExecutions)
+                .flatMap(List::stream)
+                .map(ExecutionDisplay::new)
+                .collect(Collectors.toList());
+    }
+
+    private List<JobTemplate> constructJobsParameter(final Order order) {
+        return order.getJobs().stream()
+                .map(Job::getTemplate)
                 .collect(Collectors.toList());
     }
 

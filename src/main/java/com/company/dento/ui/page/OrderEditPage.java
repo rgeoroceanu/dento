@@ -190,6 +190,7 @@ public class OrderEditPage extends Page implements Localizable, AfterNavigationO
         paidField.addClassName("dento-form-field");
         observationsField.addClassName("dento-form-field");
         observationsField.setHeight("6em");
+        colorField.setItemLabelGenerator(Color::getName);
     }
 
     private void initTeethTab() {
