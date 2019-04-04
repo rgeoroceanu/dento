@@ -146,7 +146,7 @@ public class ExecutionsPage extends ListPage<Execution, ExecutionSpecification> 
 	    technicianFilter.setItems(dataService.getAll(User.class));
         templateNameFilter.setItems(dataService.getAll(ExecutionTemplate.class).stream().map(ExecutionTemplate::getName));
         technicianFilter.setValue(null);
-        fromDateFilter.setValue(LocalDate.now().minusDays(LocalDate.now().getDayOfMonth() - 1));
+        fromDateFilter.setValue(null);
         toDateFilter.setValue(null);
         finalizedFilter.setValue(false);
         templateNameFilter.setValue(null);

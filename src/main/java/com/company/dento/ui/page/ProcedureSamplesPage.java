@@ -1,6 +1,7 @@
 package com.company.dento.ui.page;
 
 import com.company.dento.model.business.Sample;
+import com.company.dento.ui.component.layout.GridLayout;
 import com.company.dento.ui.localization.Localizable;
 
 public class ProcedureSamplesPage extends GridLayout<Sample> implements Localizable {

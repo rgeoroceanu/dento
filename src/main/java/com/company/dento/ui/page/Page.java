@@ -2,7 +2,7 @@ package com.company.dento.ui.page;
 
 import com.company.dento.model.type.Role;
 import com.company.dento.service.DataService;
-import com.company.dento.ui.component.common.MenuLayout;
+import com.company.dento.ui.component.layout.MenuLayout;
 import com.company.dento.ui.localization.Localizable;
 import com.company.dento.ui.localization.Localizer;
 import com.vaadin.flow.component.Component;
@@ -128,7 +128,6 @@ public abstract class Page extends HorizontalLayout implements Localizable, Befo
 	public void localize() {
 		// localize
 	}
-	
 	
 	/**
 	 * Set the component that is displayed in the content section.

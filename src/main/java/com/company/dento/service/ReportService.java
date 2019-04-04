@@ -77,7 +77,9 @@ public class ReportService {
     private List<ToothDisplay> constructTeethParameter(final Order order, final int startNumber, final int endNumber,
                                                         boolean reversed) {
 
-        final Map<Integer, Tooth> selectedTeeth = order.getTeeth().stream()
+        final Map<Integer, Tooth> selectedTeeth = order.getJobs().stream()
+                .map(Job::getTeeth)
+                .flatMap(Set::stream)
                 .collect(Collectors.toMap(Tooth::getNumber, t -> t));
 
         final Stream<Integer> stream = IntStream.range(startNumber, endNumber + 1).boxed();

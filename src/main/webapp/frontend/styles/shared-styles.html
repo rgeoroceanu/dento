@@ -1,5 +1,9 @@
 <custom-style>
   <style>
+    :host {
+      --lumo-primary-color: #0b8793 !important;
+      --lumo-primary-text-color: #0b8793 !important;
+    }
     .v-loading-indicator {
       position: fixed;
       top: 0;
@@ -58,10 +62,18 @@
     .dento-page {
         animation: bouncedelay 0.3s ease-in;
     }
-
+    vaadin-grid {
+        --lumo-primary-color: #0b8793 !important;
+        --lumo-primary-text-color: #0b8793 !important;
+    }
     vaadin-tab {
         --lumo-primary-color: #0b8793 !important;
         --lumo-primary-text-color: #0b8793 !important;
+    }
+    vaadin-button {
+      --lumo-success-text-color: #0b8793 !important;
+      --lumo-primary-color: #0b8793 !important;
+      --lumo-primary-text-color: #0b8793 !important;
     }
     vaadin-tab::before, vaadin-tab::after {
         color: #0b8793 !important;
@@ -98,6 +110,7 @@
             height: 100%;
             width: 100%;
             margin-top: 2px;
+            overflow: hidden;
         }
    .main-layout__content-menu {
             height: 50px;
@@ -157,14 +170,14 @@
     font-weight: bold;
     font-size: 13px!important;
   }
-
   .dento-grid-icon {
     width: 1.2em;
   }
   .dento-grid-action {
     background: transparent !important;
     color: grey;
-    width: 1.2em;
+    padding: 0px;
+    overflow: -webkit-paged-y;
   }
   .dento-grid-filter-small {
       --lumo-text-field-size: 25px;
@@ -191,7 +204,6 @@
     position: relative;
 	width: 23em;
 	height: 23em;
-	margin-bottom: 4em;
 	--teeth-select-radius: 11.5em;
 	--teeth-select-padding-top: 10em;
 	--teeth-select-padding-left: 0px;
@@ -238,6 +250,10 @@
 .dento-teeth-select-tooth-inactive {
 	background: transparent;
 	color: grey;
+}
+.dento-teeth-select-tooth-disabled {
+	color: #0b879366 !important;
+	font-weight: bold !important;
 }
 .dento-teeth-select-radio-group {
     display: flex;

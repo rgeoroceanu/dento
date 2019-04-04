@@ -4,7 +4,6 @@ import com.company.dento.model.business.Tooth;
 import com.company.dento.model.type.ToothProperty;
 import com.company.dento.model.type.ToothType;
 import com.vaadin.flow.component.AbstractCompositeField;
-import com.vaadin.flow.component.ClickEvent;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.dialog.Dialog;
 import com.vaadin.flow.component.html.Div;
@@ -59,6 +58,13 @@ public class TeethSelect extends AbstractCompositeField<Div, TeethSelect, Set<To
                 .collect(Collectors.toSet());
     }
 
+    public void setDisabledTeeth(final Set<Integer> disabled) {
+        items.values().forEach(item -> item.setEnabled(true));
+        disabled.stream()
+                .filter(items::containsKey)
+                .map(items::get)
+                .forEach(ti -> ti.setEnabled(false));
+    }
 
     private static class ToothItem extends AbstractCompositeField<Div, ToothItem, Tooth> {
 
@@ -163,6 +169,19 @@ public class TeethSelect extends AbstractCompositeField<Div, TeethSelect, Set<To
                 text.addClassName("dento-teeth-select-tooth-active");
                 active = true;
             }
+        }
+
+        public void setEnabled(boolean enabled) {
+            if (enabled) {
+                icon.removeClassName("dento-teeth-select-tooth-disabled");
+                button.removeClassName("dento-teeth-select-tooth-disabled");
+                text.removeClassName("dento-teeth-select-tooth-disabled");
+            } else {
+                icon.addClassName("dento-teeth-select-tooth-disabled");
+                button.addClassName("dento-teeth-select-tooth-disabled");
+                text.addClassName("dento-teeth-select-tooth-disabled");
+            }
+            super.setEnabled(enabled);
         }
     }
 

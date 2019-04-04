@@ -1,13 +1,14 @@
 package com.company.dento.ui.page;
 
 import com.company.dento.model.business.*;
-import com.company.dento.model.type.Role;
 import com.company.dento.service.DataService;
-import com.company.dento.ui.component.common.*;
+import com.company.dento.ui.component.common.JobsField;
+import com.company.dento.ui.component.common.UploadField;
 import com.company.dento.ui.localization.Localizable;
 import com.company.dento.ui.localization.Localizer;
 import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.button.Button;
+import com.vaadin.flow.component.button.ButtonVariant;
 import com.vaadin.flow.component.checkbox.Checkbox;
 import com.vaadin.flow.component.combobox.ComboBox;
 import com.vaadin.flow.component.datepicker.DatePicker;
@@ -30,9 +31,7 @@ import com.vaadin.flow.spring.annotation.UIScope;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.security.access.annotation.Secured;
 
-import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 @UIScope
 @Secured(value = {"USER", "ADMIN"})
@@ -54,10 +53,7 @@ public class OrderEditPage extends Page implements Localizable, AfterNavigationO
     private final UploadField uploadField = new UploadField();
     private final Checkbox paidField = new Checkbox();
     private final TextField partialSumField = new TextField();
-    private final JobSelect jobSelect = new JobSelect();
-    private final TeethSelect teethSelect = new TeethSelect();
-    private final SampleSelect sampleSelect = new SampleSelect();
-    private final ExecutionSelect executionSelect = new ExecutionSelect();
+    private final JobsField jobsField = new JobsField();
 
     private final Binder<Order> binder = new Binder<>();
 
@@ -69,14 +65,8 @@ public class OrderEditPage extends Page implements Localizable, AfterNavigationO
     private final Label cadLabel = new Label();
     private final Label paidLabel = new Label();
     private final Label partialSumLabel = new Label();
-    private final Label jobSelectLabel = new Label();
-    private final Label teethSelectLabel = new Label();
-    private final Label sampleSelectLabel = new Label();
-    private final Label executionSelectLabel = new Label();
 
     private final FormLayout generalLayout = new FormLayout();
-    private final FormLayout jobsLayout = new FormLayout();
-    private final FormLayout executionsSamplesLayout = new FormLayout();
     private final VerticalLayout contentLayout = new VerticalLayout();
 
     public OrderEditPage(final DataService dataService) {
@@ -86,13 +76,12 @@ public class OrderEditPage extends Page implements Localizable, AfterNavigationO
         final Div footerDiv = new Div();
 
         initGeneralTab();
-        initTeethTab();
-        initExecutionsSamplesTab();
 
+        reload();
         bindFields();
 
-        saveButton.addClassName("dento-button-full");
-        discardButton.addClassName("dento-button-simple");
+        saveButton.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
+        discardButton.addThemeVariants(ButtonVariant.LUMO_SUCCESS);
         saveButton.addClickListener(e -> this.save());
         discardButton.addClickListener(e -> this.discard());
 
@@ -105,11 +94,9 @@ public class OrderEditPage extends Page implements Localizable, AfterNavigationO
         contentLayout.add(tabs, generalLayout, footerDiv);
 
         generalLayout.setSizeFull();
-        jobsLayout.setSizeFull();
-        executionsSamplesLayout.setSizeFull();
         buttonsLayout.add(discardButton, saveButton);
         footerDiv.add(buttonsLayout);
-        tabs.add(generalTab, jobsTab, executionsSamplesTab);
+        tabs.add(generalTab, jobsTab);
         tabs.addSelectedChangeListener(e -> toggleTabSelection(e.getSource().getSelectedIndex()));
 
         this.setContent(contentLayout);
@@ -136,6 +123,7 @@ public class OrderEditPage extends Page implements Localizable, AfterNavigationO
 
         if (order.isPresent()) {
             binder.setBean(order.get());
+            jobsField.setOrder(order.get());
         } else {
             beforeEvent.rerouteTo(OrdersPage.class);
         }
@@ -157,19 +145,14 @@ public class OrderEditPage extends Page implements Localizable, AfterNavigationO
         cadLabel.setText(Localizer.getLocalizedString("cadData"));
         paidLabel.setText(Localizer.getLocalizedString("paidStatus"));
         partialSumLabel.setText(Localizer.getLocalizedString("partialSum"));
-        jobSelectLabel.setText(Localizer.getLocalizedString("jobs"));
-        teethSelectLabel.setText(Localizer.getLocalizedString("teeth"));
-        sampleSelectLabel.setText(Localizer.getLocalizedString("samples"));
-        executionSelectLabel.setText(Localizer.getLocalizedString("executions"));
+        jobsField.localize();
     }
 
     private void reload() {
-        jobSelect.setItems(dataService.getAll(JobTemplate.class));
-        executionSelect.setTechnicians(dataService.getAll(User.class).stream()
-                .filter(u -> u.getRoles().contains(Role.TECHNICIAN))
-                .collect(Collectors.toList()));
         doctorField.setItems(dataService.getAll(Doctor.class));
         colorField.setItems(dataService.getAll(Color.class));
+        jobsField.setTechnicians(dataService.getAll(User.class));
+        jobsField.setJobTemplates(dataService.getAll(JobTemplate.class));
     }
 
     private void initGeneralTab() {
@@ -191,28 +174,6 @@ public class OrderEditPage extends Page implements Localizable, AfterNavigationO
         observationsField.addClassName("dento-form-field");
         observationsField.setHeight("6em");
         colorField.setItemLabelGenerator(Color::getName);
-    }
-
-    private void initTeethTab() {
-        final FormLayout.FormItem fi1 = jobsLayout.addFormItem(jobSelect, jobSelectLabel);
-        final FormLayout.FormItem fi2 = jobsLayout.addFormItem(teethSelect, teethSelectLabel);
-        jobsLayout.addClassName("dento-form-layout");
-        fi1.getStyle().set("align-items", "initial");
-        fi2.getStyle().set("align-items", "initial");
-        FormLayout.ResponsiveStep rs1 = new FormLayout.ResponsiveStep("0", 1, FormLayout.ResponsiveStep.LabelsPosition.TOP);
-        FormLayout.ResponsiveStep rs2 = new FormLayout.ResponsiveStep("500px", 2, FormLayout.ResponsiveStep.LabelsPosition.ASIDE);
-        jobsLayout.setResponsiveSteps(rs1, rs2);
-    }
-
-    private void initExecutionsSamplesTab() {
-        final FormLayout.FormItem fi1 = executionsSamplesLayout.addFormItem(sampleSelect, sampleSelectLabel);
-        final FormLayout.FormItem fi2 = executionsSamplesLayout.addFormItem(executionSelect, executionSelectLabel);
-        executionsSamplesLayout.addClassName("dento-form-layout");
-        fi1.getStyle().set("align-items", "initial");
-        fi2.getStyle().set("align-items", "initial");
-        FormLayout.ResponsiveStep rs1 = new FormLayout.ResponsiveStep("0", 1, FormLayout.ResponsiveStep.LabelsPosition.TOP);
-        FormLayout.ResponsiveStep rs2 = new FormLayout.ResponsiveStep("500px", 1, FormLayout.ResponsiveStep.LabelsPosition.ASIDE);
-        executionsSamplesLayout.setResponsiveSteps(rs1, rs2);
     }
 
     private void bindFields() {
@@ -246,45 +207,13 @@ public class OrderEditPage extends Page implements Localizable, AfterNavigationO
                         .getLocalizedString("stringLengthValidation"), 0, 4000), 0, 4000))
                 .bind(Order::getDescription, Order::setDescription);
 
-        binder.forField(jobSelect)
-                .asRequired(Localizer.getLocalizedString("requiredValidation"))
-                .bind(Order::getJobs, this::updateJobs);
-
-        binder.forField(teethSelect)
-                //.asRequired(Localizer.getLocalizedString("requiredValidation"))
-                .bind(Order::getTeeth, Order::setTeeth);
-
-        binder.forField(executionSelect)
-                //.asRequired(Localizer.getLocalizedString("requiredValidation"))
-                .bind(this::extractExecutions, null);
-
-        binder.forField(sampleSelect)
-                //.asRequired(Localizer.getLocalizedString("requiredValidation"))
-                .bind(this::extractSamples, null);
-
         binder.forField(uploadField)
                 //.asRequired(Localizer.getLocalizedString("requiredValidation"))
                 .bind(Order::getCadFiles, Order::setCadFiles);
 
-    }
+        binder.forField(jobsField)
+                .bind(Order::getJobs, Order::setJobs);
 
-    private List<Execution> extractExecutions(final Order order) {
-        return order.getJobs().stream()
-                .map(Job::getExecutions)
-                .flatMap(List::stream)
-                .collect(Collectors.toList());
-    }
-
-    private List<Sample> extractSamples(final Order order) {
-        return order.getJobs().stream()
-                .map(Job::getSamples)
-                .flatMap(List::stream)
-                .collect(Collectors.toList());
-    }
-
-    private void updateJobs(final Order order, final List<Job> jobs) {
-        jobs.forEach(j -> j.setOrder(order));
-        order.setJobs(jobs);
     }
 
     private void toggleTabSelection(final int index) {
@@ -293,10 +222,7 @@ public class OrderEditPage extends Page implements Localizable, AfterNavigationO
                 contentLayout.replace(contentLayout.getComponentAt(1), generalLayout);
                 break;
             case 1:
-                contentLayout.replace(contentLayout.getComponentAt(1), jobsLayout);
-                break;
-            case 2:
-                contentLayout.replace(contentLayout.getComponentAt(1), executionsSamplesLayout);
+                contentLayout.replace(contentLayout.getComponentAt(1), jobsField);
                 break;
         }
     }
@@ -304,6 +230,7 @@ public class OrderEditPage extends Page implements Localizable, AfterNavigationO
     private void save() {
         if (binder.isValid()) {
             final Order item = binder.getBean();
+            item.getJobs().forEach(job -> job.setOrder(item));
             dataService.saveEntity(item);
             UI.getCurrent().navigate(OrdersPage.class);
         } else {

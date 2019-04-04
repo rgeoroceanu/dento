@@ -19,31 +19,41 @@ public class Order extends Base {
 	
 	@ManyToOne
 	private Doctor doctor;
+
 	@Basic
 	private String patient;
+
 	@ManyToOne
 	private Clinic clinic;
+
 	@Basic
 	private int price;
+
 	@Basic
 	@Column(length = 4000)
 	private String description;
-	@ElementCollection(fetch = FetchType.LAZY)
-	private Set<Tooth> teeth = new HashSet<>();
+
 	@Column
 	private LocalDate date;
+
 	@OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY, mappedBy = "order")
 	private List<Job> jobs = new ArrayList<>();
+
 	@ElementCollection(fetch = FetchType.LAZY)
 	private Set<CadFile> cadFiles = new HashSet<>();
+
 	@Basic
 	private boolean finalized;
+
 	@Basic
 	private boolean paid;
+
 	@ManyToOne
 	private Color color;
+
 	@Basic
 	private int partialSum;
+
 	@Basic
 	private LocalDateTime deliveryDate;
 

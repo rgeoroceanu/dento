@@ -1,18 +1,14 @@
 package com.company.dento.ui.component.common;
 
 import com.company.dento.model.business.Execution;
-import com.company.dento.model.business.ExecutionTemplate;
 import com.company.dento.model.business.User;
-import com.company.dento.service.DataService;
 import com.company.dento.ui.localization.Localizable;
 import com.company.dento.ui.localization.Localizer;
 import com.vaadin.flow.component.AbstractCompositeField;
-import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.combobox.ComboBox;
+import com.vaadin.flow.component.grid.FooterRow;
 import com.vaadin.flow.component.grid.Grid;
-import com.vaadin.flow.component.icon.Icon;
-import com.vaadin.flow.component.icon.VaadinIcon;
-import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
+import com.vaadin.flow.component.html.Label;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 
 import java.util.ArrayList;
@@ -23,31 +19,36 @@ public class ExecutionSelect extends AbstractCompositeField<VerticalLayout, Exec
     private final List<Execution> value = new ArrayList<>();
     private final Grid<Execution> grid;
     private final List<User> technicians = new ArrayList<>();
+    private final Label emptyText = new Label();
+    private final FooterRow footer;
 
     public ExecutionSelect() {
         super(null);
 
         grid = new Grid<>(Execution.class);
-        grid.getElement().setAttribute("theme", "row-stripes");
+        grid.getElement().setAttribute("theme", "row-stripes no-border");
         grid.getColumns().forEach(grid::removeColumn);
-        grid.addColumn("template.name").setWidth("300px").setSortable(false);
-        grid.addColumn("job.template.name").setSortable(false);
-        grid.addComponentColumn(this::addTechnicianColumn).setKey("technician").setSortable(false);
+        grid.addColumn("template.name").setSortable(false);
+        grid.addComponentColumn(this::addTechnicianColumn).setKey("technician").setFlexGrow(0).setWidth("20em").setSortable(false);
         grid.addClassName("dento-grid");
+        grid.setHeightByRows(true);
+        footer = grid.appendFooterRow();
+        footer.getCells().get(0).setComponent(emptyText);
 
         this.getContent().add(grid);
         this.getContent().setPadding(false);
         this.getContent().getStyle().set("margin-bottom", "15px");
-        this.getContent().setHeight("20em");
+        this.getContent().setMaxHeight("20em");
         this.getContent().setWidth("90%");
         this.getContent().getStyle().set("min-width", "200px");
+        this.getContent().getStyle().set("max-width", "650px");
     }
 
     @Override
     public void localize() {
-        grid.getColumns().get(1).setHeader(Localizer.getLocalizedString("job"));
         grid.getColumns().get(0).setHeader(Localizer.getLocalizedString("name"));
         grid.getColumnByKey("technician").setHeader(Localizer.getLocalizedString("technician"));
+        emptyText.setText(Localizer.getLocalizedString("emptyExecutions"));
     }
 
     public void setTechnicians(final List<User> technicians) {
@@ -60,7 +61,9 @@ public class ExecutionSelect extends AbstractCompositeField<VerticalLayout, Exec
         this.value.clear();
         this.value.addAll(value);
         grid.setItems(value);
+        emptyText.setVisible(value.isEmpty());
     }
+
 
     @Override
     public List<Execution> getValue() {

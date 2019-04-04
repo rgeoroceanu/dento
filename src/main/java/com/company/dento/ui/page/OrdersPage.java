@@ -112,13 +112,15 @@ public class OrdersPage extends ListPage<Order, OrderSpecification> implements L
         grid.addComponentColumn(this::createFinalizedComponent).setKey("finalized");
         grid.addComponentColumn(this::createPaidComponent).setKey("paid");
 
-        grid.addComponentColumn(this::createPrintComponent).setKey("print").setFlexGrow(0).setWidth("50px").setFrozen(true);;
+        addPrintColumn();
         addEditColumn();
         addRemoveColumn();
 
         this.addPrintButton("raport_lucrari");
 
         grid.setNonResponsiveColumns(grid.getColumns().get(0), grid.getColumns().get(1));
+        grid.setDetailColumns(grid.getColumns().get(2), grid.getColumns().get(3), grid.getColumns().get(4),
+                grid.getColumns().get(5), grid.getColumns().get(6), grid.getColumns().get(10), grid.getColumns().get(11));
 
         initFilters();
 	}
@@ -168,6 +170,13 @@ public class OrdersPage extends ListPage<Order, OrderSpecification> implements L
 
     protected void edit(final Order item) {
         UI.getCurrent().navigate(OrderEditPage.class, item.getId());
+    }
+
+    private void addPrintColumn() {
+        grid.addComponentColumn(this::createPrintComponent)
+                .setKey("print")
+                .setFlexGrow(0)
+                .setWidth("50px");
     }
 
     private Component createPrintComponent(final Order item) {

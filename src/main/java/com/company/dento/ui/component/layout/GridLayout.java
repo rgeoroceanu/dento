@@ -1,4 +1,4 @@
-package com.company.dento.ui.page;
+package com.company.dento.ui.component.layout;
 
 import java.util.List;
 
@@ -11,29 +11,29 @@ import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.data.selection.SelectionListener;
 
 
-class GridLayout<T extends Base> extends VerticalLayout implements Localizable {
+public class GridLayout<T extends Base> extends VerticalLayout implements Localizable {
 
 	private static final long serialVersionUID = 1L;
 	private final Grid<T> grid;
 	private Class<T> itemClass;
-	
-	GridLayout(final Class<T> itemClass) {
+
+	public GridLayout(final Class<T> itemClass) {
 		this.itemClass = itemClass;
 		this.grid = initGrid();
 		this.add(grid);
 		this.setSizeFull();
 		this.setMargin(false);
 	}
-	
-	void setItems(List<T> items) {
+
+	public void setItems(List<T> items) {
 		grid.setItems(items);
 	}
-	
-	void setVisibleColumns(String... columns) {
+
+	public void setVisibleColumns(String... columns) {
 		grid.setColumns(columns);
 	}
-	
-	void addSelectionListener(final SelectionListener<Grid<T>, T> selectionListener) {
+
+	public void addSelectionListener(final SelectionListener<Grid<T>, T> selectionListener) {
 		grid.addSelectionListener(selectionListener);
 	}
 	

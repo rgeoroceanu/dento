@@ -14,10 +14,12 @@ import com.vaadin.flow.data.provider.ConfigurableFilterDataProvider;
 import com.vaadin.flow.data.provider.DataProvider;
 import com.vaadin.flow.data.provider.SortDirection;
 import com.vaadin.flow.data.renderer.ComponentRenderer;
+import com.vaadin.flow.data.renderer.Renderer;
 import com.vaadin.flow.function.ValueProvider;
 import org.springframework.data.jpa.domain.Specification;
 
 import java.util.*;
+import java.util.function.BiFunction;
 import java.util.stream.Stream;
 
 public class FilterableGrid<T extends Base, V extends Specification<T>> extends Grid<T> implements Localizable {
@@ -26,6 +28,7 @@ public class FilterableGrid<T extends Base, V extends Specification<T>> extends 
     private final DataService dataService;
     private final Class<T> itemClass;
     private final List<Column> nonResponsiveColumns = new ArrayList<>();
+    private final List<Column> detailColumns = new ArrayList<>();
     private final Map<Column<T>, ValueProvider<T, ?>> valueProviders;
 
     public FilterableGrid(final Class<T> itemClass, final DataService dataService) {
@@ -43,12 +46,21 @@ public class FilterableGrid<T extends Base, V extends Specification<T>> extends 
     }
 
     @Override
-    public Column<T> addColumn(final ValueProvider<T, ?> valueProvider) {
-         final Column<T> column = super.addColumn(valueProvider);
+    protected <C extends Grid.Column<T>> C addColumn(ValueProvider<T, ?> valueProvider, BiFunction<Renderer<T>, String, C> columnFactory) {
+         final C column = super.addColumn(valueProvider, columnFactory);
          if (valueProviders != null && column != null) {
              valueProviders.put(column, valueProvider);
          }
          return column;
+    }
+
+    @Override
+    public <Z extends Component> Grid.Column<T> addComponentColumn(ValueProvider<T, Z> componentProvider) {
+        final Grid.Column<T> column = super.addComponentColumn(componentProvider);
+        if (valueProviders != null && column != null) {
+            valueProviders.put(column, componentProvider);
+        }
+        return column;
     }
 
     @Override
@@ -70,18 +82,27 @@ public class FilterableGrid<T extends Base, V extends Specification<T>> extends 
         nonResponsiveColumns.addAll(Arrays.asList(columns));
     }
 
+    public void setDetailColumns(final Column... columns) {
+        detailColumns.addAll(Arrays.asList(columns));
+    }
+
     private Component createItemDetails(final T item) {
         final FormLayout layout = new FormLayout();
         layout.setResponsiveSteps(new FormLayout.ResponsiveStep("0", 1, FormLayout.ResponsiveStep.LabelsPosition.ASIDE));
 
         valueProviders.forEach((column, getter) -> {
-            if (nonResponsiveColumns.contains(column)) {
+            if (nonResponsiveColumns.contains(column) || !detailColumns.contains(column)) {
                 return;
             }
             final Label fieldName = new Label(Localizer.getLocalizedString(column.getKey()));
-            final String value = String.format("%s", getter.apply(item));
-            final Label valueLabel = new Label(value);
-            layout.addFormItem(valueLabel, fieldName);
+            final Object result = getter.apply(item);
+            if (result instanceof Component) {
+                layout.addFormItem((Component) result, fieldName);
+            } else {
+                final String value = String.format("%s", result);
+                final Label valueLabel = new Label(value);
+                layout.addFormItem(valueLabel, fieldName);
+            }
         });
 
         return layout;
@@ -102,8 +123,6 @@ public class FilterableGrid<T extends Base, V extends Specification<T>> extends 
 
         nonResponsiveColumns.forEach(c -> {
             c.setVisible(true);
-            final String width = smallScreen ? "50px" : "unset";
-            c.setWidth(width);
         });
 
         this.setDetailsVisibleOnClick(smallScreen);

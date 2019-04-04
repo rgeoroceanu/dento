@@ -4,6 +4,7 @@ import java.util.List;
 
 import com.company.dento.model.business.Order;
 import com.company.dento.service.DataService;
+import com.company.dento.ui.component.layout.GridLayout;
 import com.company.dento.ui.localization.Localizable;
 
 public class ProceduresPage extends Page implements Localizable {

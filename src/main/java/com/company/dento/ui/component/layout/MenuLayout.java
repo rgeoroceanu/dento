@@ -1,4 +1,4 @@
-package com.company.dento.ui.component.common;
+package com.company.dento.ui.component.layout;
 
 import com.company.dento.ui.localization.Localizable;
 import com.company.dento.ui.localization.Localizer;
