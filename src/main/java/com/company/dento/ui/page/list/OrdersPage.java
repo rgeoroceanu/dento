@@ -1,4 +1,4 @@
-package com.company.dento.ui.page;
+package com.company.dento.ui.page.list;
 
 import com.company.dento.dao.specification.OrderSpecification;
 import com.company.dento.model.business.Clinic;
@@ -11,6 +11,7 @@ import com.company.dento.service.exception.DataDoesNotExistException;
 import com.company.dento.ui.component.common.ConfirmDialog;
 import com.company.dento.ui.localization.Localizable;
 import com.company.dento.ui.localization.Localizer;
+import com.company.dento.ui.page.edit.OrderEditPage;
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.button.Button;
@@ -45,6 +46,7 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 @UIScope
+@org.springframework.stereotype.Component
 @Secured(value = {"USER", "ADMIN"})
 @Route(value = "orders")
 @Log4j2

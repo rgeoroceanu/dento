@@ -42,6 +42,7 @@ import java.util.stream.Collectors;
 @HtmlImport("frontend://styles/dento-filterable-grid.html")
 @HtmlImport("frontend://styles/dento-noheader-grid.html")
 @HtmlImport("frontend://styles/upload-display-button.html")
+@HtmlImport("frontend://styles/dento-menu-details.html")
 public abstract class Page extends HorizontalLayout implements Localizable, BeforeEnterObserver, PageConfigurator {
 	private static final long serialVersionUID = 1L;
 	
@@ -52,12 +53,14 @@ public abstract class Page extends HorizontalLayout implements Localizable, Befo
 	
 	private final ComboBox<Locale> languageSelect;
 	private final Button logoutButton;
+	private final Button settingsButton;
 	private final Div contentLayout;
 	private final MenuLayout menuLayout;
 	
 	public Page(final DataService dataService) {
 		this.dataService = dataService;
 		this.languageSelect = initLanguageSelect();
+		this.settingsButton = initSettingsButton();
 		this.logoutButton = initLogoutButton();
 		this.contentLayout = new Div();
 		this.menuLayout = new MenuLayout();
@@ -145,7 +148,7 @@ public abstract class Page extends HorizontalLayout implements Localizable, Befo
 		headerWrapper.setClassName("main-layout__header");
 		headerButtonsLayout.setClassName("main-layout__header-buttons");
 		rightLayout.add(headerWrapper, contentLayout);
-		headerButtonsLayout.add(languageSelect, logoutButton);
+		headerButtonsLayout.add(languageSelect, settingsButton, logoutButton);
 		headerWrapper.add(headerButtonsLayout);
 		contentLayout.setClassName("main-layout__content");
 		this.add(menuLayout);
@@ -186,6 +189,14 @@ public abstract class Page extends HorizontalLayout implements Localizable, Befo
 		logoutButton.setIcon(new Icon(VaadinIcon.SIGN_OUT));
 		logoutButton.setClassName("main-layout__header-button");
 		return logoutButton;
+	}
+
+	private Button initSettingsButton() {
+		final Button settingsButtin = new Button();
+		settingsButtin.addClickListener(e -> {});
+		settingsButtin.setIcon(new Icon(VaadinIcon.COG_O));
+		settingsButtin.setClassName("main-layout__header-button");
+		return settingsButtin;
 	}
 
 	private void changeLocale(final Locale locale) {

@@ -39,6 +39,7 @@ public class DataServiceImpl implements DataService {
 	private final UserDao userDao;
 	private final ClinicDao clinicDao;
 	private final ColorDao colorDao;
+	private final CalendarEventDao calendarEventDao;
 
 	@Autowired
 	private PasswordEncoder passwordEncoder;
@@ -48,7 +49,7 @@ public class DataServiceImpl implements DataService {
 						   final ExecutionTemplateDao executionTemplateDao, final ExecutionDao executionDao,
 						   final OrderDao orderDao, final SampleDao sampleDao,
 						   final SampleTemplateDao sampleTemplateDao, final DoctorDao doctorDao, final UserDao userDao,
-						   final ClinicDao clinicDao, final ColorDao colorDao) {
+						   final ClinicDao clinicDao, final ColorDao colorDao, final CalendarEventDao calendarEventDao) {
 
 		this.jobDao = jobDao;
 		this.jobTemplateDao = jobTemplateDao;
@@ -63,6 +64,7 @@ public class DataServiceImpl implements DataService {
 		this.clinicDao = clinicDao;
 		//this.passwordEncoder = passwordEncoder;
 		this.colorDao = colorDao;
+		this.calendarEventDao = calendarEventDao;
 	}
 
 	@PostConstruct
@@ -334,6 +336,12 @@ public class DataServiceImpl implements DataService {
 
 		final JpaSpecificationExecutor dao = (JpaSpecificationExecutor) getDaoByEntityClass(itemClass);
         return Math.toIntExact(dao.count(spec));
+	}
+
+	@Override
+	@Transactional(readOnly = true)
+	public List<CalendarEvent> getCalendarEvents(final LocalDate start, final LocalDate end) {
+		return calendarEventDao.findByDateBetween(start, end);
 	}
 
 	private List<Sort.Order> extractSortOrders(final Map<String, Boolean> sortOrder) {

@@ -1,9 +1,10 @@
-package com.company.dento.ui.page;
+package com.company.dento.ui.page.list;
 
 import com.company.dento.model.business.Base;
 import com.company.dento.service.DataService;
 import com.company.dento.ui.component.common.FilterDialog;
 import com.company.dento.ui.component.common.FilterableGrid;
+import com.company.dento.ui.page.Page;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.html.Anchor;
 import com.vaadin.flow.component.icon.Icon;

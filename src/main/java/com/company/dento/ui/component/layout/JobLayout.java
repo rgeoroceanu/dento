@@ -95,6 +95,7 @@ public class JobLayout extends FormLayout implements Localizable {
         dateLayout.getStyle().set("max-width", "650px");
         dateField.setLocale(Locale.GERMAN);
         timeField.setLocale(Locale.GERMAN);
+
         final FormLayout.FormItem fi1 = fl1.addFormItem(dateLayout, dateLabel);
         final FormLayout.FormItem fi2 = fl1.addFormItem(sampleSelect, sampleSelectLabel);
         final FormLayout.FormItem fi3 = fl1.addFormItem(executionSelect, executionSelectLabel);
@@ -103,6 +104,7 @@ public class JobLayout extends FormLayout implements Localizable {
         fi2.getStyle().set("align-items", "initial");
         fi3.getStyle().set("align-items", "initial");
         fi4.getStyle().set("align-items", "initial");
+
         final FormLayout.ResponsiveStep rs1 = new FormLayout.ResponsiveStep("0", 1, FormLayout.ResponsiveStep.LabelsPosition.TOP);
         final FormLayout.ResponsiveStep rs2 = new FormLayout.ResponsiveStep("500px", 1, FormLayout.ResponsiveStep.LabelsPosition.ASIDE);
         final FormLayout.ResponsiveStep rs3 = new FormLayout.ResponsiveStep("0", 1, FormLayout.ResponsiveStep.LabelsPosition.TOP);
@@ -111,6 +113,7 @@ public class JobLayout extends FormLayout implements Localizable {
         this.addFormItem(fl2, new Label());
         fl1.setResponsiveSteps(rs1, rs2);
         fl2.setResponsiveSteps(rs1, rs2);
+
         this.setResponsiveSteps(rs3, rs4);
         this.addClassName("dento-form-layout");
         fl1.addClassName("dento-form-layout");

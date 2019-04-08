@@ -1,4 +1,4 @@
-package com.company.dento.ui.page;
+package com.company.dento.ui.page.list;
 
 import com.company.dento.dao.specification.ExecutionSpecification;
 import com.company.dento.model.business.Execution;
@@ -23,6 +23,7 @@ import lombok.extern.log4j.Log4j2;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.springframework.security.access.annotation.Secured;
+import org.springframework.stereotype.Component;
 
 import java.io.InputStream;
 import java.time.LocalDate;
@@ -31,6 +32,7 @@ import java.util.Arrays;
 import java.util.Optional;
 
 @UIScope
+@Component
 @Secured(value = {"USER", "ADMIN"})
 @Route(value = "executions")
 @Log4j2

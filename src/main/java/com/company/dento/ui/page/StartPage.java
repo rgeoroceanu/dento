@@ -7,7 +7,9 @@ import com.vaadin.flow.component.formlayout.FormLayout;
 import com.vaadin.flow.component.notification.Notification;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.router.Route;
+import com.vaadin.flow.spring.annotation.UIScope;
 import org.springframework.security.access.annotation.Secured;
+import org.springframework.stereotype.Component;
 
 /**
  * Layout of the start page containing individual boxes of information.
@@ -15,8 +17,8 @@ import org.springframework.security.access.annotation.Secured;
  * @author Radu Georoceanu <rgeoroceanu@yahoo.com>
  *
  */
-//@Component
-//@UIScope
+@Component
+@UIScope
 @Secured(value = {"USER", "ADMIN"})
 @Route(value = "start")
 public class StartPage extends Page{

@@ -1,5 +1,6 @@
 package com.company.dento.model.business;
 
+import com.company.dento.model.type.CalendarEventType;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -43,11 +44,8 @@ public class Job extends Base {
 	@OneToMany(fetch = FetchType.LAZY, mappedBy = "job", orphanRemoval = true, cascade = CascadeType.ALL)
 	private List<Sample> samples = new ArrayList<>();
 
-	@Basic
-	private LocalDate deliveryDate;
-
-	@Basic
-	private LocalTime deliveryTime;
+	@OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
+	private CalendarEvent deliveryEvent;
 
 	@ElementCollection(fetch = FetchType.LAZY)
 	private Set<Tooth> teeth = new HashSet<>();
@@ -57,5 +55,32 @@ public class Job extends Base {
 			return template.getName() + " : " + order.getId();
 		}
 		return super.toString();
+	}
+
+	public void setDeliveryDate(final LocalDate deliveryDate) {
+		if (deliveryDate == null) {
+			deliveryEvent = null;
+			return;
+		}
+
+		if (this.deliveryEvent == null) {
+			this.deliveryEvent = new CalendarEvent(CalendarEventType.JOB_DELIVERY);
+		}
+		this.deliveryEvent.setDate(deliveryDate);
+	}
+
+	public void setDeliveryTime(final LocalTime deliveryTime) {
+		if (deliveryEvent == null) {
+			return;
+		}
+		deliveryEvent.setTime(deliveryTime);
+	}
+
+	public LocalDate getDeliveryDate() {
+		return deliveryEvent != null ? deliveryEvent.getDate() : null;
+	}
+
+	public LocalTime getDeliveryTime() {
+		return deliveryEvent != null ? deliveryEvent.getTime() : null;
 	}
 }

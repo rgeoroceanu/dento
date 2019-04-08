@@ -1,28 +1,22 @@
-package com.company.dento.ui.page;
+package com.company.dento.ui.page.edit;
 
 import com.company.dento.model.business.*;
 import com.company.dento.service.DataService;
 import com.company.dento.ui.component.common.JobsField;
 import com.company.dento.ui.component.common.UploadField;
-import com.company.dento.ui.localization.Localizable;
 import com.company.dento.ui.localization.Localizer;
+import com.company.dento.ui.page.list.OrdersPage;
 import com.vaadin.flow.component.UI;
-import com.vaadin.flow.component.button.Button;
-import com.vaadin.flow.component.button.ButtonVariant;
 import com.vaadin.flow.component.checkbox.Checkbox;
 import com.vaadin.flow.component.combobox.ComboBox;
 import com.vaadin.flow.component.datepicker.DatePicker;
 import com.vaadin.flow.component.formlayout.FormLayout;
-import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.html.Label;
 import com.vaadin.flow.component.notification.Notification;
-import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
-import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.tabs.Tab;
 import com.vaadin.flow.component.tabs.Tabs;
 import com.vaadin.flow.component.textfield.TextArea;
 import com.vaadin.flow.component.textfield.TextField;
-import com.vaadin.flow.data.binder.Binder;
 import com.vaadin.flow.data.converter.StringToIntegerConverter;
 import com.vaadin.flow.data.validator.IntegerRangeValidator;
 import com.vaadin.flow.data.validator.StringLengthValidator;
@@ -30,21 +24,21 @@ import com.vaadin.flow.router.*;
 import com.vaadin.flow.spring.annotation.UIScope;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.security.access.annotation.Secured;
+import org.springframework.stereotype.Component;
 
 import java.util.Optional;
 
-@UIScope
+//@UIScope
+//@Component
 @Secured(value = {"USER", "ADMIN"})
 @Route(value = "order")
 @Log4j2
-public class OrderEditPage extends Page implements Localizable, AfterNavigationObserver, HasUrlParameter<Long> {
+public class OrderEditPage extends EditPage<Order> {
 
     private final Tabs tabs = new Tabs();
     private final Tab generalTab = new Tab();
     private final Tab jobsTab = new Tab();
     private final Tab executionsSamplesTab = new Tab();
-    private final Button saveButton = new Button();
-    private final Button discardButton = new Button();
     private final ComboBox<Doctor> doctorField = new ComboBox<>();
     private final TextField patientField = new TextField();
     private final ComboBox<Color> colorField = new ComboBox<>();
@@ -54,8 +48,6 @@ public class OrderEditPage extends Page implements Localizable, AfterNavigationO
     private final Checkbox paidField = new Checkbox();
     private final TextField partialSumField = new TextField();
     private final JobsField jobsField = new JobsField();
-
-    private final Binder<Order> binder = new Binder<>();
 
     private final Label doctorLabel = new Label();
     private final Label patientLabel = new Label();
@@ -67,45 +59,24 @@ public class OrderEditPage extends Page implements Localizable, AfterNavigationO
     private final Label partialSumLabel = new Label();
 
     private final FormLayout generalLayout = new FormLayout();
-    private final VerticalLayout contentLayout = new VerticalLayout();
 
     public OrderEditPage(final DataService dataService) {
         super(dataService);
 
-        final HorizontalLayout buttonsLayout = new HorizontalLayout();
-        final Div footerDiv = new Div();
-
         initGeneralTab();
-
         reload();
         bindFields();
 
-        saveButton.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
-        discardButton.addThemeVariants(ButtonVariant.LUMO_SUCCESS);
-        saveButton.addClickListener(e -> this.save());
-        discardButton.addClickListener(e -> this.discard());
-
-        buttonsLayout.addClassName("edit-layout__footer-buttons");
-        footerDiv.addClassName("edit-layout__footer");
-
-        contentLayout.setSizeFull();
-        contentLayout.setPadding(false);
-        contentLayout.setMargin(false);
-        contentLayout.add(tabs, generalLayout, footerDiv);
-
         generalLayout.setSizeFull();
-        buttonsLayout.add(discardButton, saveButton);
-        footerDiv.add(buttonsLayout);
         tabs.add(generalTab, jobsTab);
         tabs.addSelectedChangeListener(e -> toggleTabSelection(e.getSource().getSelectedIndex()));
 
-        this.setContent(contentLayout);
-        this.setMargin(false);
-        this.setPadding(false);
+        contentLayout.addComponentAtIndex(0, tabs);
+        contentLayout.addComponentAtIndex(1, generalLayout);
     }
 
     @Override
-    public void afterNavigation(AfterNavigationEvent afterNavigationEvent) {
+    public void afterNavigation(final AfterNavigationEvent afterNavigationEvent) {
         generalTab.setSelected(true);
         toggleTabSelection(0);
     }
@@ -135,8 +106,6 @@ public class OrderEditPage extends Page implements Localizable, AfterNavigationO
         generalTab.setLabel(Localizer.getLocalizedString("generalInformation"));
         jobsTab.setLabel(Localizer.getLocalizedString("jobs"));
         executionsSamplesTab.setLabel(Localizer.getLocalizedString("executionsSamples"));
-        saveButton.setText(Localizer.getLocalizedString("save"));
-        discardButton.setText(Localizer.getLocalizedString("cancel"));
         doctorLabel.setText(Localizer.getLocalizedString("doctor"));
         patientLabel.setText(Localizer.getLocalizedString("patient"));
         colorLabel.setText(Localizer.getLocalizedString("color"));
@@ -148,7 +117,7 @@ public class OrderEditPage extends Page implements Localizable, AfterNavigationO
         jobsField.localize();
     }
 
-    private void reload() {
+    protected void reload() {
         doctorField.setItems(dataService.getAll(Doctor.class));
         colorField.setItems(dataService.getAll(Color.class));
         jobsField.setTechnicians(dataService.getAll(User.class));
@@ -176,7 +145,7 @@ public class OrderEditPage extends Page implements Localizable, AfterNavigationO
         colorField.setItemLabelGenerator(Color::getName);
     }
 
-    private void bindFields() {
+    protected void bindFields() {
         binder.forField(doctorField)
                 .asRequired(Localizer.getLocalizedString("requiredValidation"))
                 .bind(Order::getDoctor, Order::setDoctor);
@@ -227,7 +196,7 @@ public class OrderEditPage extends Page implements Localizable, AfterNavigationO
         }
     }
 
-    private void save() {
+    protected void save() {
         if (binder.isValid()) {
             final Order item = binder.getBean();
             item.getJobs().forEach(job -> job.setOrder(item));
@@ -239,7 +208,7 @@ public class OrderEditPage extends Page implements Localizable, AfterNavigationO
         }
     }
 
-    private void discard() {
+    protected void discard() {
         UI.getCurrent().navigate(OrdersPage.class);
     }
 }
