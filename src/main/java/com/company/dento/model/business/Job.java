@@ -1,6 +1,7 @@
 package com.company.dento.model.business;
 
 import com.company.dento.model.type.CalendarEventType;
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -21,6 +22,7 @@ import java.util.Set;
 @Setter
 @Entity
 @Table(name = "jobs")
+@EqualsAndHashCode(callSuper = true, exclude = {"order", "executions", "samples", "teeth"})
 public class Job extends Base {
 	
 	@ManyToOne(optional = false)
@@ -35,14 +37,11 @@ public class Job extends Base {
 	@Basic
 	private int count = 1;
 
-	@OneToMany
-	private List<MaterialTemplate> usedMaterials = new ArrayList<>();
+	@OneToMany(fetch = FetchType.LAZY, mappedBy = "job", orphanRemoval = true, cascade = CascadeType.ALL)
+	private Set<Execution> executions = new HashSet<>();
 
 	@OneToMany(fetch = FetchType.LAZY, mappedBy = "job", orphanRemoval = true, cascade = CascadeType.ALL)
-	private List<Execution> executions = new ArrayList<>();
-
-	@OneToMany(fetch = FetchType.LAZY, mappedBy = "job", orphanRemoval = true, cascade = CascadeType.ALL)
-	private List<Sample> samples = new ArrayList<>();
+	private Set<Sample> samples = new HashSet<>();
 
 	@OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
 	private CalendarEvent deliveryEvent;

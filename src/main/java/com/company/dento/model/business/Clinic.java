@@ -9,6 +9,7 @@ import javax.persistence.Entity;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -16,14 +17,18 @@ import lombok.Setter;
 @Setter
 @Entity
 @Table(name = "clinics")
+@EqualsAndHashCode(callSuper = true, exclude = "doctors")
 public class Clinic extends Base {
 
 	@Column(unique = true, nullable = false)
 	private String name;
+
 	@OneToMany
 	private List<Doctor> doctors = new ArrayList<>();
+
 	@Basic
 	private String email;
+
 	@Basic
 	private String phone;
 	

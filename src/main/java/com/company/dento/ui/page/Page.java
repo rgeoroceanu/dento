@@ -67,6 +67,7 @@ public abstract class Page extends HorizontalLayout implements Localizable, Befo
 		initLayout();
 		Localizer.setLocale(ROMANIAN_LOCALE);
         contentLayout.addClassName("dento-page");
+		languageSelect.setVisible(false);
 	}
 
 	@Override

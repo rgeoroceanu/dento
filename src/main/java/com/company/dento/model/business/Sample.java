@@ -1,6 +1,7 @@
 package com.company.dento.model.business;
 
 import com.company.dento.model.type.CalendarEventType;
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -12,12 +13,15 @@ import java.time.LocalTime;
 @Setter
 @Entity
 @Table(name = "samples")
+@EqualsAndHashCode(callSuper = true)
 public class Sample extends Base {
 	
 	@ManyToOne(optional = false)
 	private SampleTemplate template;
+
 	@ManyToOne(optional = false)
 	private Job job;
+
 	@OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
 	private CalendarEvent dateEvent;
 	

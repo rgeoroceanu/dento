@@ -1,18 +1,11 @@
 package com.company.dento.model.business;
 
-import java.time.LocalDateTime;
-
-import javax.persistence.Column;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.MappedSuperclass;
-import javax.persistence.PrePersist;
-import javax.persistence.PreUpdate;
-import javax.persistence.Version;
-
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
+
+import javax.persistence.*;
+import java.time.LocalDateTime;
 
 /**
  * Base entity with an id, version, created and updated fiels.
@@ -23,6 +16,7 @@ import lombok.Setter;
 @Getter
 @Setter
 @MappedSuperclass
+@EqualsAndHashCode
 public class Base {
 	
 	@Id

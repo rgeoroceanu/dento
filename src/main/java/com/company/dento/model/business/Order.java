@@ -1,20 +1,20 @@
 package com.company.dento.model.business;
 
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
 
 import javax.persistence.*;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 @Getter
 @Setter
 @Entity
 @Table(name = "orders")
+@EqualsAndHashCode(callSuper = true, exclude = {"jobs", "cadFiles"})
 public class Order extends Base {
 	
 	@ManyToOne
@@ -37,7 +37,7 @@ public class Order extends Base {
 	private LocalDate date;
 
 	@OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY, mappedBy = "order")
-	private List<Job> jobs = new ArrayList<>();
+	private Set<Job> jobs = new HashSet<>();
 
 	@ElementCollection(fetch = FetchType.LAZY)
 	private Set<CadFile> cadFiles = new HashSet<>();

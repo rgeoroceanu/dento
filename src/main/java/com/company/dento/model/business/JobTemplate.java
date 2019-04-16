@@ -6,19 +6,20 @@ import lombok.Getter;
 import lombok.Setter;
 
 import javax.persistence.*;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 
 @Getter
 @Setter
 @Entity
 @Table(name = "job_templates")
-@EqualsAndHashCode
+@EqualsAndHashCode(callSuper = true, exclude = {"individualPrices", "materials", "sampleTemplates", "executionTemplates"})
 public class JobTemplate extends Base {
 	
 	@Column(unique = true, nullable = false)
 	private String name;
 
+	@Column
 	@Enumerated
 	private SelectionType selectionType;
 
@@ -31,17 +32,17 @@ public class JobTemplate extends Base {
 	@Basic
 	private boolean active;
 
-	@OneToMany
-	private List<JobPrice> individualPrices = new ArrayList<>();
+	@ElementCollection(fetch = FetchType.LAZY)
+	private Set<JobPrice> individualPrices = new HashSet<>();
 
-	@OneToMany
-	private List<MaterialTemplate> defaultMaterials = new ArrayList<>();
+	@ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+	private Set<Material> materials = new HashSet<>();
 
-	@ManyToMany
-	private List<SampleTemplate> sampleTemplates = new ArrayList<>();
+	@ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+	private Set<SampleTemplate> sampleTemplates = new HashSet<>();
 
-	@ManyToMany
-	private List<ExecutionTemplate> executionTemplates = new ArrayList<>();
+	@ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+	private Set<ExecutionTemplate> executionTemplates = new HashSet<>();
 
 	public String toString() {
 		if (name != null) {

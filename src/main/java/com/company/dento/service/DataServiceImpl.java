@@ -29,7 +29,7 @@ public class DataServiceImpl implements DataService {
 	
 	private final JobDao jobDao;
 	private final JobTemplateDao jobTemplateDao;
-	private final MaterialTemplateDao materialTemplateDao;
+	private final MaterialDao materialDao;
 	private final ExecutionTemplateDao executionTemplateDao;
 	private final ExecutionDao executionDao;
 	private final OrderDao orderDao;
@@ -45,7 +45,7 @@ public class DataServiceImpl implements DataService {
 	private PasswordEncoder passwordEncoder;
 
 	public DataServiceImpl(final JobDao jobDao, final JobTemplateDao jobTemplateDao,
-						   final MaterialTemplateDao materialTemplateDao,
+						   final MaterialDao materialDao,
 						   final ExecutionTemplateDao executionTemplateDao, final ExecutionDao executionDao,
 						   final OrderDao orderDao, final SampleDao sampleDao,
 						   final SampleTemplateDao sampleTemplateDao, final DoctorDao doctorDao, final UserDao userDao,
@@ -53,7 +53,7 @@ public class DataServiceImpl implements DataService {
 
 		this.jobDao = jobDao;
 		this.jobTemplateDao = jobTemplateDao;
-		this.materialTemplateDao = materialTemplateDao;
+		this.materialDao = materialDao;
 		this.executionTemplateDao = executionTemplateDao;
 		this.executionDao = executionDao;
 		this.orderDao = orderDao;
@@ -98,7 +98,7 @@ public class DataServiceImpl implements DataService {
 			sampleTemplate1.setName("Proba Ceramica");
 			saveEntity(sampleTemplate1);
 			
-			MaterialTemplate material = new MaterialTemplate();
+			Material material = new Material();
 			material.setName("Material 1");
 			material.setMeasurementUnit(MeasurementUnit.CM);
 			material.setPerJob(true);
@@ -169,7 +169,7 @@ public class DataServiceImpl implements DataService {
 			job1.setTemplate(jobTemplate1);
 			job1.setOrder(order);
 			job1.setPrice(100);
-			job1.setExecutions(Arrays.asList(execution1));
+			job1.setExecutions(Collections.singleton(execution1));
 			execution1.setJob(job1);
 
 			sample.setJob(job1);
@@ -181,7 +181,7 @@ public class DataServiceImpl implements DataService {
 			job2.setTemplate(jobTemplate1);
 			job2.setOrder(order);
 			job2.setPrice(150);
-			job2.setExecutions(Arrays.asList(execution2));
+			job2.setExecutions(Collections.singleton(execution2));
 			execution2.setJob(job2);
             saveEntity(job2);
 			
@@ -254,8 +254,8 @@ public class DataServiceImpl implements DataService {
 			return (JpaRepository<T, Long>) jobDao;
 		} else if (entityClass == JobTemplate.class) {
 			return (JpaRepository<T, Long>) jobTemplateDao;
-		} else if (entityClass == MaterialTemplate.class) {
-			return (JpaRepository<T, Long>) materialTemplateDao;
+		} else if (entityClass == Material.class) {
+			return (JpaRepository<T, Long>) materialDao;
 		} else if (entityClass == Order.class) {
 			return (JpaRepository<T, Long>) orderDao;
 		} else if (entityClass == Sample.class) {

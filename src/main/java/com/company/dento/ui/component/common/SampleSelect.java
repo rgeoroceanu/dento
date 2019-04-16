@@ -12,9 +12,11 @@ import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.timepicker.TimePicker;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
-public class SampleSelect extends AbstractCompositeField<VerticalLayout, SampleSelect, List<Sample>> implements Localizable {
+public class SampleSelect extends AbstractCompositeField<VerticalLayout, SampleSelect, Set<Sample>> implements Localizable {
 
     private final List<Sample> value = new ArrayList<>();
     private final Grid<Sample> grid;
@@ -52,15 +54,15 @@ public class SampleSelect extends AbstractCompositeField<VerticalLayout, SampleS
     }
 
     @Override
-    public void setPresentationValue(final List<Sample> value) {
+    public void setPresentationValue(final Set<Sample> value) {
         this.value.clear();
         this.value.addAll(value);
         grid.setItems(value);
         emptyText.setVisible(value.isEmpty());
     }
 
-    public List<Sample> getValue() {
-        return new ArrayList<>(value);
+    public Set<Sample> getValue() {
+        return new HashSet<>(value);
     }
 
     private DatePicker addDatePickerColumn(final Sample sample) {

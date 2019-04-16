@@ -94,7 +94,7 @@ public class ReportService {
     private List<SampleDisplay> constructSamplesParameter(final Order order) {
         return order.getJobs().stream()
                 .map(Job::getSamples)
-                .flatMap(List::stream)
+                .flatMap(Set::stream)
                 .map(SampleDisplay::new)
                 .collect(Collectors.toList());
     }
@@ -102,7 +102,7 @@ public class ReportService {
     private List<ExecutionDisplay> constructExecutionsParameter(final Order order) {
         return order.getJobs().stream()
                 .map(Job::getExecutions)
-                .flatMap(List::stream)
+                .flatMap(Set::stream)
                 .map(ExecutionDisplay::new)
                 .collect(Collectors.toList());
     }

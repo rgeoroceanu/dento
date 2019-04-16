@@ -60,7 +60,7 @@ public class JobLayout extends FormLayout implements Localizable {
         binder.setBean(job);
     }
 
-    public void updateTeeth(final List<Job> allJobs) {
+    public void updateTeeth(final Set<Job> allJobs) {
         final Set<Integer> disabled = extractTeeth(allJobs);
         disabled.removeAll(binder.getBean().getTeeth().stream().map(Tooth::getNumber).collect(Collectors.toList()));
         teethSelect.setDisabledTeeth(disabled);
@@ -74,7 +74,7 @@ public class JobLayout extends FormLayout implements Localizable {
         return binder.getBean();
     }
 
-    private Set<Integer> extractTeeth(final List<Job> allJobs) {
+    private Set<Integer> extractTeeth(final Set<Job> allJobs) {
         return allJobs.stream()
                 .map(Job::getTeeth)
                 .flatMap(Set::stream)

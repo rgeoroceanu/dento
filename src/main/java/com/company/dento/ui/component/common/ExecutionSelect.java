@@ -12,9 +12,11 @@ import com.vaadin.flow.component.html.Label;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
-public class ExecutionSelect extends AbstractCompositeField<VerticalLayout, ExecutionSelect, List<Execution>> implements Localizable {
+public class ExecutionSelect extends AbstractCompositeField<VerticalLayout, ExecutionSelect, Set<Execution>> implements Localizable {
 
     private final List<Execution> value = new ArrayList<>();
     private final Grid<Execution> grid;
@@ -32,6 +34,7 @@ public class ExecutionSelect extends AbstractCompositeField<VerticalLayout, Exec
         grid.addComponentColumn(this::addTechnicianColumn).setKey("technician").setFlexGrow(0).setWidth("20em").setSortable(false);
         grid.addClassName("dento-grid");
         grid.setHeightByRows(true);
+
         footer = grid.appendFooterRow();
         footer.getCells().get(0).setComponent(emptyText);
 
@@ -57,7 +60,7 @@ public class ExecutionSelect extends AbstractCompositeField<VerticalLayout, Exec
     }
 
     @Override
-    public void setPresentationValue(final List<Execution> value) {
+    public void setPresentationValue(final Set<Execution> value) {
         this.value.clear();
         this.value.addAll(value);
         grid.setItems(value);
@@ -66,8 +69,8 @@ public class ExecutionSelect extends AbstractCompositeField<VerticalLayout, Exec
 
 
     @Override
-    public List<Execution> getValue() {
-        return new ArrayList<>(value);
+    public Set<Execution> getValue() {
+        return new HashSet<>(value);
     }
 
     private ComboBox<User> addTechnicianColumn(final Execution execution) {

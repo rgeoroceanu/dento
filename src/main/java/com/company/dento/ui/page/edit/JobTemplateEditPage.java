@@ -1,10 +1,9 @@
 package com.company.dento.ui.page.edit;
 
-import com.company.dento.model.business.JobTemplate;
-import com.company.dento.model.business.SampleTemplate;
+import com.company.dento.model.business.*;
 import com.company.dento.model.type.SelectionType;
 import com.company.dento.service.DataService;
-import com.company.dento.ui.component.common.TwinColSelect;
+import com.company.dento.ui.component.common.PriceField;
 import com.company.dento.ui.localization.Localizer;
 import com.company.dento.ui.page.list.JobTemplatesPage;
 import com.vaadin.flow.component.UI;
@@ -22,6 +21,7 @@ import com.vaadin.flow.router.OptionalParameter;
 import com.vaadin.flow.router.Route;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.security.access.annotation.Secured;
+import org.vaadin.gatanaso.MultiselectComboBox;
 
 import java.util.Optional;
 
@@ -37,13 +37,19 @@ public class JobTemplateEditPage extends EditPage<JobTemplate> {
     private final ComboBox<SelectionType> selectionTypeField = new ComboBox<>();
     private final Checkbox activeField = new Checkbox();
     private final TextField standardPriceField = new TextField();
-    private final TwinColSelect<SampleTemplate> sampleTemplatesField = new TwinColSelect<>(SampleTemplate.class, "name");
+    private final MultiselectComboBox<SampleTemplate> sampleTemplatesField = new MultiselectComboBox<>();
+    private final MultiselectComboBox<ExecutionTemplate> executionTemplatesField = new MultiselectComboBox<>();
+    private final MultiselectComboBox<Material> materialsField = new MultiselectComboBox<>();
+    private final PriceField individualPricesField = new PriceField();
 
     private final Label nameLabel = new Label();
     private final Label selectionTypeLabel = new Label();
     private final Label standardPriceLabel = new Label();
     private final Label activeLabel = new Label();
     private final Label sampleTemplatesLabel = new Label();
+    private final Label executionTemplatesLabel = new Label();
+    private final Label materialsLabel = new Label();
+    private final Label individualPricesLabel = new Label();
 
     public JobTemplateEditPage(final DataService dataService) {
         super(dataService);
@@ -58,7 +64,6 @@ public class JobTemplateEditPage extends EditPage<JobTemplate> {
 
     @Override
     public void afterNavigation(AfterNavigationEvent afterNavigationEvent) {
-        reload();
     }
 
     @Override
@@ -87,25 +92,40 @@ public class JobTemplateEditPage extends EditPage<JobTemplate> {
         standardPriceLabel.setText(Localizer.getLocalizedString("standardPrice"));
         activeLabel.setText(Localizer.getLocalizedString("active"));
         sampleTemplatesLabel.setText(Localizer.getLocalizedString("samples"));
+        executionTemplatesLabel.setText(Localizer.getLocalizedString("executions"));
+        materialsLabel.setText(Localizer.getLocalizedString("materials"));
+        individualPricesLabel.setText(Localizer.getLocalizedString("individualPrices"));
     }
 
     protected void reload() {
         selectionTypeField.setItems(SelectionType.values());
-        sampleTemplatesField.setOptions(dataService.getAll(SampleTemplate.class));
+        sampleTemplatesField.setItems(dataService.getAll(SampleTemplate.class));
+        executionTemplatesField.setItems(dataService.getAll(ExecutionTemplate.class));
+        materialsField.setItems(dataService.getAll(Material.class));
+        individualPricesField.setClinics(dataService.getAll(Clinic.class));
     }
 
     private void initGeneralLayout() {
-        generalLayout.addFormItem(nameField, nameLabel);
-        generalLayout.addFormItem(selectionTypeField, selectionTypeLabel);
-        generalLayout.addFormItem(standardPriceField, standardPriceLabel);
+        generalLayout.addFormItem(nameField, nameLabel).getStyle();
         generalLayout.addFormItem(activeField, activeLabel);
-        generalLayout.addFormItem(sampleTemplatesField, sampleTemplatesLabel);
+        generalLayout.addFormItem(selectionTypeField, selectionTypeLabel);
+        generalLayout.addFormItem(materialsField, materialsLabel).getStyle().set("align-items", "end");
+        generalLayout.addFormItem(sampleTemplatesField, sampleTemplatesLabel).getStyle().set("align-items", "end");
+        generalLayout.addFormItem(executionTemplatesField, executionTemplatesLabel).getStyle().set("align-items", "end");
+        generalLayout.addFormItem(individualPricesField, individualPricesLabel).getStyle().set("align-items", "end");
+        generalLayout.addFormItem(standardPriceField, standardPriceLabel);
         generalLayout.addClassName("dento-form-layout");
         nameField.addClassName("dento-form-field");
         selectionTypeField.addClassName("dento-form-field");
         standardPriceField.addClassName("dento-form-field");
         activeField.addClassName("dento-form-field");
+        sampleTemplatesField.addClassName("dento-form-field");
+        executionTemplatesField.addClassName("dento-form-field");
+        materialsField.addClassName("dento-form-field");
         selectionTypeField.setItemLabelGenerator(val -> Localizer.getLocalizedString(val.name().toLowerCase()));
+        executionTemplatesField.setItemLabelGenerator(ExecutionTemplate::getName);
+        sampleTemplatesField.setItemLabelGenerator(SampleTemplate::getName);
+        materialsField.setItemLabelGenerator(Material::getName);
     }
 
     protected void bindFields() {
@@ -127,6 +147,15 @@ public class JobTemplateEditPage extends EditPage<JobTemplate> {
 
         binder.forField(sampleTemplatesField)
                 .bind(JobTemplate::getSampleTemplates, JobTemplate::setSampleTemplates);
+
+        binder.forField(executionTemplatesField)
+                .bind(JobTemplate::getExecutionTemplates, JobTemplate::setExecutionTemplates);
+
+        binder.forField(materialsField)
+                .bind(JobTemplate::getMaterials, JobTemplate::setMaterials);
+
+        binder.forField(individualPricesField)
+                .bind(JobTemplate::getIndividualPrices, JobTemplate::setIndividualPrices);
 
     }
 
