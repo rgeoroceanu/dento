@@ -38,7 +38,7 @@ public class StartPage extends Page{
 		initAreaChart();
 		this.setContent(content);
 		content.setSizeFull();
-		formLayout.setSizeFull();
+		formLayout.setWidthFull();
 		content.getStyle().set("overflow-y", "auto");
 		final FormLayout.ResponsiveStep rs1 = new FormLayout.ResponsiveStep("0", 1, FormLayout.ResponsiveStep.LabelsPosition.TOP);
 		final FormLayout.ResponsiveStep rs2 = new FormLayout.ResponsiveStep("700px", 2, FormLayout.ResponsiveStep.LabelsPosition.TOP);
@@ -112,7 +112,7 @@ public class StartPage extends Page{
 		configuration.addSeries(new ListSeries("Tehnician 4", 18, 31, 54, 156, 339, 818, 1201));
 		configuration.addSeries(new ListSeries("Tehnician 5", 2, 2, 2, 6, 13, 30, 46));
 
-		areaChart.setWidth("60%");
+		areaChart.setWidth("90%");
 		areaChart.getStyle().set("border-style", "ridge");
 		areaChart.getStyle().set("margin", "15px");
 		content.add(areaChart);

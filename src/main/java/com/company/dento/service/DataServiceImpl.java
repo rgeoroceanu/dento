@@ -41,8 +41,8 @@ public class DataServiceImpl implements DataService {
 	private final ColorDao colorDao;
 	private final CalendarEventDao calendarEventDao;
 
-	@Autowired
-	private PasswordEncoder passwordEncoder;
+	//@Autowired
+	//private PasswordEncoder passwordEncoder;
 
 	public DataServiceImpl(final JobDao jobDao, final JobTemplateDao jobTemplateDao,
 						   final MaterialDao materialDao,
@@ -310,7 +310,7 @@ public class DataServiceImpl implements DataService {
 		Preconditions.checkNotNull(user, "User must not be null!");
 		log.info("Save user " + user.getUsername());
 
-		user.setPassword(passwordEncoder.encode(user.getPassword()));
+		//user.setPassword(passwordEncoder.encode(user.getPassword()));
 		return userDao.saveAndFlush(user);
 	}
 

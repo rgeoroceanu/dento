@@ -88,7 +88,6 @@ public class OrdersPage extends ListPage<Order, OrderSpecification> implements L
         grid.addColumn("patient");
         grid.addColumn("clinic.name");
         grid.addColumn("doctor");
-
         grid.addColumn("price");
 
         grid.addComponentColumn(item -> createCollectionColumn(item.getJobs().stream()
@@ -111,8 +110,8 @@ public class OrdersPage extends ListPage<Order, OrderSpecification> implements L
                 .collect(Collectors.toList())))
                 .setKey("job.price.total");
 
-        grid.addComponentColumn(this::createFinalizedComponent).setKey("finalized");
-        grid.addComponentColumn(this::createPaidComponent).setKey("paid");
+        grid.addComponentColumn(this::createFinalizedComponent).setKey("finalized").setWidth("50px");
+        grid.addComponentColumn(this::createPaidComponent).setKey("paid").setWidth("50px");
 
         addPrintColumn();
         addEditColumn();

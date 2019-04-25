@@ -12,6 +12,7 @@ import javax.persistence.Table;
 @Entity
 @Table(name = "colors")
 public class Color extends Base {
+
     @Basic
     private String name;
 }

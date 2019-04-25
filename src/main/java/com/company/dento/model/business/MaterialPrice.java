@@ -18,6 +18,7 @@ public class MaterialPrice extends Base {
 	
 	@OneToOne
 	private JobTemplate jobTemplate;
+
 	@Basic
 	private int price;
 }

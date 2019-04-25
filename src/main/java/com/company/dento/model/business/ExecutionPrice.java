@@ -18,6 +18,7 @@ public class ExecutionPrice extends Base {
 	
 	@OneToOne
 	private User technician;
+
 	@Basic
 	private int price;
 }

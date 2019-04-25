@@ -126,6 +126,9 @@ public class JobTemplateEditPage extends EditPage<JobTemplate> {
         executionTemplatesField.setItemLabelGenerator(ExecutionTemplate::getName);
         sampleTemplatesField.setItemLabelGenerator(SampleTemplate::getName);
         materialsField.setItemLabelGenerator(Material::getName);
+        final FormLayout.ResponsiveStep rs1 = new FormLayout.ResponsiveStep("0", 1, FormLayout.ResponsiveStep.LabelsPosition.TOP);
+        final FormLayout.ResponsiveStep rs2 = new FormLayout.ResponsiveStep("500px", 2, FormLayout.ResponsiveStep.LabelsPosition.ASIDE);
+        generalLayout.setResponsiveSteps(rs1, rs2);
     }
 
     protected void bindFields() {

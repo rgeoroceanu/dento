@@ -22,10 +22,13 @@ public class Base {
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	private Long id;
+
 	@Version
 	private int version;
+
 	@Column
 	private LocalDateTime created;
+
 	@Column
 	private LocalDateTime updated;
 	

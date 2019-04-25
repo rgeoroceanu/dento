@@ -12,14 +12,13 @@ import org.springframework.core.io.Resource;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
 
 import static net.sf.jasperreports.engine.util.JRSaver.saveObject;
 
 @Configuration
 public class ReportConfiguration {
 
-    @Value("classpath:templates/")
-    private Resource templatesFolderResource;
     @Value("classpath:templates/order_template.jrxml")
     private Resource orderTemplateResource;
 
@@ -30,8 +29,9 @@ public class ReportConfiguration {
 
     private Resource compileReport(final Resource templateResource) throws IOException, JRException {
         final JasperReport jasperReport = JasperCompileManager.compileReport(templateResource.getInputStream());
-        final String outputPath = String.format("%s/%s.jasper", templatesFolderResource.getFile().getAbsolutePath(),
-                FilenameUtils.getBaseName(templateResource.getFile().getName()));
+
+        final String outputPath = String.format("%s/%s.jasper", Files.createTempDirectory("dento-reports"),
+                FilenameUtils.getBaseName(templateResource.getFilename()));
 
         final File templateFile = new File(outputPath);
 

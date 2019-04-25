@@ -18,14 +18,19 @@ public class Material extends Base {
 	
 	@Column(unique = true, nullable = false)
 	private String name;
+
 	@Enumerated
 	private MeasurementUnit measurementUnit;
+
 	@Basic
 	private int pricePerUnit;
+
 	@Basic
 	private boolean perJob;
+
 	@OneToMany
 	private List<MaterialPrice> individualPrices = new ArrayList<>();
+
 	@Basic
 	private boolean active;
 	

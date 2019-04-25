@@ -21,18 +21,22 @@ public class Doctor extends Base {
 	
 	@Basic
 	private String firstName;
+
 	@Basic
 	private String lastName;
+
 	@ManyToOne
 	private Clinic clinic;
+
 	@Basic
 	private String email;
+
 	@Basic
 	private String phone;
 	
 	@Override
 	public String toString() {
-		if (lastName != null) {
+		if (lastName != null && firstName != null) {
 			return firstName + " " + lastName;
 		}
 		return super.toString();

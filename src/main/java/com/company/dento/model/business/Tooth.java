@@ -13,8 +13,11 @@ import javax.persistence.Embeddable;
 @Embeddable
 @EqualsAndHashCode
 public class Tooth {
+
 	private int number;
+
 	private ToothType type;
+
 	private ToothProperty property;
 
 	public Tooth() {}

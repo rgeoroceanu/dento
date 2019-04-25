@@ -6,6 +6,7 @@ import com.company.dento.ui.component.layout.MenuLayout;
 import com.company.dento.ui.localization.Localizable;
 import com.company.dento.ui.localization.Localizer;
 import com.vaadin.flow.component.Component;
+import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.combobox.ComboBox;
 import com.vaadin.flow.component.dependency.HtmlImport;
@@ -186,7 +187,7 @@ public abstract class Page extends HorizontalLayout implements Localizable, Befo
 	private Button initLogoutButton() {
 		final Button logoutButton = new Button();
 		logoutButton.addClickListener(e -> logoutButton.getUI()
-				.ifPresent(ui -> ui.getSession().close()));
+				.ifPresent(this::logout));
 		logoutButton.setIcon(new Icon(VaadinIcon.SIGN_OUT));
 		logoutButton.setClassName("main-layout__header-button");
 		return logoutButton;
@@ -198,6 +199,11 @@ public abstract class Page extends HorizontalLayout implements Localizable, Befo
 		settingsButtin.setIcon(new Icon(VaadinIcon.COG_O));
 		settingsButtin.setClassName("main-layout__header-button");
 		return settingsButtin;
+	}
+
+	private void logout(final UI ui) {
+		ui.getPage().executeJavaScript("window.location.href='/logout'");
+		ui.getSession().close();
 	}
 
 	private void changeLocale(final Locale locale) {

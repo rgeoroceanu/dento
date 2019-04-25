@@ -32,7 +32,7 @@ public class User extends Base {
 	private String lastName;
 	
 	public String toString() {
-		if (lastName != null) {
+		if (lastName != null && firstName != null) {
 			return firstName + " " + lastName;
 		}
 		return super.toString();

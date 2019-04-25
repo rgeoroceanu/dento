@@ -20,11 +20,12 @@ import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.data.converter.StringToIntegerConverter;
 import com.vaadin.flow.data.validator.IntegerRangeValidator;
 import com.vaadin.flow.data.validator.StringLengthValidator;
-import com.vaadin.flow.router.*;
-import com.vaadin.flow.spring.annotation.UIScope;
+import com.vaadin.flow.router.AfterNavigationEvent;
+import com.vaadin.flow.router.BeforeEvent;
+import com.vaadin.flow.router.OptionalParameter;
+import com.vaadin.flow.router.Route;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.security.access.annotation.Secured;
-import org.springframework.stereotype.Component;
 
 import java.util.Optional;
 
@@ -143,6 +144,9 @@ public class OrderEditPage extends EditPage<Order> {
         observationsField.addClassName("dento-form-field");
         observationsField.setHeight("6em");
         colorField.setItemLabelGenerator(Color::getName);
+        final FormLayout.ResponsiveStep rs1 = new FormLayout.ResponsiveStep("0", 1, FormLayout.ResponsiveStep.LabelsPosition.TOP);
+        final FormLayout.ResponsiveStep rs2 = new FormLayout.ResponsiveStep("500px", 2, FormLayout.ResponsiveStep.LabelsPosition.ASIDE);
+        generalLayout.setResponsiveSteps(rs1, rs2);
     }
 
     protected void bindFields() {

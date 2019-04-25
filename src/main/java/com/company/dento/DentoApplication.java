@@ -14,7 +14,6 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 @EnableJpaRepositories(repositoryBaseClass = PageableRepositoryImpl.class)
 @EnableTransactionManagement
 @EntityScan({"com.company.dento.model.business", "com.company.dento.model.converter"})
-@EnableWebSecurity
 public class DentoApplication  extends SpringBootServletInitializer {
 	
 	public static void main(String[] args) {
