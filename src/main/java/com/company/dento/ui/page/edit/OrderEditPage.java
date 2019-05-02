@@ -32,7 +32,7 @@ import java.util.Optional;
 //@UIScope
 //@Component
 @Secured(value = {"USER", "ADMIN"})
-@Route(value = "order")
+@Route(value = "orders/id")
 @Log4j2
 public class OrderEditPage extends EditPage<Order> {
 

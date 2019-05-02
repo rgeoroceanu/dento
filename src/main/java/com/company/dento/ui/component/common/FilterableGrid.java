@@ -99,7 +99,7 @@ public class FilterableGrid<T extends Base, V extends Specification<T>> extends 
             if (result instanceof Component) {
                 layout.addFormItem((Component) result, fieldName);
             } else {
-                final String value = String.format("%s", result);
+                final String value = String.format("%s", result != null ? result : "");
                 final Label valueLabel = new Label(value);
                 layout.addFormItem(valueLabel, fieldName);
             }

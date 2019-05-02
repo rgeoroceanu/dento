@@ -1,17 +1,14 @@
 package com.company.dento.ui.page.list;
 
-import com.company.dento.dao.specification.JobTemplateSpecification;
-import com.company.dento.model.business.JobTemplate;
+import com.company.dento.dao.specification.ClinicSpecification;
+import com.company.dento.model.business.Clinic;
 import com.company.dento.service.DataService;
 import com.company.dento.service.exception.DataDoesNotExistException;
 import com.company.dento.ui.component.common.ConfirmDialog;
 import com.company.dento.ui.localization.Localizable;
 import com.company.dento.ui.localization.Localizer;
-import com.company.dento.ui.page.edit.JobTemplateEditPage;
-import com.vaadin.flow.component.Component;
+import com.company.dento.ui.page.edit.ClinicEditPage;
 import com.vaadin.flow.component.UI;
-import com.vaadin.flow.component.icon.Icon;
-import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.component.notification.Notification;
 import com.vaadin.flow.router.Route;
 import com.vaadin.flow.spring.annotation.UIScope;
@@ -23,31 +20,30 @@ import java.io.InputStream;
 @UIScope
 @org.springframework.stereotype.Component
 @Secured(value = {"USER", "ADMIN"})
-@Route(value = "jobTemplates")
+@Route(value = "clinics")
 @Log4j2
-public class JobTemplatesPage extends ListPage<JobTemplate, JobTemplateSpecification> implements Localizable {
+public class ClinicsPage extends ListPage<Clinic, ClinicSpecification> implements Localizable {
 
 	private static final long serialVersionUID = 1L;
 
     private final ConfirmDialog confirmDialog;
 
-	public JobTemplatesPage(final DataService dataService) {
-	    super(JobTemplate.class, dataService);
+	public ClinicsPage(final DataService dataService) {
+	    super(Clinic.class, dataService);
 
         confirmDialog = new ConfirmDialog();
 
         grid.addColumn("name");
-        grid.addColumn("selectionType");
-        grid.addColumn("standardPrice");
-
-        grid.addComponentColumn(this::createActiveComponent).setKey("active");
+        grid.addColumn("town");
+        grid.addColumn("email");
+        grid.addColumn("phone");
+        grid.addColumn("address");
 
         addEditColumn();
         addRemoveColumn();
 
         grid.setNonResponsiveColumns(grid.getColumns().get(0), grid.getColumns().get(1));
-        grid.setDetailColumns(grid.getColumns().get(2), grid.getColumns().get(3));
-
+        grid.setDetailColumns(grid.getColumns().get(2), grid.getColumns().get(3), grid.getColumns().get(4));
         filterButton.setVisible(false);
 
         initFilters();
@@ -59,17 +55,17 @@ public class JobTemplatesPage extends ListPage<JobTemplate, JobTemplateSpecifica
 		confirmDialog.localize();
 	}
 
-    protected void confirmRemove(final JobTemplate item) {
+    protected void confirmRemove(final Clinic item) {
 	    confirmDialog.setHeader(String.format(Localizer.getLocalizedString("confirmRemove.header"),
                 Localizer.getLocalizedString("order")));
         confirmDialog.setText(String.format(Localizer.getLocalizedString("confirmRemove.text"),
-                "lucrarea numarul " +  item.getId()));
+                "clinica numarul " +  item.getId()));
 	    confirmDialog.addConfirmListener(e -> remove(item));
 	    confirmDialog.open();
     }
 
     protected void refresh() {
-        final JobTemplateSpecification criteria = new JobTemplateSpecification();
+        final ClinicSpecification criteria = new ClinicSpecification();
         grid.refresh(criteria);
     }
 
@@ -77,26 +73,18 @@ public class JobTemplatesPage extends ListPage<JobTemplate, JobTemplateSpecifica
     protected void clearFilters() { }
 
     protected void add() {
-        UI.getCurrent().navigate(JobTemplateEditPage.class);
+        UI.getCurrent().navigate(ClinicEditPage.class);
     }
 
-    protected void edit(final JobTemplate item) {
-        UI.getCurrent().navigate(JobTemplateEditPage.class, item.getId());
+    protected void edit(final Clinic item) {
+        UI.getCurrent().navigate(ClinicEditPage.class, item.getId());
     }
 
-    private Component createActiveComponent(final JobTemplate item) {
-        final Icon icon = new Icon(item.isActive() ? VaadinIcon.CHECK : VaadinIcon.CLOSE_SMALL);
-        icon.addClassName("dento-grid-icon");
-        final String color = item.isActive() ? "green": "red";
-        icon.setColor(color);
-        return icon;
-    }
-
-    private void remove(final JobTemplate item) {
+    private void remove(final Clinic item) {
         try {
-            dataService.deleteEntity(item.getId(), JobTemplate.class);
+            dataService.deleteEntity(item.getId(), Clinic.class);
         } catch (DataDoesNotExistException e) {
-            log.warn("Tried to delete non-nexisting job: {}", item.getId());
+            log.warn("Tried to delete non-nexisting clinic: {}", item.getId());
         }
         Notification.show(String.format(Localizer.getLocalizedString("confirmRemove.success"),
                 item.getId()), 3000, Notification.Position.BOTTOM_CENTER);

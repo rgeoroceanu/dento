@@ -28,7 +28,7 @@ import java.util.Optional;
 //@UIScope
 //@Component
 @Secured(value = {"USER", "ADMIN"})
-@Route(value = "jobTemplate")
+@Route(value = "jobTemplates/id")
 @Log4j2
 public class JobTemplateEditPage extends EditPage<JobTemplate> {
 

@@ -2,7 +2,10 @@ package com.company.dento.ui.component.layout;
 
 import com.company.dento.ui.localization.Localizable;
 import com.company.dento.ui.localization.Localizer;
-import com.company.dento.ui.page.*;
+import com.company.dento.ui.page.CalendarPage;
+import com.company.dento.ui.page.Page;
+import com.company.dento.ui.page.StartPage;
+import com.company.dento.ui.page.list.ClinicsPage;
 import com.company.dento.ui.page.list.ExecutionsPage;
 import com.company.dento.ui.page.list.JobTemplatesPage;
 import com.company.dento.ui.page.list.OrdersPage;
@@ -47,7 +50,7 @@ public class MenuLayout extends Div implements Localizable {
 		this.ordersButton = addMenuItem(OrdersPage.class, VaadinIcon.FILE);
 		this.executionsButton = addMenuItem(ExecutionsPage.class, VaadinIcon.SPECIALIST);
 		initAdminMenu();
-		this.clinicsButton = addAdminItem(StartPage.class);
+		this.clinicsButton = addAdminItem(ClinicsPage.class);
 		this.doctorsButton = addAdminItem(StartPage.class);
 		this.executionTemplatesButton = addAdminItem(StartPage.class);
 		this.jobTemplatesButton = addAdminItem(JobTemplatesPage.class);
