@@ -1,13 +1,13 @@
 package com.company.dento.ui.page.list;
 
-import com.company.dento.dao.specification.ClinicSpecification;
-import com.company.dento.model.business.Clinic;
+import com.company.dento.dao.specification.DoctorSpecification;
+import com.company.dento.model.business.Doctor;
 import com.company.dento.service.DataService;
 import com.company.dento.service.exception.DataDoesNotExistException;
 import com.company.dento.ui.component.common.ConfirmDialog;
 import com.company.dento.ui.localization.Localizable;
 import com.company.dento.ui.localization.Localizer;
-import com.company.dento.ui.page.edit.ClinicEditPage;
+import com.company.dento.ui.page.edit.DoctorEditPage;
 import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.notification.Notification;
 import com.vaadin.flow.router.Route;
@@ -20,24 +20,24 @@ import java.io.InputStream;
 @UIScope
 @org.springframework.stereotype.Component
 @Secured(value = {"USER", "ADMIN"})
-@Route(value = "clinics")
+@Route(value = "doctors")
 @Log4j2
-public class ClinicsPage extends ListPage<Clinic, ClinicSpecification> implements Localizable {
+public class DoctorsPage extends ListPage<Doctor, DoctorSpecification> implements Localizable {
 
 	private static final long serialVersionUID = 1L;
 
     private final ConfirmDialog confirmDialog;
 
-	public ClinicsPage(final DataService dataService) {
-	    super(Clinic.class, dataService);
+	public DoctorsPage(final DataService dataService) {
+	    super(Doctor.class, dataService);
 
         confirmDialog = new ConfirmDialog();
 
-        grid.addColumn("name");
-        grid.addColumn("town");
+        grid.addColumn("firstName");
+        grid.addColumn("lastName");
+        grid.addColumn("clinic.name");
         grid.addColumn("email");
         grid.addColumn("phone");
-        grid.addColumn("address");
 
         addEditColumn();
         addRemoveColumn();
@@ -55,17 +55,17 @@ public class ClinicsPage extends ListPage<Clinic, ClinicSpecification> implement
 		confirmDialog.localize();
 	}
 
-    protected void confirmRemove(final Clinic item) {
+    protected void confirmRemove(final Doctor item) {
 	    confirmDialog.setHeader(String.format(Localizer.getLocalizedString("confirmRemove.header"),
                 Localizer.getLocalizedString("order")));
         confirmDialog.setText(String.format(Localizer.getLocalizedString("confirmRemove.text"),
-                "clinica " +  item.getName()));
+                "doctorul Dr. " +  item.getLastName()));
 	    confirmDialog.addConfirmListener(e -> remove(item));
 	    confirmDialog.open();
     }
 
     protected void refresh() {
-        final ClinicSpecification criteria = new ClinicSpecification();
+        final DoctorSpecification criteria = new DoctorSpecification();
         grid.refresh(criteria);
     }
 
@@ -73,18 +73,18 @@ public class ClinicsPage extends ListPage<Clinic, ClinicSpecification> implement
     protected void clearFilters() { }
 
     protected void add() {
-        UI.getCurrent().navigate(ClinicEditPage.class);
+        UI.getCurrent().navigate(DoctorEditPage.class);
     }
 
-    protected void edit(final Clinic item) {
-        UI.getCurrent().navigate(ClinicEditPage.class, item.getId());
+    protected void edit(final Doctor item) {
+        UI.getCurrent().navigate(DoctorEditPage.class, item.getId());
     }
 
-    private void remove(final Clinic item) {
+    private void remove(final Doctor item) {
         try {
-            dataService.deleteEntity(item.getId(), Clinic.class);
+            dataService.deleteEntity(item.getId(), Doctor.class);
         } catch (DataDoesNotExistException e) {
-            log.warn("Tried to delete non-nexisting clinic: {}", item.getId());
+            log.warn("Tried to delete non-nexisting doctor: {}", item.getId());
         }
         Notification.show(String.format(Localizer.getLocalizedString("confirmRemove.success"),
                 item.getId()), 3000, Notification.Position.BOTTOM_CENTER);
