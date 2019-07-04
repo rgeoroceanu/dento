@@ -51,7 +51,7 @@ public class MenuLayout extends Div implements Localizable {
 		this.doctorsButton = addAdminItem(DoctorsPage.class);
 		this.executionTemplatesButton = addAdminItem(StartPage.class);
 		this.jobTemplatesButton = addAdminItem(JobTemplatesPage.class);
-		this.materialsButton = addAdminItem(StartPage.class);
+		this.materialsButton = addAdminItem(MaterialsPage.class);
 		this.sampleTemplatesButton = addAdminItem(StartPage.class);
 		this.techniciansButton = addAdminItem(StartPage.class);
 	}
