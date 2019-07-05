@@ -177,7 +177,7 @@ public class OrdersPage extends ListPage<Order, OrderSpecification> implements L
         grid.addComponentColumn(this::createPrintComponent)
                 .setKey("print")
                 .setFlexGrow(0)
-                .setWidth("50px");
+                .setWidth("70px");
     }
 
     private Component createPrintComponent(final Order item) {

@@ -1,7 +1,7 @@
 package com.company.dento.ui.component.common;
 
-import com.company.dento.model.business.Clinic;
-import com.company.dento.model.business.JobPrice;
+import com.company.dento.model.business.Base;
+import com.company.dento.model.business.Price;
 import com.company.dento.ui.localization.Localizer;
 import com.vaadin.flow.component.AbstractCompositeField;
 import com.vaadin.flow.component.button.Button;
@@ -14,28 +14,29 @@ import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.data.binder.Binder;
 import com.vaadin.flow.data.converter.StringToIntegerConverter;
-import com.vaadin.flow.data.provider.Query;
 import com.vaadin.flow.data.validator.IntegerRangeValidator;
 
 import java.util.*;
 import java.util.stream.Collectors;
 
-public class PriceField extends AbstractCompositeField<VerticalLayout, PriceField, Set<JobPrice>> {
+public class PriceField<T extends Price<S>, S extends Base> extends AbstractCompositeField<VerticalLayout, PriceField<T, S>, Set<T>> {
 
-    private final ComboBox<Clinic> clinicSelect;
-    private final Set<JobPrice> value = new HashSet<>();
-    private final Grid<JobPrice> grid;
-    private List<Clinic> clinics = new ArrayList<>();
+    private final ComboBox<S> optionSelect;
+    private final Set<T> value = new HashSet<>();
+    private final Grid<T> grid;
+    private List<S> options = new ArrayList<>();
+    private final Class<T> itemClass;
 
-    public PriceField() {
+    public PriceField(final Class<T> itemClass) {
         super(null);
+        this.itemClass = itemClass;
 
         final HorizontalLayout buttons = new HorizontalLayout();
-        grid = new Grid<>(JobPrice.class);
+        grid = new Grid<>(itemClass);
         grid.getElement().setAttribute("theme", "row-stripes no-border");
         grid.addClassName("dento-noheader-grid");
         grid.getColumns().forEach(grid::removeColumn);
-        grid.addColumn("clinic.name").setSortable(false);
+        grid.addColumn(Price::getKeyName).setSortable(false);
         grid.addComponentColumn(this::addPriceColumn).setKey("price").setFlexGrow(0).setWidth("5em").setSortable(false);
         addRemoveColumn();
 
@@ -50,12 +51,11 @@ public class PriceField extends AbstractCompositeField<VerticalLayout, PriceFiel
         addButton.addClassNames("dento-button-simple",  "main-layout__content-menu-button");
         addButton.addClickListener(e -> add());
 
-        clinicSelect = new ComboBox<>();
-        clinicSelect.setWidth("80%");
-        clinicSelect.setMaxWidth("320px");
-        clinicSelect.setItemLabelGenerator(Clinic::getName);
+        optionSelect = new ComboBox<>();
+        optionSelect.setWidth("80%");
+        optionSelect.setMaxWidth("320px");
 
-        buttons.add(clinicSelect, addButton);
+        buttons.add(optionSelect, addButton);
         buttons.setPadding(false);
         buttons.setWidth("100%");
 
@@ -64,65 +64,78 @@ public class PriceField extends AbstractCompositeField<VerticalLayout, PriceFiel
         this.getContent().setWidth("90%");
         this.getContent().setMinWidth("200px");
         this.getContent().setMaxWidth("650px");
-        this.addValueChangeListener(e -> updateClinics(e.getValue()));
+        this.addValueChangeListener(e -> updateOptions(e.getValue()));
     }
 
-    public void setClinics(final List<Clinic> items) {
-        this.clinics = items;
+    public void setOptions(final List<S> items) {
+        this.options = items;
         value.clear();
         grid.setItems(value);
-        clinicSelect.setItems(items);
+        optionSelect.setItems(items);
     }
 
     @Override
-    public Set<JobPrice> getValue() {
-        return new HashSet<>(value);
+    public Set<T> getValue() {
+        return new HashSet<T>(value);
     }
 
     @Override
-    protected void setPresentationValue(final Set<JobPrice> prices) {
+    protected void setPresentationValue(final Set<T> prices) {
         this.value.clear();
         this.value.addAll(prices);
         grid.setItems(value);
-        final List<Clinic> clinics = clinicSelect.getDataProvider()
-                .fetch(new Query<>())
-                .collect(Collectors.toList());
+        //final List<S> clinics = optionSelect.getDataProvider()
+        //        .fetch(new Query<>())
+        //        .collect(Collectors.toList());
     }
 
     @Override
     public void setRequiredIndicatorVisible(boolean required) {
-        clinicSelect.setRequiredIndicatorVisible(required);
+        optionSelect.setRequiredIndicatorVisible(required);
     }
 
     @Override
     public boolean isRequiredIndicatorVisible() {
-        return clinicSelect.isRequiredIndicatorVisible();
+        return optionSelect.isRequiredIndicatorVisible();
     }
 
-    private void updateClinics(final Set<JobPrice> value) {
-        final Map<Long, Clinic> clinicIds =clinics.stream().collect(Collectors.toMap(Clinic::getId, c -> c));
-        value.stream()
-                .filter(jb -> clinicIds.containsKey(jb.getClinic().getId()))
-                .forEach(jb -> clinicIds.remove(jb.getClinic().getId()));
+    private void updateOptions(final Set<T> value) {
+        final Map<Long, S> ids = options.stream()
+                .collect(Collectors.toMap(Base::getId, s -> s));
 
-        clinicSelect.setItems(clinicIds.values());
+        value.stream()
+                .filter(jb -> ids.containsKey(jb.getKey().getId()))
+                .forEach(jb -> ids.remove(jb.getKey().getId()));
+
+        optionSelect.setItems(ids.values());
     }
 
     private void add() {
-        clinicSelect.getOptionalValue()
+        optionSelect.getOptionalValue()
                 .ifPresent(v -> {
-                    final JobPrice item = new JobPrice();
-                    item.setClinic(v);
-                    value.add(item);
-                    grid.setItems(value);
-                    setModelValue(value, true);
+                    createItem()
+                            .ifPresent(i -> {
+                                i.setKey(v);
+                                value.add(i);
+                                grid.setItems(value);
+                                setModelValue(value, true);
+                            });
                 });
     }
 
-    private void remove(final JobPrice item) {
+    private void remove(final T item) {
         value.remove(item);
         grid.setItems(value);
         setModelValue(value, true);
+    }
+
+
+    private Optional<T> createItem() {
+        try {
+            return Optional.of(this.itemClass.getDeclaredConstructor().newInstance());
+        } catch (Exception e) {
+            return Optional.empty();
+        }
     }
 
     private void addRemoveColumn() {
@@ -138,18 +151,18 @@ public class PriceField extends AbstractCompositeField<VerticalLayout, PriceFiel
         }).setFlexGrow(0);
     }
 
-    private TextField addPriceColumn(final JobPrice jobPrice) {
-        final TextField price = new TextField();
-        final Binder<JobPrice> binder = new Binder<>();
-        binder.forField(price)
+    private TextField addPriceColumn(final T price) {
+        final TextField priceField = new TextField();
+        final Binder<T> binder = new Binder<>();
+        binder.forField(priceField)
                 .withConverter(new StringToIntegerConverter(Localizer.getLocalizedString("integerRangeValidation")))
                 .withValidator(new IntegerRangeValidator("integerRangeValidation", 0, 100000))
-                .bind(JobPrice::getPrice, JobPrice::setPrice);
+                .bind(T::getPrice, T::setPrice);
 
-        binder.setBean(jobPrice);
-        price.setWidth("15em");
-        price.setPreventInvalidInput(true);
-        price.addClassName("dento-grid-filter-small");
-        return price;
+        binder.setBean(price);
+        priceField.setWidth("15em");
+        priceField.setPreventInvalidInput(true);
+        priceField.addClassName("dento-grid-filter-small");
+        return priceField;
     }
 }

@@ -30,7 +30,7 @@ public class MenuLayout extends Div implements Localizable {
 	private final RouterLink sampleTemplatesButton;
 	private final RouterLink executionTemplatesButton;
 	private final RouterLink clinicsButton;
-	private final RouterLink techniciansButton;
+	private final RouterLink usersButton;
 	private final Label titleLabel;
 	private final UnorderedList generalButtonsLayout;
 	private final UnorderedList adminButtonsLayout;
@@ -53,7 +53,7 @@ public class MenuLayout extends Div implements Localizable {
 		this.jobTemplatesButton = addAdminItem(JobTemplatesPage.class);
 		this.materialsButton = addAdminItem(MaterialsPage.class);
 		this.sampleTemplatesButton = addAdminItem(StartPage.class);
-		this.techniciansButton = addAdminItem(StartPage.class);
+		this.usersButton = addAdminItem(UsersPage.class);
 	}
 
 	@Override
@@ -70,7 +70,7 @@ public class MenuLayout extends Div implements Localizable {
 		localizeMenuItem(clinicsButton, "clinics");
 		localizeMenuItem(sampleTemplatesButton, "samples");
 		localizeMenuItem(jobTemplatesButton, "jobs");
-		localizeMenuItem(techniciansButton, "technicians");
+		localizeMenuItem(usersButton, "users");
 	}
 
 	private void localizeMenuItem(final RouterLink routerLink, final String messageId) {

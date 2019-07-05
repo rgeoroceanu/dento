@@ -6,8 +6,8 @@ import lombok.Getter;
 import lombok.Setter;
 
 import javax.persistence.*;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 
 @Getter
 @Setter
@@ -28,8 +28,8 @@ public class Material extends Base {
 	@Basic
 	private boolean perJob;
 
-	@OneToMany
-	private List<MaterialPrice> individualPrices = new ArrayList<>();
+	@ElementCollection(fetch = FetchType.LAZY)
+	private Set<MaterialPrice> individualPrices = new HashSet<>();
 
 	@Basic
 	private boolean active;

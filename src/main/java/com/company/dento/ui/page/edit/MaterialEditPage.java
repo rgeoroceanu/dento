@@ -1,8 +1,11 @@
 package com.company.dento.ui.page.edit;
 
+import com.company.dento.model.business.JobTemplate;
 import com.company.dento.model.business.Material;
+import com.company.dento.model.business.MaterialPrice;
 import com.company.dento.model.type.MeasurementUnit;
 import com.company.dento.service.DataService;
+import com.company.dento.ui.component.common.PriceField;
 import com.company.dento.ui.localization.Localizer;
 import com.company.dento.ui.page.list.MaterialsPage;
 import com.vaadin.flow.component.UI;
@@ -36,7 +39,7 @@ public class MaterialEditPage extends EditPage<Material> {
     private final Checkbox activeField = new Checkbox();
     private final Checkbox perJobField = new Checkbox();
     private final TextField pricePerUnitField = new TextField();
-    //private final MaterialPriceField individualPricesField = new MaterialPriceField();
+    private final PriceField<MaterialPrice, JobTemplate> individualPricesField = new PriceField<>(MaterialPrice.class);
 
     private final Label nameLabel = new Label();
     private final Label measurementUnitLabel = new Label();
@@ -91,7 +94,7 @@ public class MaterialEditPage extends EditPage<Material> {
 
     protected void reload() {
         measurementUnitField.setItems(MeasurementUnit.values());
-        //individualPricesField.setJobs(dataService.getAll(JobTemplate.class));
+        individualPricesField.setOptions(dataService.getAll(JobTemplate.class));
     }
 
     private void initGeneralLayout() {
@@ -99,7 +102,7 @@ public class MaterialEditPage extends EditPage<Material> {
         generalLayout.addFormItem(activeField, activeLabel);
         generalLayout.addFormItem(measurementUnitField, measurementUnitLabel);
         generalLayout.addFormItem(perJobField, perJobLabel);
-        //generalLayout.addFormItem(individualPricesField, individualPricesLabel).getStyle().set("align-items", "end");
+        generalLayout.addFormItem(individualPricesField, individualPricesLabel).getStyle().set("align-items", "end");
         generalLayout.addFormItem(pricePerUnitField, pricePerUnitLabel);
         generalLayout.addClassName("dento-form-layout");
         nameField.addClassName("dento-form-field");
@@ -133,8 +136,8 @@ public class MaterialEditPage extends EditPage<Material> {
         binder.forField(perJobField)
                 .bind(Material::isPerJob, Material::setPerJob);
 
-        //binder.forField(individualPricesField)
-        //        .bind(Material::getIndividualPrices, Material::setIndividualPrices);
+        binder.forField(individualPricesField)
+                .bind(Material::getIndividualPrices, Material::setIndividualPrices);
 
     }
 

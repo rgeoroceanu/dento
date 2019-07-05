@@ -30,6 +30,9 @@ public class User extends Base {
 
 	@Basic
 	private String lastName;
+
+	@Basic
+	private boolean active;
 	
 	public String toString() {
 		if (lastName != null && firstName != null) {

@@ -40,7 +40,7 @@ public class JobTemplateEditPage extends EditPage<JobTemplate> {
     private final MultiselectComboBox<SampleTemplate> sampleTemplatesField = new MultiselectComboBox<>();
     private final MultiselectComboBox<ExecutionTemplate> executionTemplatesField = new MultiselectComboBox<>();
     private final MultiselectComboBox<Material> materialsField = new MultiselectComboBox<>();
-    private final PriceField individualPricesField = new PriceField();
+    private final PriceField<JobPrice, Clinic> individualPricesField = new PriceField<>(JobPrice.class);
 
     private final Label nameLabel = new Label();
     private final Label selectionTypeLabel = new Label();
@@ -102,7 +102,7 @@ public class JobTemplateEditPage extends EditPage<JobTemplate> {
         sampleTemplatesField.setItems(dataService.getAll(SampleTemplate.class));
         executionTemplatesField.setItems(dataService.getAll(ExecutionTemplate.class));
         materialsField.setItems(dataService.getAll(Material.class));
-        individualPricesField.setClinics(dataService.getAll(Clinic.class));
+        individualPricesField.setOptions(dataService.getAll(Clinic.class));
     }
 
     private void initGeneralLayout() {
