@@ -19,7 +19,7 @@ public class Material extends Base {
 	@Column(unique = true, nullable = false)
 	private String name;
 
-	@Enumerated
+	@Enumerated(EnumType.STRING)
 	private MeasurementUnit measurementUnit;
 
 	@Basic

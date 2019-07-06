@@ -1,6 +1,6 @@
 package com.company.dento.ui.component.common;
 
-import com.company.dento.model.business.CadFile;
+import com.company.dento.model.business.StoredFile;
 import com.vaadin.flow.component.AbstractCompositeField;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.dialog.Dialog;
@@ -22,10 +22,10 @@ import java.io.IOException;
 import java.util.HashSet;
 import java.util.Set;
 
-public class UploadField extends AbstractCompositeField<VerticalLayout, UploadField, Set<CadFile>> {
+public class UploadField extends AbstractCompositeField<VerticalLayout, UploadField, Set<StoredFile>> {
 
     private static final int MAX_FILE_SIZE = 1024*1024*2;
-    private final Set<CadFile> value = new HashSet<>();
+    private final Set<StoredFile> value = new HashSet<>();
     private final MultiFileMemoryBuffer buffer = new MultiFileMemoryBuffer();
     private final Upload upload = new Upload(buffer);
     private final Div valuesList = new Div();
@@ -54,16 +54,20 @@ public class UploadField extends AbstractCompositeField<VerticalLayout, UploadFi
         this.getContent().addClassName("dento-form-field");
     }
 
+    public void setMaxFiles(final int maxFiles) {
+        upload.setMaxFiles(maxFiles);
+    }
+
     @Override
-    protected void setPresentationValue(final Set<CadFile> cadFiles) {
+    protected void setPresentationValue(final Set<StoredFile> storedFiles) {
         value.clear();
-        value.addAll(cadFiles);
+        value.addAll(storedFiles);
         valuesList.removeAll();
-        cadFiles.forEach(this::addFileDisplayButton);
+        storedFiles.forEach(this::addFileDisplayButton);
     }
 
     private void processUpload(SucceededEvent event) {
-        final CadFile file = new CadFile();
+        final StoredFile file = new StoredFile();
         file.setName(event.getFileName());
 
         try {
@@ -78,17 +82,17 @@ public class UploadField extends AbstractCompositeField<VerticalLayout, UploadFi
         hideFileProgress(file.getName());
     }
 
-    private void addFileDisplayButton(final CadFile cadFile) {
+    private void addFileDisplayButton(final StoredFile storedFile) {
         final HorizontalLayout hl = new HorizontalLayout();
 
         final Button display = new Button();
-        display.setText(cadFile.getName());
+        display.setText(storedFile.getName());
         display.addClassName("upload-display-button");
-        display.addClickListener(e -> this.showImage(cadFile));
+        display.addClickListener(e -> this.showImage(storedFile));
 
         final Button remove = new Button();
         remove.setIcon(new Icon(VaadinIcon.CLOSE));
-        remove.addClickListener(e -> this.removeFile(cadFile, hl));
+        remove.addClickListener(e -> this.removeFile(storedFile, hl));
         remove.addClassName("upload-remove-button");
 
         hl.add(display, remove);
@@ -96,8 +100,8 @@ public class UploadField extends AbstractCompositeField<VerticalLayout, UploadFi
         valuesList.add(hl);
     }
 
-    private void removeFile(final CadFile cadFile, final HorizontalLayout displayLayout) {
-        value.remove(cadFile);
+    private void removeFile(final StoredFile storedFile, final HorizontalLayout displayLayout) {
+        value.remove(storedFile);
         valuesList.remove(displayLayout);
         setModelValue(value, true);
     }
@@ -106,7 +110,7 @@ public class UploadField extends AbstractCompositeField<VerticalLayout, UploadFi
         upload.getElement().setPropertyJson("files", Json.createArray());
     }
 
-    private void showImage(final CadFile file) {
+    private void showImage(final StoredFile file) {
         final Dialog dialog = new Dialog();
         dialog.setCloseOnEsc(true);
         dialog.setCloseOnOutsideClick(true);

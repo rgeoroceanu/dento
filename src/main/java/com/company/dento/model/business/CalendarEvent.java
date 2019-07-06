@@ -4,10 +4,7 @@ import com.company.dento.model.type.CalendarEventType;
 import lombok.Getter;
 import lombok.Setter;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Enumerated;
-import javax.persistence.Table;
+import javax.persistence.*;
 import java.time.LocalDate;
 import java.time.LocalTime;
 
@@ -18,7 +15,7 @@ import java.time.LocalTime;
 public class CalendarEvent extends Base {
 
     @Column(nullable = false)
-    @Enumerated
+    @Enumerated(EnumType.STRING)
     private CalendarEventType type;
 
     @Column(nullable = false)

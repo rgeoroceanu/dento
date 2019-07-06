@@ -182,7 +182,7 @@ public class OrderEditPage extends EditPage<Order> {
 
         binder.forField(uploadField)
                 //.asRequired(Localizer.getLocalizedString("requiredValidation"))
-                .bind(Order::getCadFiles, Order::setCadFiles);
+                .bind(Order::getStoredFiles, Order::setStoredFiles);
 
         binder.forField(jobsField)
                 .bind(Order::getJobs, Order::setJobs);

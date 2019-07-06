@@ -14,7 +14,7 @@ import java.util.Set;
 @Setter
 @Entity
 @Table(name = "orders")
-@EqualsAndHashCode(callSuper = true, exclude = {"jobs", "cadFiles"})
+@EqualsAndHashCode(callSuper = true, exclude = {"jobs", "storedFiles"})
 public class Order extends Base {
 	
 	@ManyToOne
@@ -40,7 +40,7 @@ public class Order extends Base {
 	private Set<Job> jobs = new HashSet<>();
 
 	@ElementCollection(fetch = FetchType.LAZY)
-	private Set<CadFile> cadFiles = new HashSet<>();
+	private Set<StoredFile> storedFiles = new HashSet<>();
 
 	@Basic
 	private boolean finalized;

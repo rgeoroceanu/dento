@@ -63,4 +63,8 @@ public abstract class EditPage<T> extends Page implements Localizable, AfterNavi
     protected abstract void save();
 
     protected  abstract void discard();
+
+    protected void disableDiscardButton() {
+        discardButton.setVisible(false);
+    }
 }

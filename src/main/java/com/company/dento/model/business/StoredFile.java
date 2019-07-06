@@ -12,7 +12,7 @@ import javax.persistence.Lob;
 @Setter
 @Embeddable
 @EqualsAndHashCode
-public class CadFile {
+public class StoredFile {
 
     @Basic
     private String name;

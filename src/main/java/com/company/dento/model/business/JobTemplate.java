@@ -20,7 +20,7 @@ public class JobTemplate extends Base {
 	private String name;
 
 	@Column
-	@Enumerated
+	@Enumerated(EnumType.STRING)
 	private SelectionType selectionType;
 
 	@Basic

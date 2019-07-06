@@ -8,12 +8,12 @@ import com.company.dento.service.exception.DataDoesNotExistException;
 import com.company.dento.service.exception.InvalidDataTypeException;
 import com.google.common.base.Preconditions;
 import lombok.extern.log4j.Log4j2;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Example;
+import org.springframework.data.domain.ExampleMatcher;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -40,16 +40,16 @@ public class DataServiceImpl implements DataService {
 	private final ClinicDao clinicDao;
 	private final ColorDao colorDao;
 	private final CalendarEventDao calendarEventDao;
+	private final GeneralDataDao generalDataDao;
 
 	//@Autowired
 	//private PasswordEncoder passwordEncoder;
 
-	public DataServiceImpl(final JobDao jobDao, final JobTemplateDao jobTemplateDao,
-						   final MaterialDao materialDao,
+	public DataServiceImpl(final JobDao jobDao, final JobTemplateDao jobTemplateDao, final MaterialDao materialDao,
 						   final ExecutionTemplateDao executionTemplateDao, final ExecutionDao executionDao,
-						   final OrderDao orderDao, final SampleDao sampleDao,
-						   final SampleTemplateDao sampleTemplateDao, final DoctorDao doctorDao, final UserDao userDao,
-						   final ClinicDao clinicDao, final ColorDao colorDao, final CalendarEventDao calendarEventDao) {
+						   final OrderDao orderDao, final SampleDao sampleDao, final SampleTemplateDao sampleTemplateDao,
+						   final DoctorDao doctorDao, final UserDao userDao, final ClinicDao clinicDao,
+						   final ColorDao colorDao, final CalendarEventDao calendarEventDao, final GeneralDataDao generalDataDao) {
 
 		this.jobDao = jobDao;
 		this.jobTemplateDao = jobTemplateDao;
@@ -65,6 +65,7 @@ public class DataServiceImpl implements DataService {
 		//this.passwordEncoder = passwordEncoder;
 		this.colorDao = colorDao;
 		this.calendarEventDao = calendarEventDao;
+		this.generalDataDao = generalDataDao;
 	}
 
 	@PostConstruct
@@ -281,20 +282,6 @@ public class DataServiceImpl implements DataService {
 	}
 
 	@Override
-	public List<Sample> getOrderSamples(final Long orderId) {
-		Preconditions.checkNotNull(orderId, "Order id cannot be null!");
-		log.info("Retrieve samples for order " + orderId);
-		return sampleDao.findByJobOrderId(orderId);
-	}
-
-	@Override
-	public List<Job> getOrderExecutions(final Long orderId) {
-		Preconditions.checkNotNull(orderId, "Order id cannot be null!");
-		log.info("Retrieve executions for order " + orderId);
-		return jobDao.findByOrderId(orderId);
-	}
-
-	@Override
 	public User getUser(final String username) throws DataDoesNotExistException {
 		Preconditions.checkNotNull(username, "Username cannot be null!");
 		log.info("Retrieve user " + username);
@@ -342,6 +329,17 @@ public class DataServiceImpl implements DataService {
 	@Transactional(readOnly = true)
 	public List<CalendarEvent> getCalendarEvents(final LocalDate start, final LocalDate end) {
 		return calendarEventDao.findByDateBetween(start, end);
+	}
+
+	@Override
+	public Optional<GeneralData> getGeneralData() {
+		return generalDataDao.findOne(Example.of(new GeneralData(), ExampleMatcher.matchingAny().withIgnoreNullValues()));
+	}
+
+	@Override
+	public GeneralData saveGeneralData(final GeneralData generalData) {
+		this.getGeneralData().ifPresent(prev -> generalData.setId(prev.getId()));
+		return generalDataDao.save(generalData);
 	}
 
 	private List<Sort.Order> extractSortOrders(final Map<String, Boolean> sortOrder) {
