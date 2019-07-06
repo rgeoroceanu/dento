@@ -1,6 +1,5 @@
 package com.company.dento.ui.component.layout;
 
-import com.company.dento.model.business.GeneralData;
 import com.company.dento.ui.localization.Localizable;
 import com.company.dento.ui.localization.Localizer;
 import com.company.dento.ui.page.CalendarPage;
@@ -56,7 +55,7 @@ public class MenuLayout extends Div implements Localizable {
 		this.executionTemplatesButton = addAdminItem(StartPage.class);
 		this.jobTemplatesButton = addAdminItem(JobTemplatesPage.class);
 		this.materialsButton = addAdminItem(MaterialsPage.class);
-		this.sampleTemplatesButton = addAdminItem(StartPage.class);
+		this.sampleTemplatesButton = addAdminItem(SampleTemplatesPage.class);
 		this.usersButton = addAdminItem(UsersPage.class);
 	}
 
