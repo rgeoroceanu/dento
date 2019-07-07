@@ -1,6 +1,5 @@
 package com.company.dento.ui.page;
 
-import com.company.dento.model.type.Role;
 import com.company.dento.service.DataService;
 import com.company.dento.ui.component.layout.MenuLayout;
 import com.company.dento.ui.localization.Localizable;
@@ -18,18 +17,17 @@ import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.page.LoadingIndicatorConfiguration;
+import com.vaadin.flow.router.AfterNavigationEvent;
+import com.vaadin.flow.router.AfterNavigationObserver;
 import com.vaadin.flow.router.BeforeEnterEvent;
 import com.vaadin.flow.router.BeforeEnterObserver;
 import com.vaadin.flow.server.InitialPageSettings;
 import com.vaadin.flow.server.PageConfigurator;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.context.SecurityContextHolder;
 
 import java.util.Arrays;
-import java.util.HashSet;
+import java.util.Collections;
+import java.util.List;
 import java.util.Locale;
-import java.util.Set;
 import java.util.stream.Collectors;
 
 /**
@@ -46,7 +44,7 @@ import java.util.stream.Collectors;
 @HtmlImport("frontend://styles/dento-noheader-grid.html")
 @HtmlImport("frontend://styles/upload-display-button.html")
 @HtmlImport("frontend://styles/dento-menu-details.html")
-public abstract class Page extends HorizontalLayout implements Localizable, BeforeEnterObserver, PageConfigurator {
+public abstract class Page extends HorizontalLayout implements Localizable, BeforeEnterObserver, PageConfigurator, AfterNavigationObserver {
 	private static final long serialVersionUID = 1L;
 	
 	protected DataService dataService;
@@ -75,6 +73,8 @@ public abstract class Page extends HorizontalLayout implements Localizable, Befo
 		Localizer.setLocale(ROMANIAN_LOCALE);
         contentLayout.addClassName("dento-page");
 		languageSelect.setVisible(false);
+		final boolean isAdmin = PageSecurityHelper.getCurrentUserAuthorities().contains("ADMIN");
+		settingsButton.setVisible(isAdmin);
 	}
 
 	@Override
@@ -84,40 +84,17 @@ public abstract class Page extends HorizontalLayout implements Localizable, Befo
 	}
 
 	@Override
+	public void afterNavigation(final AfterNavigationEvent afterNavigationEvent) {
+		if (!PageSecurityHelper.hasPageAccess(this.getClass())) {
+			UI.getCurrent().navigate(AccessDeniedPage.class);
+		}
+	}
+
+	@Override
 	public void beforeEnter(BeforeEnterEvent event) {
 		localizeRecursive(this);
 	}
-	
-	/**
-	 * Check if current has simple authority.
-	 * @return true if user has USER role.
-	 */
-	protected boolean isSimpleUser() {
-		return getAuthorities().contains(Role.USER.toString()) || getAuthorities().contains(Role.TECHNICIAN.toString());
-	}
-	
-	/**
-	 * Check if current user has ADMIN authority.
-	 * @return true if user has admin role.
-	 */
-	protected boolean isAdminUser() {
-		return getAuthorities().contains(Role.ADMIN.toString());
-	}
-	
-	private Set<String> getAuthorities() {
-		Authentication auth = (Authentication) SecurityContextHolder.getContext().getAuthentication();
-		Set<String> authorities = new HashSet<>();
-		if(auth!= null) {
-			org.springframework.security.core.userdetails.User user = (org.springframework.security.core.userdetails.User) auth.getPrincipal();
-			if(user != null && user.getAuthorities() != null) {
-				for(GrantedAuthority ga : user.getAuthorities()) {
-					authorities.add(ga.getAuthority());
-				}
-			}
-		}
-		return authorities;
-	}
-	
+
 	private void localizeRecursive(final Component root) {
 		if(root instanceof Localizable) {
 			((Localizable) root).localize();
@@ -147,7 +124,7 @@ public abstract class Page extends HorizontalLayout implements Localizable, Befo
 	protected void setContent(final Component content) {
 		this.contentLayout.add(content);
 	}
-	
+
 	private void initLayout() {
 		final Div headerWrapper = new Div();
 		final HorizontalLayout headerButtonsLayout = new HorizontalLayout();

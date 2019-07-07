@@ -1,16 +1,13 @@
 package com.company.dento.ui.page;
 
 import com.company.dento.service.DataService;
-import com.vaadin.flow.component.charts.Chart;
-import com.vaadin.flow.component.charts.model.*;
-import com.vaadin.flow.component.formlayout.FormLayout;
-import com.vaadin.flow.component.notification.Notification;
-import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.router.BeforeEnterEvent;
 import com.vaadin.flow.router.Route;
 import com.vaadin.flow.spring.annotation.UIScope;
-import org.springframework.security.access.annotation.Secured;
 import org.springframework.stereotype.Component;
+
+import java.util.Arrays;
+import java.util.List;
 
 /**
  * Layout of the start page containing individual boxes of information.
@@ -20,9 +17,8 @@ import org.springframework.stereotype.Component;
  */
 @Component
 @UIScope
-@Secured(value = {"USER", "ADMIN"})
 @Route(value = "")
-public class RootPage extends Page{
+public class RootPage extends Page {
 
 	private static final long serialVersionUID = 1L;
 

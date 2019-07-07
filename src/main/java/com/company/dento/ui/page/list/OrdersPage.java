@@ -40,14 +40,11 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @UIScope
 @org.springframework.stereotype.Component
-@Secured(value = {"USER", "ADMIN"})
 @Route(value = "orders")
 @Log4j2
 public class OrdersPage extends ListPage<Order, OrderSpecification> implements Localizable {

@@ -16,10 +16,11 @@ import lombok.extern.log4j.Log4j2;
 import org.springframework.security.access.annotation.Secured;
 
 import java.io.InputStream;
+import java.util.Collections;
+import java.util.List;
 
 @UIScope
 @org.springframework.stereotype.Component
-@Secured(value = {"USER", "ADMIN"})
 @Route(value = "doctors")
 @Log4j2
 public class DoctorsPage extends ListPage<Doctor, DoctorSpecification> implements Localizable {

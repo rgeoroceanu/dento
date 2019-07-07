@@ -8,20 +8,16 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
-import org.springframework.security.core.userdetails.User;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.security.provisioning.InMemoryUserDetailsManager;
-import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 
 @Configuration
 @EnableWebSecurity
 public class SpringSecurityConfiguration extends WebSecurityConfigurerAdapter {
 
-	//@Autowired
-	//private UserDetailsService userDetailsService;
+	@Autowired
+	private UserDetailsService userDetailsService;
 
 	@Override
 	protected void configure(HttpSecurity http) throws Exception {
@@ -60,15 +56,14 @@ public class SpringSecurityConfiguration extends WebSecurityConfigurerAdapter {
 	@Autowired
 	public void configureGlobal(final AuthenticationManagerBuilder auth) throws Exception {
 		auth
-				.inMemoryAuthentication().passwordEncoder(new BCryptPasswordEncoder())
-				.withUser("demouser").password("$2a$04$CBxD9.eUBMVCS2zGbBUDqOpkjsw/odYGe0Y4wEXbMnVjsGLSul0b2").roles("ADMIN", "USER");
-		//.userDetailsService(userDetailsService);
-		//.passwordEncoder(passwordEncoder());
+				//.inMemoryAuthentication().passwordEncoder(new BCryptPasswordEncoder())
+				//.withUser("demouser").password("$2a$04$CBxD9.eUBMVCS2zGbBUDqOpkjsw/odYGe0Y4wEXbMnVjsGLSul0b2").roles("ADMIN", "USER");
+		.userDetailsService(userDetailsService)
+		.passwordEncoder(passwordEncoder());
 	}
 
-	//@Bean
-	//public PasswordEncoder passwordEncoder() {
-	//	final PasswordEncoder encoder = new BCryptPasswordEncoder();
-	//	return encoder;
-	//}
+	@Bean
+	public PasswordEncoder passwordEncoder() {
+		return new BCryptPasswordEncoder();
+	}
 }

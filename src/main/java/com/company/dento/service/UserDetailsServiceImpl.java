@@ -15,7 +15,7 @@ import com.company.dento.model.business.User;
 import com.company.dento.model.type.Role;
 import com.company.dento.service.exception.DataDoesNotExistException;
 
-//@Service
+@Service
 public class UserDetailsServiceImpl implements UserDetailsService {
     
 	@Autowired

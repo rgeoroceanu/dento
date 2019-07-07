@@ -29,11 +29,12 @@ import java.io.InputStream;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
 import java.util.Optional;
 
 @UIScope
 @Component
-@Secured(value = {"USER", "ADMIN"})
 @Route(value = "executions")
 @Log4j2
 public class ExecutionsPage extends ListPage<Execution, ExecutionSpecification> implements Localizable {
@@ -178,6 +179,5 @@ public class ExecutionsPage extends ListPage<Execution, ExecutionSpecification> 
         filterDialog.addFilter("Cantitate", countFilter);
         filterDialog.addFilter("Pret", priceFilter);
         filterDialog.addFilter("Finalizata", finalizedFilter);
-
     }
 }

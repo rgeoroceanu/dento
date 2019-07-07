@@ -19,10 +19,11 @@ import lombok.extern.log4j.Log4j2;
 import org.springframework.security.access.annotation.Secured;
 
 import java.io.InputStream;
+import java.util.Collections;
+import java.util.List;
 
 @UIScope
 @org.springframework.stereotype.Component
-@Secured(value = {"USER", "ADMIN"})
 @Route(value = "jobTemplates")
 @Log4j2
 public class JobTemplatesPage extends ListPage<JobTemplate, JobTemplateSpecification> implements Localizable {

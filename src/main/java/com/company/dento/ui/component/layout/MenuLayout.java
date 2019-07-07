@@ -4,6 +4,7 @@ import com.company.dento.ui.localization.Localizable;
 import com.company.dento.ui.localization.Localizer;
 import com.company.dento.ui.page.CalendarPage;
 import com.company.dento.ui.page.Page;
+import com.company.dento.ui.page.PageSecurityHelper;
 import com.company.dento.ui.page.StartPage;
 import com.company.dento.ui.page.list.*;
 import com.vaadin.flow.component.details.Details;
@@ -37,6 +38,7 @@ public class MenuLayout extends Div implements Localizable {
 	private final UnorderedList generalButtonsLayout;
 	private final UnorderedList adminButtonsLayout;
 	private final Span adminLabel;
+	private Details adminDetails;
 
 	public MenuLayout() {
 		this.titleLabel = initTitleLabel();
@@ -58,6 +60,7 @@ public class MenuLayout extends Div implements Localizable {
 		this.materialsButton = addAdminItem(MaterialsPage.class);
 		this.sampleTemplatesButton = addAdminItem(SampleTemplatesPage.class);
 		this.usersButton = addAdminItem(UsersPage.class);
+		adminDetails.setVisible(adminButtonsLayout.getChildren().count() != 0);
 	}
 
 	@Override
@@ -128,7 +131,12 @@ public class MenuLayout extends Div implements Localizable {
 		span.setClassName("menu-title");
 		menuItem.add(icon, span);
 		listItem.add(menuItem);
-		generalButtonsLayout.add(listItem);
+		final boolean hasAccess = PageSecurityHelper.hasPageAccess(routerClass);
+		if (hasAccess) {
+			generalButtonsLayout.add(listItem);
+		}
+
+		menuItem.setVisible(hasAccess);
 		return menuItem;
 	}
 
@@ -140,14 +148,19 @@ public class MenuLayout extends Div implements Localizable {
 		span.setClassName("menu-title");
 		menuItem.add(span);
 		listItem.add(menuItem);
-		adminButtonsLayout.add(listItem);
+		final boolean hasAccess = PageSecurityHelper.hasPageAccess(routerClass);
+		if (hasAccess) {
+			adminButtonsLayout.add(listItem);
+		}
+
+		menuItem.setVisible(hasAccess);
 		return menuItem;
 	}
 
 	private void initAdminMenu() {
 		final ListItem adminItem = new ListItem();
 		adminItem.setClassName("nav-item");
-		final Details adminDetails = new Details();
+		adminDetails = new Details();
 		final Anchor adminAnchor = new Anchor();
 		adminDetails.addThemeVariants(DetailsVariant.REVERSE);
 		adminAnchor.add(new Icon(VaadinIcon.TOOLS), adminLabel);

@@ -16,15 +16,17 @@ import com.vaadin.flow.router.AfterNavigationEvent;
 import com.vaadin.flow.router.BeforeEvent;
 import com.vaadin.flow.router.OptionalParameter;
 import com.vaadin.flow.router.Route;
+import com.vaadin.flow.spring.annotation.UIScope;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.security.access.annotation.Secured;
+import org.springframework.stereotype.Component;
 
 import java.util.Collections;
+import java.util.List;
 import java.util.Optional;
 
-//@UIScope
-//@Component
-@Secured(value = {"USER", "ADMIN"})
+@UIScope
+@Component
 @Route(value = "general")
 @Log4j2
 public class GeneralDataEditPage extends EditPage<GeneralData> {
@@ -65,6 +67,7 @@ public class GeneralDataEditPage extends EditPage<GeneralData> {
 
     @Override
     public void afterNavigation(AfterNavigationEvent afterNavigationEvent) {
+        super.afterNavigation(afterNavigationEvent);
     }
 
     @Override

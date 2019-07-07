@@ -8,12 +8,14 @@ import com.company.dento.service.exception.DataDoesNotExistException;
 import com.company.dento.service.exception.InvalidDataTypeException;
 import com.google.common.base.Preconditions;
 import lombok.extern.log4j.Log4j2;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Example;
 import org.springframework.data.domain.ExampleMatcher;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -43,8 +45,8 @@ public class DataServiceImpl implements DataService {
 	private final CalendarEventDao calendarEventDao;
 	private final GeneralDataDao generalDataDao;
 
-	//@Autowired
-	//private PasswordEncoder passwordEncoder;
+	@Autowired
+	private PasswordEncoder passwordEncoder;
 
 	public DataServiceImpl(final JobDao jobDao, final JobTemplateDao jobTemplateDao, final MaterialDao materialDao,
 						   final ExecutionTemplateDao executionTemplateDao, final ExecutionDao executionDao,
@@ -78,8 +80,8 @@ public class DataServiceImpl implements DataService {
 			user.setFirstName("Admin");
 			user.setLastName("Admin");
 			user.setUsername("admin");
-			user.setPassword("admin1234");
-			user.setRoles(new HashSet<>(Arrays.asList(Role.ADMIN)));
+			user.setPassword("admin12345678");
+			user.setRoles(new HashSet<>(Arrays.asList(Role.USER)));
 			saveUserAndEncodePassword(user);
 			
 			// TODO remove this
@@ -301,7 +303,7 @@ public class DataServiceImpl implements DataService {
 		Preconditions.checkNotNull(user, "User must not be null!");
 		log.info("Save user " + user.getUsername());
 
-		//user.setPassword(passwordEncoder.encode(user.getPassword()));
+		user.setPassword(passwordEncoder.encode(user.getPassword()));
 		return userDao.saveAndFlush(user);
 	}
 

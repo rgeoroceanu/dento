@@ -49,6 +49,7 @@ public abstract class ListPage<T extends Base, V extends Specification<T>> exten
 
     @Override
     public void afterNavigation(final AfterNavigationEvent event) {
+        super.afterNavigation(event);
         clearFilters();
         refresh();
     }

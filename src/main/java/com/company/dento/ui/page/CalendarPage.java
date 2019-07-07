@@ -25,6 +25,9 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
 import java.util.stream.Collectors;
 
 /**
@@ -34,7 +37,6 @@ import java.util.stream.Collectors;
  */
 @Component
 @UIScope
-@Secured(value = {"USER", "ADMIN"})
 @Route(value = "calendar")
 public class CalendarPage extends Page implements AfterNavigationObserver {
 
@@ -53,6 +55,7 @@ public class CalendarPage extends Page implements AfterNavigationObserver {
 
 	@Override
 	public void afterNavigation(AfterNavigationEvent afterNavigationEvent) {
+		super.afterNavigation(afterNavigationEvent);
 		reload();
 	}
 

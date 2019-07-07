@@ -23,10 +23,11 @@ import org.apache.tomcat.jni.Local;
 import org.springframework.security.access.annotation.Secured;
 
 import java.io.InputStream;
+import java.util.Collections;
+import java.util.List;
 
 @UIScope
 @org.springframework.stereotype.Component
-@Secured(value = {"USER", "ADMIN"})
 @Route(value = "materials")
 @Log4j2
 public class MaterialsPage extends ListPage<Material, MaterialSpecification> implements Localizable {
