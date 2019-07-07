@@ -32,7 +32,7 @@ public class UsersPage extends ListPage<User, UserSpecification> implements Loca
     private final ConfirmDialog confirmDialog;
 
 	public UsersPage(final DataService dataService) {
-	    super(User.class, dataService);
+	    super(User.class, dataService, "Utilizatori");
 
         confirmDialog = new ConfirmDialog();
 
@@ -60,7 +60,7 @@ public class UsersPage extends ListPage<User, UserSpecification> implements Loca
 
     protected void confirmRemove(final User item) {
 	    confirmDialog.setHeader(String.format(Localizer.getLocalizedString("confirmRemove.header"),
-                Localizer.getLocalizedString("material")));
+                Localizer.getLocalizedString("user")));
         confirmDialog.setText(String.format(Localizer.getLocalizedString("confirmRemove.text"),
                 "utilizatorul " +  item.getUsername()));
 	    confirmDialog.addConfirmListener(e -> remove(item));

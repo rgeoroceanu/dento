@@ -43,7 +43,7 @@ public class DoctorEditPage extends EditPage<Doctor> {
     private final Label phoneLabel = new Label();
 
     public DoctorEditPage(final DataService dataService) {
-        super(dataService);
+        super(dataService, "Doctor");
 
         initGeneralLayout();
         reload();

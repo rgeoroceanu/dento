@@ -67,7 +67,7 @@ public class OrdersPage extends ListPage<Order, OrderSpecification> implements L
     private final ReportService reportService;
 
 	public OrdersPage(final DataService dataService, final ReportService reportService) {
-	    super(Order.class, dataService);
+	    super(Order.class, dataService, "Comenzi");
 	    this.reportService = reportService;
 
         clinicFilter = new ComboBox<>();

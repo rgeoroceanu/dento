@@ -47,7 +47,7 @@ public class UserEditPage extends EditPage<User> {
     private final Label passwordLabel = new Label();
 
     public UserEditPage(final DataService dataService) {
-        super(dataService);
+        super(dataService, "Utilizator");
 
         initGeneralLayout();
         reload();

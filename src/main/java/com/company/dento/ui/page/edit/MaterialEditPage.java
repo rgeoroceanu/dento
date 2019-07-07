@@ -49,7 +49,7 @@ public class MaterialEditPage extends EditPage<Material> {
     private final Label individualPricesLabel = new Label();
 
     public MaterialEditPage(final DataService dataService) {
-        super(dataService);
+        super(dataService, "Material");
 
         initGeneralLayout();
         reload();

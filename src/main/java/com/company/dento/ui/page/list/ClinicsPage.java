@@ -29,7 +29,7 @@ public class ClinicsPage extends ListPage<Clinic, ClinicSpecification> implement
     private final ConfirmDialog confirmDialog;
 
 	public ClinicsPage(final DataService dataService) {
-	    super(Clinic.class, dataService);
+	    super(Clinic.class, dataService, "Clinici");
 
         confirmDialog = new ConfirmDialog();
 

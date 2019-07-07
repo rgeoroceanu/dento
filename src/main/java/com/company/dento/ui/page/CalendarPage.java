@@ -46,7 +46,7 @@ public class CalendarPage extends Page implements AfterNavigationObserver {
 	private Label dateLabel = new Label();
 
 	public CalendarPage(final DataService dataService) {
-		super(dataService);
+		super("Programări", dataService);
 		calendar = FullCalendarBuilder.create().build();
 		initLayout();
 	}

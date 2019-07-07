@@ -52,7 +52,7 @@ public class JobTemplateEditPage extends EditPage<JobTemplate> {
     private final Label individualPricesLabel = new Label();
 
     public JobTemplateEditPage(final DataService dataService) {
-        super(dataService);
+        super(dataService, "Lucrare");
 
         initGeneralLayout();
         reload();

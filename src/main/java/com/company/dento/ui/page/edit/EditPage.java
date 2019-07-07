@@ -22,8 +22,8 @@ public abstract class EditPage<T> extends Page implements Localizable, AfterNavi
     private final Button saveButton = new Button();
     private final Button discardButton = new Button();
 
-    public EditPage(final DataService dataService) {
-        super(dataService);
+    public EditPage(final DataService dataService, final String title) {
+        super(title, dataService);
 
         final HorizontalLayout buttonsLayout = new HorizontalLayout();
         final Div footerDiv = new Div();

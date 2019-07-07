@@ -43,7 +43,7 @@ public class ExecutionTemplateEditPage extends EditPage<ExecutionTemplate> {
     private final Label individualPricesLabel = new Label();
 
     public ExecutionTemplateEditPage(final DataService dataService) {
-        super(dataService);
+        super(dataService, "Manoperă");
 
         initGeneralLayout();
         reload();

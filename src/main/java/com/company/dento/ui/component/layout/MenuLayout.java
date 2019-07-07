@@ -5,7 +5,6 @@ import com.company.dento.ui.localization.Localizer;
 import com.company.dento.ui.page.CalendarPage;
 import com.company.dento.ui.page.Page;
 import com.company.dento.ui.page.StartPage;
-import com.company.dento.ui.page.edit.GeneralDataEditPage;
 import com.company.dento.ui.page.list.*;
 import com.vaadin.flow.component.details.Details;
 import com.vaadin.flow.component.details.DetailsVariant;
@@ -32,7 +31,7 @@ public class MenuLayout extends Div implements Localizable {
 	private final RouterLink executionTemplatesButton;
 	private final RouterLink clinicsButton;
 	private final RouterLink usersButton;
-	private final RouterLink generalDataButton;
+	private final RouterLink colorsButton;
 	private final Label titleLabel;
 	private final UnorderedList generalButtonsLayout;
 	private final UnorderedList adminButtonsLayout;
@@ -49,8 +48,8 @@ public class MenuLayout extends Div implements Localizable {
 		this.ordersButton = addMenuItem(OrdersPage.class, VaadinIcon.FILE);
 		this.executionsButton = addMenuItem(ExecutionsPage.class, VaadinIcon.SPECIALIST);
 		initAdminMenu();
-		this.generalDataButton = addAdminItem(GeneralDataEditPage.class);
 		this.clinicsButton = addAdminItem(ClinicsPage.class);
+		this.colorsButton = addAdminItem(ToothColorsPage.class);
 		this.doctorsButton = addAdminItem(DoctorsPage.class);
 		this.executionTemplatesButton = addAdminItem(ExecutionTemplatesPage.class);
 		this.jobTemplatesButton = addAdminItem(JobTemplatesPage.class);
@@ -74,7 +73,7 @@ public class MenuLayout extends Div implements Localizable {
 		localizeMenuItem(sampleTemplatesButton, "samples");
 		localizeMenuItem(jobTemplatesButton, "jobs");
 		localizeMenuItem(usersButton, "users");
-		localizeMenuItem(generalDataButton, "generalData");
+		localizeMenuItem(colorsButton, "toothColors");
 	}
 
 	private void localizeMenuItem(final RouterLink routerLink, final String messageId) {

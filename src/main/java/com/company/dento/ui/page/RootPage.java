@@ -27,7 +27,7 @@ public class RootPage extends Page{
 	private static final long serialVersionUID = 1L;
 
 	public RootPage(final DataService dataService) {
-		super(dataService);
+		super("Root", dataService);
 	}
 
 	@Override

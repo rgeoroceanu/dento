@@ -32,7 +32,7 @@ public class ExecutionTemplatesPage extends ListPage<ExecutionTemplate, Executio
     private final ConfirmDialog confirmDialog;
 
 	public ExecutionTemplatesPage(final DataService dataService) {
-	    super(ExecutionTemplate.class, dataService);
+	    super(ExecutionTemplate.class, dataService, "Manopere");
 
         confirmDialog = new ConfirmDialog();
 
@@ -60,7 +60,7 @@ public class ExecutionTemplatesPage extends ListPage<ExecutionTemplate, Executio
 
     protected void confirmRemove(final ExecutionTemplate item) {
 	    confirmDialog.setHeader(String.format(Localizer.getLocalizedString("confirmRemove.header"),
-                Localizer.getLocalizedString("order")));
+                Localizer.getLocalizedString("execution")));
         confirmDialog.setText(String.format(Localizer.getLocalizedString("confirmRemove.text"),
                 "manopera " +  item.getName()));
 	    confirmDialog.addConfirmListener(e -> remove(item));

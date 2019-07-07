@@ -36,7 +36,7 @@ public class MaterialsPage extends ListPage<Material, MaterialSpecification> imp
     private final ConfirmDialog confirmDialog;
 
 	public MaterialsPage(final DataService dataService) {
-	    super(Material.class, dataService);
+	    super(Material.class, dataService, "Materiale");
 
         confirmDialog = new ConfirmDialog();
 

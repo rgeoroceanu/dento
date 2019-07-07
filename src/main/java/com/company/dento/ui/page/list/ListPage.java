@@ -26,8 +26,8 @@ public abstract class ListPage<T extends Base, V extends Specification<T>> exten
     protected final FilterDialog filterDialog;
     private HorizontalLayout menuLayout;
 
-    public ListPage(final Class<T> itemClass, final DataService dataService) {
-        super(dataService);
+    public ListPage(final Class<T> itemClass, final DataService dataService, final String title) {
+        super(title, dataService);
 
         grid = new FilterableGrid<T, V>(itemClass, dataService);
 

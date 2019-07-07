@@ -34,7 +34,7 @@ public class SampleTemplateEditPage extends EditPage<SampleTemplate> {
     private final Label activeLabel = new Label();
 
     public SampleTemplateEditPage(final DataService dataService) {
-        super(dataService);
+        super(dataService, "Probă");
 
         initGeneralLayout();
         reload();

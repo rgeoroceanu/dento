@@ -62,7 +62,7 @@ public class OrderEditPage extends EditPage<Order> {
     private final FormLayout generalLayout = new FormLayout();
 
     public OrderEditPage(final DataService dataService) {
-        super(dataService);
+        super(dataService, "Comandă");
 
         initGeneralTab();
         reload();

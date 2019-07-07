@@ -5,12 +5,14 @@ import com.company.dento.service.DataService;
 import com.company.dento.ui.component.layout.MenuLayout;
 import com.company.dento.ui.localization.Localizable;
 import com.company.dento.ui.localization.Localizer;
+import com.company.dento.ui.page.edit.GeneralDataEditPage;
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.combobox.ComboBox;
 import com.vaadin.flow.component.dependency.HtmlImport;
 import com.vaadin.flow.component.html.Div;
+import com.vaadin.flow.component.html.Label;
 import com.vaadin.flow.component.icon.Icon;
 import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
@@ -56,14 +58,18 @@ public abstract class Page extends HorizontalLayout implements Localizable, Befo
 	private final Button logoutButton;
 	private final Button settingsButton;
 	private final Div contentLayout;
+	private final Div title;
 	private final MenuLayout menuLayout;
 	
-	public Page(final DataService dataService) {
+	public Page(final String title, final DataService dataService) {
 		this.dataService = dataService;
 		this.languageSelect = initLanguageSelect();
 		this.settingsButton = initSettingsButton();
 		this.logoutButton = initLogoutButton();
 		this.contentLayout = new Div();
+		this.title = new Div();
+		this.title.addClassName("dento-page-title");
+		this.title.add(new Label(title));
 		this.menuLayout = new MenuLayout();
 		initLayout();
 		Localizer.setLocale(ROMANIAN_LOCALE);
@@ -149,7 +155,7 @@ public abstract class Page extends HorizontalLayout implements Localizable, Befo
 		rightLayout.getElement().getStyle().set("overflow-y", "hidden");
 		headerWrapper.setClassName("main-layout__header");
 		headerButtonsLayout.setClassName("main-layout__header-buttons");
-		rightLayout.add(headerWrapper, contentLayout);
+		rightLayout.add(headerWrapper, title, contentLayout);
 		headerButtonsLayout.add(languageSelect, settingsButton, logoutButton);
 		headerWrapper.add(headerButtonsLayout);
 		contentLayout.setClassName("main-layout__content");
@@ -194,11 +200,11 @@ public abstract class Page extends HorizontalLayout implements Localizable, Befo
 	}
 
 	private Button initSettingsButton() {
-		final Button settingsButtin = new Button();
-		settingsButtin.addClickListener(e -> {});
-		settingsButtin.setIcon(new Icon(VaadinIcon.COG_O));
-		settingsButtin.setClassName("main-layout__header-button");
-		return settingsButtin;
+		final Button settingsButton = new Button();
+		settingsButton.addClickListener(e -> settingsButton.getUI().ifPresent(ui -> ui.navigate(GeneralDataEditPage.class)));
+		settingsButton.setIcon(new Icon(VaadinIcon.COG_O));
+		settingsButton.setClassName("main-layout__header-button");
+		return settingsButton;
 	}
 
 	private void logout(final UI ui) {

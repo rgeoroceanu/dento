@@ -51,7 +51,7 @@ public class GeneralDataEditPage extends EditPage<GeneralData> {
     private final Label currencyLabel = new Label();
 
     public GeneralDataEditPage(final DataService dataService) {
-        super(dataService);
+        super(dataService, "Date generale");
 
         initGeneralLayout();
         reload();

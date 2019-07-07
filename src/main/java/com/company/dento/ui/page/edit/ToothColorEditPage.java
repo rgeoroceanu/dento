@@ -1,16 +1,16 @@
 package com.company.dento.ui.page.edit;
 
-import com.company.dento.model.business.Clinic;
+import com.company.dento.model.business.Color;
+import com.company.dento.model.type.ColorCategory;
 import com.company.dento.service.DataService;
 import com.company.dento.ui.localization.Localizer;
-import com.company.dento.ui.page.list.ClinicsPage;
+import com.company.dento.ui.page.list.ToothColorsPage;
 import com.vaadin.flow.component.UI;
+import com.vaadin.flow.component.combobox.ComboBox;
 import com.vaadin.flow.component.formlayout.FormLayout;
 import com.vaadin.flow.component.html.Label;
 import com.vaadin.flow.component.notification.Notification;
-import com.vaadin.flow.component.textfield.TextArea;
 import com.vaadin.flow.component.textfield.TextField;
-import com.vaadin.flow.data.validator.EmailValidator;
 import com.vaadin.flow.router.AfterNavigationEvent;
 import com.vaadin.flow.router.BeforeEvent;
 import com.vaadin.flow.router.OptionalParameter;
@@ -23,25 +23,19 @@ import java.util.Optional;
 //@UIScope
 //@Component
 @Secured(value = {"USER", "ADMIN"})
-@Route(value = "clinics/id")
+@Route(value = "toothColors/id")
 @Log4j2
-public class ClinicEditPage extends EditPage<Clinic> {
+public class ToothColorEditPage extends EditPage<Color> {
 
     private final FormLayout generalLayout = new FormLayout();
     private final TextField nameField = new TextField();
-    private final TextField townField = new TextField();
-    private final TextArea addressField = new TextArea();
-    private final TextField emailField = new TextField();
-    private final TextField phoneField = new TextField();
+    private final ComboBox<ColorCategory> categoryField = new ComboBox<>();
 
     private final Label nameLabel = new Label();
-    private final Label townLabel = new Label();
-    private final Label addressLabel = new Label();
-    private final Label emailLabel = new Label();
-    private final Label phoneLabel = new Label();
+    private final Label categoryLabel = new Label();
 
-    public ClinicEditPage(final DataService dataService) {
-            super(dataService, "Clinică");
+    public ToothColorEditPage(final DataService dataService) {
+        super(dataService, "Culoare dinte");
 
         initGeneralLayout();
         reload();
@@ -59,17 +53,17 @@ public class ClinicEditPage extends EditPage<Clinic> {
     public void setParameter(final BeforeEvent beforeEvent, final @OptionalParameter Long itemId) {
         reload();
 
-        final Optional<Clinic> item;
+        final Optional<Color> item;
         if (itemId != null) {
-            item = dataService.getEntity(itemId, Clinic.class);
+            item = dataService.getEntity(itemId, Color.class);
         } else {
-            item = Optional.of(new Clinic());
+            item = Optional.of(new Color());
         }
 
         if (item.isPresent()) {
             binder.setBean(item.get());
         } else {
-            beforeEvent.rerouteTo(ClinicsPage.class);
+            beforeEvent.rerouteTo(ToothColorsPage.class);
         }
     }
 
@@ -77,28 +71,21 @@ public class ClinicEditPage extends EditPage<Clinic> {
     public void localize() {
         super.localize();
         nameLabel.setText(Localizer.getLocalizedString("name"));
-        townLabel.setText(Localizer.getLocalizedString("town"));
-        addressLabel.setText(Localizer.getLocalizedString("address"));
-        phoneLabel.setText(Localizer.getLocalizedString("phone"));
-        emailLabel.setText(Localizer.getLocalizedString("email"));
+        categoryLabel.setText(Localizer.getLocalizedString("category"));
     }
 
-    protected void reload() { }
+    protected void reload() {
+        categoryField.setItems(ColorCategory.values());
+    }
 
     private void initGeneralLayout() {
-        generalLayout.addFormItem(nameField, nameLabel);
-        generalLayout.addFormItem(emailField, emailLabel);
-        generalLayout.addFormItem(phoneField, phoneLabel);
-        generalLayout.addFormItem(townField, townLabel);
-        generalLayout.addFormItem(addressField, addressLabel);
-
+        generalLayout.addFormItem(nameField, nameLabel).getStyle();
+        generalLayout.addFormItem(categoryField, categoryLabel);
         generalLayout.addClassName("dento-form-layout");
         nameField.addClassName("dento-form-field");
-        addressField.addClassName("dento-form-field");
-        townField.addClassName("dento-form-field");
-        emailField.addClassName("dento-form-field");
-        phoneField.addClassName("dento-form-field");
-
+        categoryField.addClassName("dento-form-field");
+        categoryField.setAllowCustomValue(false);
+        categoryField.setPreventInvalidInput(true);
         final FormLayout.ResponsiveStep rs1 = new FormLayout.ResponsiveStep("0", 1, FormLayout.ResponsiveStep.LabelsPosition.TOP);
         final FormLayout.ResponsiveStep rs2 = new FormLayout.ResponsiveStep("500px", 2, FormLayout.ResponsiveStep.LabelsPosition.ASIDE);
         generalLayout.setResponsiveSteps(rs1, rs2);
@@ -107,29 +94,19 @@ public class ClinicEditPage extends EditPage<Clinic> {
     protected void bindFields() {
         binder.forField(nameField)
                 .asRequired(Localizer.getLocalizedString("requiredValidation"))
-                .bind(Clinic::getName, Clinic::setName);
+                .bind(Color::getName, Color::setName);
 
-        binder.forField(townField)
+        binder.forField(categoryField)
                 .asRequired(Localizer.getLocalizedString("requiredValidation"))
-                .bind(Clinic::getTown, Clinic::setTown);
+                .bind(Color::getCategory, Color::setCategory);
 
-        binder.forField(addressField)
-                .bind(Clinic::getAddress, Clinic::setAddress);
-
-        binder.forField(emailField)
-                .asRequired(Localizer.getLocalizedString("requiredValidation"))
-                .withValidator(new EmailValidator("Email invalid!"))
-                .bind(Clinic::getEmail, Clinic::setEmail);
-
-        binder.forField(phoneField)
-                .bind(Clinic::getPhone, Clinic::setPhone);
     }
 
     protected void save() {
         if (binder.isValid()) {
-            final Clinic item = binder.getBean();
+            final Color item = binder.getBean();
             dataService.saveEntity(item);
-            UI.getCurrent().navigate(ClinicsPage.class);
+            UI.getCurrent().navigate(ToothColorsPage.class);
         } else {
             Notification.show(Localizer.getLocalizedString("validationError"),
                     5000, Notification.Position.BOTTOM_CENTER);
@@ -137,6 +114,6 @@ public class ClinicEditPage extends EditPage<Clinic> {
     }
 
     protected void discard() {
-        UI.getCurrent().navigate(ClinicsPage.class);
+        UI.getCurrent().navigate(ToothColorsPage.class);
     }
 }

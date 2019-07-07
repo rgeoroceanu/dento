@@ -31,7 +31,7 @@ public class StartPage extends Page{
 	private final FormLayout formLayout = new FormLayout();
 
 	public StartPage(final DataService dataService) {
-		super(dataService);
+		super("Acasă", dataService);
 		content.add(formLayout);
 		initPieChart();
 		initBarChart();

@@ -32,7 +32,7 @@ public class JobTemplatesPage extends ListPage<JobTemplate, JobTemplateSpecifica
     private final ConfirmDialog confirmDialog;
 
 	public JobTemplatesPage(final DataService dataService) {
-	    super(JobTemplate.class, dataService);
+	    super(JobTemplate.class, dataService, "Lucrări");
 
         confirmDialog = new ConfirmDialog();
 
@@ -61,7 +61,7 @@ public class JobTemplatesPage extends ListPage<JobTemplate, JobTemplateSpecifica
 
     protected void confirmRemove(final JobTemplate item) {
 	    confirmDialog.setHeader(String.format(Localizer.getLocalizedString("confirmRemove.header"),
-                Localizer.getLocalizedString("order")));
+                Localizer.getLocalizedString("job")));
         confirmDialog.setText(String.format(Localizer.getLocalizedString("confirmRemove.text"),
                 "lucrarea " +  item.getName()));
 	    confirmDialog.addConfirmListener(e -> remove(item));

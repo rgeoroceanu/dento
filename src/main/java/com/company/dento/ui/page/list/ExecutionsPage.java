@@ -51,7 +51,7 @@ public class ExecutionsPage extends ListPage<Execution, ExecutionSpecification> 
     private final ConfirmDialog confirmDialog;
 
 	public ExecutionsPage(final DataService dataService) {
-	    super(Execution.class, dataService);
+	    super(Execution.class, dataService, "Manopere");
 
         technicianFilter = new ComboBox<>();
         fromDateFilter = new DatePicker();
