@@ -38,7 +38,8 @@ public class DataServiceImpl implements DataService {
 	private final DoctorDao doctorDao;
 	private final UserDao userDao;
 	private final ClinicDao clinicDao;
-	private final ColorDao colorDao;
+	private final ToothColorDao toothColorDao;
+	private final ToothOptionDao toothOptionDao;
 	private final CalendarEventDao calendarEventDao;
 	private final GeneralDataDao generalDataDao;
 
@@ -49,7 +50,7 @@ public class DataServiceImpl implements DataService {
 						   final ExecutionTemplateDao executionTemplateDao, final ExecutionDao executionDao,
 						   final OrderDao orderDao, final SampleDao sampleDao, final SampleTemplateDao sampleTemplateDao,
 						   final DoctorDao doctorDao, final UserDao userDao, final ClinicDao clinicDao,
-						   final ColorDao colorDao, final CalendarEventDao calendarEventDao, final GeneralDataDao generalDataDao) {
+						   final ToothColorDao toothColorDao, ToothOptionDao toothOptionDao, final CalendarEventDao calendarEventDao, final GeneralDataDao generalDataDao) {
 
 		this.jobDao = jobDao;
 		this.jobTemplateDao = jobTemplateDao;
@@ -63,7 +64,8 @@ public class DataServiceImpl implements DataService {
 		this.userDao = userDao;
 		this.clinicDao = clinicDao;
 		//this.passwordEncoder = passwordEncoder;
-		this.colorDao = colorDao;
+		this.toothColorDao = toothColorDao;
+		this.toothOptionDao = toothOptionDao;
 		this.calendarEventDao = calendarEventDao;
 		this.generalDataDao = generalDataDao;
 	}
@@ -118,9 +120,9 @@ public class DataServiceImpl implements DataService {
 			doctor.setClinic(clinic);
 			saveEntity(doctor);
 
-			final Color color = new Color();
-			color.setName("A2");
-			saveEntity(color);
+			final ToothColor toothColor = new ToothColor();
+			toothColor.setName("A2");
+			saveEntity(toothColor);
 
 			Order order = new Order();
 			order.setDate(LocalDate.now());
@@ -128,7 +130,7 @@ public class DataServiceImpl implements DataService {
 			order.setPatient("Gheorghe");
 			order.setClinic(clinic);
 			order.setPrice(450);
-			order.setColor(color);
+			order.setToothColor(toothColor);
 			order.setDeliveryDate(LocalDateTime.now());
 			saveEntity(order);
 
@@ -139,7 +141,7 @@ public class DataServiceImpl implements DataService {
 			order2.setPrice(111);
 			order2.setPatient("Gheorghe");
 			order2.setClinic(clinic);
-			order2.setColor(color);
+			order2.setToothColor(toothColor);
 			order2.setDeliveryDate(LocalDateTime.now());
 			saveEntity(order2);
 
@@ -273,8 +275,10 @@ public class DataServiceImpl implements DataService {
 			return (JpaRepository<T, Long>) executionDao;
 		} else if (entityClass == ExecutionTemplate.class) {
 			return (JpaRepository<T, Long>) executionTemplateDao;
-		} else if (entityClass == Color.class) {
-			return (JpaRepository<T, Long>) colorDao;
+		} else if (entityClass == ToothColor.class) {
+			return (JpaRepository<T, Long>) toothColorDao;
+		} else if (entityClass == ToothOption.class) {
+			return (JpaRepository<T, Long>) toothOptionDao;
 		}
 		
 		log.warn("Invalid entity type " + entityClass.getSimpleName());

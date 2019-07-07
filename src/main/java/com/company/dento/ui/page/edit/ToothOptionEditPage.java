@@ -1,10 +1,11 @@
 package com.company.dento.ui.page.edit;
 
-import com.company.dento.model.business.ToothColor;
-import com.company.dento.model.type.ColorCategory;
+import com.company.dento.model.business.JobTemplate;
+import com.company.dento.model.business.ToothOption;
+import com.company.dento.model.type.ToothOptionColumn;
 import com.company.dento.service.DataService;
 import com.company.dento.ui.localization.Localizer;
-import com.company.dento.ui.page.list.ToothColorsPage;
+import com.company.dento.ui.page.list.ToothOptionsPage;
 import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.combobox.ComboBox;
 import com.vaadin.flow.component.formlayout.FormLayout;
@@ -23,19 +24,23 @@ import java.util.Optional;
 //@UIScope
 //@Component
 @Secured(value = {"USER", "ADMIN"})
-@Route(value = "toothColors/id")
+@Route(value = "toothOptions/id")
 @Log4j2
-public class ToothColorEditPage extends EditPage<ToothColor> {
+public class ToothOptionEditPage extends EditPage<ToothOption> {
 
     private final FormLayout generalLayout = new FormLayout();
     private final TextField nameField = new TextField();
-    private final ComboBox<ColorCategory> categoryField = new ComboBox<>();
+    private final TextField abbreviationField = new TextField();
+    private final ComboBox<ToothOptionColumn> columnField = new ComboBox<>();
+    private final ComboBox<JobTemplate> specificJobField = new ComboBox<>();
 
     private final Label nameLabel = new Label();
-    private final Label categoryLabel = new Label();
+    private final Label abbreviationLabel = new Label();
+    private final Label columnLabel = new Label();
+    private final Label specificJobLabel = new Label();
 
-    public ToothColorEditPage(final DataService dataService) {
-        super(dataService, "Culoare dinte");
+    public ToothOptionEditPage(final DataService dataService) {
+        super(dataService, "Opțiune dinte");
 
         initGeneralLayout();
         reload();
@@ -53,17 +58,17 @@ public class ToothColorEditPage extends EditPage<ToothColor> {
     public void setParameter(final BeforeEvent beforeEvent, final @OptionalParameter Long itemId) {
         reload();
 
-        final Optional<ToothColor> item;
+        final Optional<ToothOption> item;
         if (itemId != null) {
-            item = dataService.getEntity(itemId, ToothColor.class);
+            item = dataService.getEntity(itemId, ToothOption.class);
         } else {
-            item = Optional.of(new ToothColor());
+            item = Optional.of(new ToothOption());
         }
 
         if (item.isPresent()) {
             binder.setBean(item.get());
         } else {
-            beforeEvent.rerouteTo(ToothColorsPage.class);
+            beforeEvent.rerouteTo(ToothOptionsPage.class);
         }
     }
 
@@ -71,21 +76,28 @@ public class ToothColorEditPage extends EditPage<ToothColor> {
     public void localize() {
         super.localize();
         nameLabel.setText(Localizer.getLocalizedString("name"));
-        categoryLabel.setText(Localizer.getLocalizedString("category"));
+        abbreviationLabel.setText(Localizer.getLocalizedString("abbreviation"));
+        columnLabel.setText(Localizer.getLocalizedString("toothColumn"));
+        specificJobLabel.setText(Localizer.getLocalizedString("specificJob"));
     }
 
     protected void reload() {
-        categoryField.setItems(ColorCategory.values());
+        columnField.setItems(ToothOptionColumn.values());
+        specificJobField.setItems(dataService.getAll(JobTemplate.class));
     }
 
     private void initGeneralLayout() {
         generalLayout.addFormItem(nameField, nameLabel).getStyle();
-        generalLayout.addFormItem(categoryField, categoryLabel);
+        generalLayout.addFormItem(abbreviationField, abbreviationLabel);
+        generalLayout.addFormItem(columnField, columnLabel);
+        generalLayout.addFormItem(specificJobField, specificJobLabel);
         generalLayout.addClassName("dento-form-layout");
         nameField.addClassName("dento-form-field");
-        categoryField.addClassName("dento-form-field");
-        categoryField.setAllowCustomValue(false);
-        categoryField.setPreventInvalidInput(true);
+        abbreviationField.addClassName("dento-form-field");
+        columnField.addClassName("dento-form-field");
+        specificJobField.addClassName("dento-form-field");
+        columnField.setAllowCustomValue(false);
+        columnField.setPreventInvalidInput(true);
         final FormLayout.ResponsiveStep rs1 = new FormLayout.ResponsiveStep("0", 1, FormLayout.ResponsiveStep.LabelsPosition.TOP);
         final FormLayout.ResponsiveStep rs2 = new FormLayout.ResponsiveStep("500px", 2, FormLayout.ResponsiveStep.LabelsPosition.ASIDE);
         generalLayout.setResponsiveSteps(rs1, rs2);
@@ -94,19 +106,26 @@ public class ToothColorEditPage extends EditPage<ToothColor> {
     protected void bindFields() {
         binder.forField(nameField)
                 .asRequired(Localizer.getLocalizedString("requiredValidation"))
-                .bind(ToothColor::getName, ToothColor::setName);
+                .bind(ToothOption::getName, ToothOption::setName);
 
-        binder.forField(categoryField)
+        binder.forField(abbreviationField)
                 .asRequired(Localizer.getLocalizedString("requiredValidation"))
-                .bind(ToothColor::getCategory, ToothColor::setCategory);
+                .bind(ToothOption::getAbbreviation, ToothOption::setAbbreviation);
+
+        binder.forField(columnField)
+                .asRequired(Localizer.getLocalizedString("requiredValidation"))
+                .bind(ToothOption::getDisplayColumn, ToothOption::setDisplayColumn);
+
+        binder.forField(specificJobField)
+                .bind(ToothOption::getSpecificJob, ToothOption::setSpecificJob);
 
     }
 
     protected void save() {
         if (binder.isValid()) {
-            final ToothColor item = binder.getBean();
+            final ToothOption item = binder.getBean();
             dataService.saveEntity(item);
-            UI.getCurrent().navigate(ToothColorsPage.class);
+            UI.getCurrent().navigate(ToothOptionsPage.class);
         } else {
             Notification.show(Localizer.getLocalizedString("validationError"),
                     5000, Notification.Position.BOTTOM_CENTER);
@@ -114,6 +133,6 @@ public class ToothColorEditPage extends EditPage<ToothColor> {
     }
 
     protected void discard() {
-        UI.getCurrent().navigate(ToothColorsPage.class);
+        UI.getCurrent().navigate(ToothOptionsPage.class);
     }
 }

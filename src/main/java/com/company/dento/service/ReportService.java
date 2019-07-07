@@ -60,7 +60,7 @@ public class ReportService {
         parameters.put("CLINIC", order.getClinic().getName());
         parameters.put("DOCTOR", order.getDoctor().toString());
         parameters.put("ORDER_NO", order.getId());
-        parameters.put("COLOR", order.getColor().getName());
+        parameters.put("COLOR", order.getToothColor().getName());
         parameters.put("DELIVERY_DATE", order.getDeliveryDate().toLocalDate());
         parameters.put("JOBS", constructJobsParameter(order));
 

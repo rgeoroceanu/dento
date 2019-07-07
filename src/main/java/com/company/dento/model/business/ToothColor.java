@@ -9,8 +9,8 @@ import javax.persistence.*;
 @Getter
 @Setter
 @Entity
-@Table(name = "colors")
-public class Color extends Base {
+@Table(name = "tooth_colors")
+public class ToothColor extends Base {
 
     @Basic
     private String name;

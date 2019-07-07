@@ -42,7 +42,7 @@ public class OrderEditPage extends EditPage<Order> {
     private final Tab executionsSamplesTab = new Tab();
     private final ComboBox<Doctor> doctorField = new ComboBox<>();
     private final TextField patientField = new TextField();
-    private final ComboBox<Color> colorField = new ComboBox<>();
+    private final ComboBox<ToothColor> colorField = new ComboBox<>();
     private final TextArea observationsField = new TextArea();
     private final DatePicker dateField = new DatePicker();
     private final UploadField uploadField = new UploadField();
@@ -120,7 +120,7 @@ public class OrderEditPage extends EditPage<Order> {
 
     protected void reload() {
         doctorField.setItems(dataService.getAll(Doctor.class));
-        colorField.setItems(dataService.getAll(Color.class));
+        colorField.setItems(dataService.getAll(ToothColor.class));
         jobsField.setTechnicians(dataService.getAll(User.class));
         jobsField.setJobTemplates(dataService.getAll(JobTemplate.class));
     }
@@ -143,7 +143,7 @@ public class OrderEditPage extends EditPage<Order> {
         paidField.addClassName("dento-form-field");
         observationsField.addClassName("dento-form-field");
         observationsField.setHeight("6em");
-        colorField.setItemLabelGenerator(Color::getName);
+        colorField.setItemLabelGenerator(ToothColor::getName);
         final FormLayout.ResponsiveStep rs1 = new FormLayout.ResponsiveStep("0", 1, FormLayout.ResponsiveStep.LabelsPosition.TOP);
         final FormLayout.ResponsiveStep rs2 = new FormLayout.ResponsiveStep("500px", 2, FormLayout.ResponsiveStep.LabelsPosition.ASIDE);
         generalLayout.setResponsiveSteps(rs1, rs2);
@@ -165,7 +165,7 @@ public class OrderEditPage extends EditPage<Order> {
                 .bind(Order::getDate, Order::setDate);
 
         binder.forField(colorField)
-                .bind(Order::getColor, Order::setColor);
+                .bind(Order::getToothColor, Order::setToothColor);
 
         binder.forField(partialSumField)
                 .withConverter(new StringToIntegerConverter(Localizer.getLocalizedString("integerRangeValidation")))

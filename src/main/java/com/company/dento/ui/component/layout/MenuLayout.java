@@ -31,7 +31,8 @@ public class MenuLayout extends Div implements Localizable {
 	private final RouterLink executionTemplatesButton;
 	private final RouterLink clinicsButton;
 	private final RouterLink usersButton;
-	private final RouterLink colorsButton;
+	private final RouterLink toothColorsButton;
+	private final RouterLink toothOptionsButton;
 	private final Label titleLabel;
 	private final UnorderedList generalButtonsLayout;
 	private final UnorderedList adminButtonsLayout;
@@ -49,7 +50,8 @@ public class MenuLayout extends Div implements Localizable {
 		this.executionsButton = addMenuItem(ExecutionsPage.class, VaadinIcon.SPECIALIST);
 		initAdminMenu();
 		this.clinicsButton = addAdminItem(ClinicsPage.class);
-		this.colorsButton = addAdminItem(ToothColorsPage.class);
+		this.toothColorsButton = addAdminItem(ToothColorsPage.class);
+		this.toothOptionsButton = addAdminItem(ToothOptionsPage.class);
 		this.doctorsButton = addAdminItem(DoctorsPage.class);
 		this.executionTemplatesButton = addAdminItem(ExecutionTemplatesPage.class);
 		this.jobTemplatesButton = addAdminItem(JobTemplatesPage.class);
@@ -73,7 +75,8 @@ public class MenuLayout extends Div implements Localizable {
 		localizeMenuItem(sampleTemplatesButton, "samples");
 		localizeMenuItem(jobTemplatesButton, "jobs");
 		localizeMenuItem(usersButton, "users");
-		localizeMenuItem(colorsButton, "toothColors");
+		localizeMenuItem(toothColorsButton, "toothColors");
+		localizeMenuItem(toothOptionsButton, "toothOptions");
 	}
 
 	private void localizeMenuItem(final RouterLink routerLink, final String messageId) {

@@ -1,6 +1,6 @@
 package com.company.dento.dao.specification;
 
-import com.company.dento.model.business.Color;
+import com.company.dento.model.business.ToothColor;
 import lombok.Setter;
 import org.springframework.data.jpa.domain.Specification;
 
@@ -12,16 +12,16 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Specification for advanced search of {@link Color} entities.
+ * Specification for advanced search of {@link ToothColor} entities.
  *
  * @author Radu Georoceanu <rgeoroceanu@yahoo.com>
  *
  */
 @Setter
-public class ColorSpecification implements Specification<Color> {
+public class ToothColorSpecification implements Specification<ToothColor> {
 
     @Override
-    public Predicate toPredicate(final Root<Color> root,
+    public Predicate toPredicate(final Root<ToothColor> root,
                                  final CriteriaQuery<?> query, CriteriaBuilder builder) {
 
         final List<Predicate> predicates = new ArrayList<>();

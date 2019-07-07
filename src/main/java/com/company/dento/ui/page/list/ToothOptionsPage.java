@@ -1,13 +1,13 @@
 package com.company.dento.ui.page.list;
 
-import com.company.dento.dao.specification.ToothColorSpecification;
-import com.company.dento.model.business.ToothColor;
+import com.company.dento.dao.specification.ToothOptionSpecification;
+import com.company.dento.model.business.ToothOption;
 import com.company.dento.service.DataService;
 import com.company.dento.service.exception.DataDoesNotExistException;
 import com.company.dento.ui.component.common.ConfirmDialog;
 import com.company.dento.ui.localization.Localizable;
 import com.company.dento.ui.localization.Localizer;
-import com.company.dento.ui.page.edit.ToothColorEditPage;
+import com.company.dento.ui.page.edit.ToothOptionEditPage;
 import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.notification.Notification;
 import com.vaadin.flow.router.Route;
@@ -20,21 +20,23 @@ import java.io.InputStream;
 @UIScope
 @org.springframework.stereotype.Component
 @Secured(value = {"USER", "ADMIN"})
-@Route(value = "toothColors")
+@Route(value = "toothOptions")
 @Log4j2
-public class ToothColorsPage extends ListPage<ToothColor, ToothColorSpecification> implements Localizable {
+public class ToothOptionsPage extends ListPage<ToothOption, ToothOptionSpecification> implements Localizable {
 
 	private static final long serialVersionUID = 1L;
 
     private final ConfirmDialog confirmDialog;
 
-	public ToothColorsPage(final DataService dataService) {
-	    super(ToothColor.class, dataService, "Culori Dinți");
+	public ToothOptionsPage(final DataService dataService) {
+	    super(ToothOption.class, dataService, "Opțiuni Dinți");
 
         confirmDialog = new ConfirmDialog();
 
         grid.addColumn("name");
-        grid.addColumn("category");
+        grid.addColumn("abbreviation");
+        grid.addColumn("displayColumn");
+        grid.addColumn(o -> o.getSpecificJob() != null ? o.getSpecificJob().getName() : "").setKey("specificJob");
 
         addEditColumn();
         addRemoveColumn();
@@ -53,17 +55,17 @@ public class ToothColorsPage extends ListPage<ToothColor, ToothColorSpecificatio
 		confirmDialog.localize();
 	}
 
-    protected void confirmRemove(final ToothColor item) {
+    protected void confirmRemove(final ToothOption item) {
 	    confirmDialog.setHeader(String.format(Localizer.getLocalizedString("confirmRemove.header"),
-                Localizer.getLocalizedString("color")));
+                Localizer.getLocalizedString("toothOption")));
         confirmDialog.setText(String.format(Localizer.getLocalizedString("confirmRemove.text"),
-                "culoarea " +  item.getName()));
+                "opțiunea " +  item.getName()));
 	    confirmDialog.addConfirmListener(e -> remove(item));
 	    confirmDialog.open();
     }
 
     protected void refresh() {
-        final ToothColorSpecification criteria = new ToothColorSpecification();
+        final ToothOptionSpecification criteria = new ToothOptionSpecification();
         grid.refresh(criteria);
     }
 
@@ -71,18 +73,18 @@ public class ToothColorsPage extends ListPage<ToothColor, ToothColorSpecificatio
     protected void clearFilters() { }
 
     protected void add() {
-        UI.getCurrent().navigate(ToothColorEditPage.class);
+        UI.getCurrent().navigate(ToothOptionEditPage.class);
     }
 
-    protected void edit(final ToothColor item) {
-        UI.getCurrent().navigate(ToothColorEditPage.class, item.getId());
+    protected void edit(final ToothOption item) {
+        UI.getCurrent().navigate(ToothOptionEditPage.class, item.getId());
     }
 
-    private void remove(final ToothColor item) {
+    private void remove(final ToothOption item) {
         try {
-            dataService.deleteEntity(item.getId(), ToothColor.class);
+            dataService.deleteEntity(item.getId(), ToothOption.class);
         } catch (DataDoesNotExistException e) {
-            log.warn("Tried to delete non-nexisting toothColor: {}", item.getId());
+            log.warn("Tried to delete non-nexisting tooth option: {}", item.getId());
         }
         Notification.show(String.format(Localizer.getLocalizedString("confirmRemove.success"),
                 item.getId()), 3000, Notification.Position.BOTTOM_CENTER);

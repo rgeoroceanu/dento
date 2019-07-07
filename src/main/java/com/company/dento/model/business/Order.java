@@ -49,7 +49,7 @@ public class Order extends Base {
 	private boolean paid;
 
 	@ManyToOne
-	private Color color;
+	private ToothColor toothColor;
 
 	@Basic
 	private int partialSum;

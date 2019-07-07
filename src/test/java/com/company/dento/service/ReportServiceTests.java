@@ -47,9 +47,9 @@ public class ReportServiceTests {
 		doctor.setFirstName("Dr. Raul");
 		doctor.setLastName("Vasile");
 		order.setDoctor(doctor);
-		final Color color = new Color();
-		color.setName("A2");
-		order.setColor(color);
+		final ToothColor toothColor = new ToothColor();
+		toothColor.setName("A2");
+		order.setToothColor(toothColor);
 		final JobTemplate jobTemplate1 = new JobTemplate();
 		jobTemplate1.setName("Test Job 1");
 		final Job job1 = new Job();
