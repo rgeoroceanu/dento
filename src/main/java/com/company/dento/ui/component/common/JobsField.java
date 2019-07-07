@@ -31,7 +31,9 @@ public class JobsField extends AbstractCompositeField<VerticalLayout, JobsField,
     private final Button createButton = new Button();
     private final Accordion accordion = new Accordion();
     private Order order;
-    private List<User> technicians = new ArrayList<>();
+    private final List<User> technicians = new ArrayList<>();
+    private final List<ToothOption> optionsColumn1 = new ArrayList<>();
+    private final List<ToothOption> optionsColumn2 = new ArrayList<>();
 
     public JobsField() {
         super(null);
@@ -50,6 +52,16 @@ public class JobsField extends AbstractCompositeField<VerticalLayout, JobsField,
     public void setTechnicians(final List<User> technicians) {
         this.technicians.clear();
         this.technicians.addAll(technicians);
+    }
+
+    public void setColumn1Options(final List<ToothOption> optionsColumn1) {
+        this.optionsColumn1.clear();
+        this.optionsColumn1.addAll(optionsColumn1);
+    }
+
+    public void setColumn2Options(final List<ToothOption> optionsColumn2) {
+        this.optionsColumn2.clear();
+        this.optionsColumn2.addAll(optionsColumn2);
     }
 
     @Override
@@ -77,6 +89,7 @@ public class JobsField extends AbstractCompositeField<VerticalLayout, JobsField,
         jobLayout.setJob(job);
         jobLayout.localize();
         jobLayout.setTechnicians(technicians);
+        jobLayout.setTeethOptions(this.optionsColumn1, this.optionsColumn2);
         jobLayout.addTeethSelectListener(e -> value.values().forEach(jl -> jl.updateTeeth(this.getValue())));
         panel.setContent(jobLayout);
         accordion.add(panel);

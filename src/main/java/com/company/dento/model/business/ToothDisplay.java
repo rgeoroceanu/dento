@@ -11,7 +11,7 @@ public class ToothDisplay {
 
     public ToothDisplay(final Tooth tooth) {
         this.toothNumber = String.valueOf(tooth.getNumber());
-        this.toothType = tooth.getType() != null ? tooth.getType().name() : "";
-        this.toothProperty = tooth.getProperty() != null ? tooth.getProperty().name() : "";
+        this.toothType = tooth.getOption1() != null ? tooth.getOption1().getName() : "";
+        this.toothProperty = tooth.getOption2() != null ? tooth.getOption2().getName() : "";
     }
 }

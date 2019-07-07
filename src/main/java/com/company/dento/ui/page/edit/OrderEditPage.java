@@ -1,6 +1,7 @@
 package com.company.dento.ui.page.edit;
 
 import com.company.dento.model.business.*;
+import com.company.dento.model.type.ToothOptionColumn;
 import com.company.dento.service.DataService;
 import com.company.dento.ui.component.common.JobsField;
 import com.company.dento.ui.component.common.UploadField;
@@ -28,6 +29,7 @@ import lombok.extern.log4j.Log4j2;
 import org.springframework.security.access.annotation.Secured;
 
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 //@UIScope
 //@Component
@@ -122,6 +124,14 @@ public class OrderEditPage extends EditPage<Order> {
         doctorField.setItems(dataService.getAll(Doctor.class));
         colorField.setItems(dataService.getAll(ToothColor.class));
         jobsField.setTechnicians(dataService.getAll(User.class));
+        jobsField.setColumn1Options(dataService.getAll(ToothOption.class).stream()
+                .filter(o -> o.getDisplayColumn().equals(ToothOptionColumn.COLOANA_1))
+                .collect(Collectors.toList()));
+
+        jobsField.setColumn2Options(dataService.getAll(ToothOption.class).stream()
+                .filter(o -> o.getDisplayColumn().equals(ToothOptionColumn.COLOANA_2))
+                .collect(Collectors.toList()));
+
         jobsField.setJobTemplates(dataService.getAll(JobTemplate.class));
     }
 

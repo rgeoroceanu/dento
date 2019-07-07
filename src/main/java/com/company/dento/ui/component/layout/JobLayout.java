@@ -2,6 +2,7 @@ package com.company.dento.ui.component.layout;
 
 import com.company.dento.model.business.Job;
 import com.company.dento.model.business.Tooth;
+import com.company.dento.model.business.ToothOption;
 import com.company.dento.model.business.User;
 import com.company.dento.ui.component.common.ExecutionSelect;
 import com.company.dento.ui.component.common.SampleSelect;
@@ -40,6 +41,10 @@ public class JobLayout extends FormLayout implements Localizable {
     public JobLayout() {
         initLayout();
         bindFields();
+    }
+
+    public void setTeethOptions(final List<ToothOption> optionsColumn1, final List<ToothOption> optionsColumn2) {
+        teethSelect.setTeethOptions(optionsColumn1, optionsColumn2);
     }
 
     public void setTechnicians(final List<User> technicians) {

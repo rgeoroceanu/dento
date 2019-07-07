@@ -1,8 +1,7 @@
 package com.company.dento.ui.component.common;
 
 import com.company.dento.model.business.Tooth;
-import com.company.dento.model.type.ToothProperty;
-import com.company.dento.model.type.ToothType;
+import com.company.dento.model.business.ToothOption;
 import com.vaadin.flow.component.AbstractCompositeField;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.dialog.Dialog;
@@ -12,11 +11,9 @@ import com.vaadin.flow.component.icon.Icon;
 import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.radiobutton.RadioButtonGroup;
+import com.vaadin.flow.data.renderer.TextRenderer;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
@@ -26,17 +23,20 @@ public class TeethSelect extends AbstractCompositeField<Div, TeethSelect, Set<To
 
     public TeethSelect() {
         super(null);
-        IntStream.range(11, 19).forEach(this::addTooth);
-        IntStream.range(21, 29).forEach(this::addTooth);
-        IntStream.range(31, 39).forEach(this::addTooth);
-        IntStream.range(41, 49).forEach(this::addTooth);
 
         this.getContent().addClassName("dento-teeth-select");
         this.getContent().addClassName("dento-form-field");
     }
 
-    private void addTooth(int toothNumber) {
-        final ToothItem tooth = new ToothItem(toothNumber);
+    public void setTeethOptions(final List<ToothOption> optionsColumn1, final List<ToothOption> optionsColumn2) {
+        IntStream.range(11, 19).forEach(val -> this.addTooth(val, optionsColumn1, optionsColumn2));
+        IntStream.range(21, 29).forEach(val -> this.addTooth(val, optionsColumn1, optionsColumn2));
+        IntStream.range(31, 39).forEach(val -> this.addTooth(val, optionsColumn1, optionsColumn2));
+        IntStream.range(41, 49).forEach(val -> this.addTooth(val, optionsColumn1, optionsColumn2));
+    }
+
+    private void addTooth(int toothNumber, final List<ToothOption> column1, final List<ToothOption> column2) {
+        final ToothItem tooth = new ToothItem(toothNumber, column1, column2);
         tooth.addValueChangeListener(e -> this.setModelValue(getValue(), true));
         items.put(toothNumber, tooth);
         this.getContent().add(tooth);
@@ -54,7 +54,7 @@ public class TeethSelect extends AbstractCompositeField<Div, TeethSelect, Set<To
         return items.values().stream()
                 .filter(ti -> ti.getOptionalValue().isPresent())
                 .map(ToothItem::getValue)
-                .filter(ti -> ti.getProperty() != null && ti.getType() != null)
+                .filter(ti -> ti.getOption1() != null && ti.getOption2() != null)
                 .collect(Collectors.toSet());
     }
 
@@ -79,13 +79,13 @@ public class TeethSelect extends AbstractCompositeField<Div, TeethSelect, Set<To
         private boolean active = false;
         private Tooth value;
 
-        ToothItem(final int toothNumber) {
+        ToothItem(final int toothNumber, final List<ToothOption> column1, final List<ToothOption> column2) {
             super(null);
 
             button = new Button();
             icon = new Icon(VaadinIcon.TOOTH);
             select = new Dialog();
-            toothPropertySelect = new ToothPropertySelect();
+            toothPropertySelect = new ToothPropertySelect(column1, column2);
             toothPropertySelect.addSelectionListener(this::handleSelection);
             select.add(toothPropertySelect);
             toothPropertyDisplay = new ToothPropertyDisplay();
@@ -133,19 +133,19 @@ public class TeethSelect extends AbstractCompositeField<Div, TeethSelect, Set<To
 
         private void updateDisplay() {
             toggleState();
-            toothPropertyDisplay.setValue(value.getType(), value.getProperty());
+            toothPropertyDisplay.setValue(value.getOption1(), value.getOption2());
             toothPropertyDisplay.setVisible(true);
             //toothPropertySelect.setVisible(false);
             select.close();
             toothPropertySelect.clear();
         }
 
-        private void updateValue(final ToothType p1, final ToothProperty p2) {
-            value.setType(p1);
-            value.setProperty(p2);
+        private void updateValue(final ToothOption p1, final ToothOption p2) {
+            value.setOption1(p1);
+            value.setOption2(p2);
         }
 
-        private void handleSelection(final ToothType p1, final ToothProperty p2) {
+        private void handleSelection(final ToothOption p1, final ToothOption p2) {
             updateValue(p1, p2);
             updateDisplay();
             setModelValue(value, true);
@@ -186,23 +186,29 @@ public class TeethSelect extends AbstractCompositeField<Div, TeethSelect, Set<To
     }
 
     private static class ToothPropertySelect extends HorizontalLayout {
-        private final RadioButtonGroup<ToothType> g1;
-        private final RadioButtonGroup<ToothProperty> g2;
+        private final RadioButtonGroup<ToothOption> g1;
+        private final RadioButtonGroup<ToothOption> g2;
         private SelectionListener selectionListener;
+        private final List<ToothOption> col1;
+        private final List<ToothOption> col2;
 
         private interface SelectionListener {
-            void selected(ToothType t1, ToothProperty t2);
+            void selected(ToothOption t1, ToothOption t2);
         }
 
-        ToothPropertySelect() {
+        ToothPropertySelect(final List<ToothOption> col1, final List<ToothOption> col2) {
+            this.col1 = col1;
+            this.col2 = col2;
             g1 = new RadioButtonGroup<>();
             g2 = new RadioButtonGroup<>();
             g1.addClassName("dento-teeth-select-radio-group");
             g2.addClassName("dento-teeth-select-radio-group");
-            g1.setItems(ToothType.values());
-            g2.setItems(ToothProperty.values());
+            g1.setItems(col1);
+            g2.setItems(col2);
             g1.addValueChangeListener(e -> itemSelected());
             g2.addValueChangeListener(e -> itemSelected());
+            g1.setRenderer(new TextRenderer<>(ToothOption::getAbbreviation));
+            g2.setRenderer(new TextRenderer<>(ToothOption::getAbbreviation));
             this.add(g1, g2);
             this.addClassName("dento-teeth-select-properties");
         }
@@ -214,13 +220,13 @@ public class TeethSelect extends AbstractCompositeField<Div, TeethSelect, Set<To
         void clear() {
             g1.clear();
             g2.clear();
-            g1.setItems(ToothType.values());
-            g2.setItems(ToothProperty.values());
+            g1.setItems(col1);
+            g2.setItems(col2);
         }
 
         private void itemSelected() {
-            final Optional<ToothType> type = g1.getOptionalValue();
-            final Optional<ToothProperty> prop = g2.getOptionalValue();
+            final Optional<ToothOption> type = g1.getOptionalValue();
+            final Optional<ToothOption> prop = g2.getOptionalValue();
             if (type.isPresent() && prop.isPresent()) {
                 selectionListener.selected(type.get(), prop.get());
             }
@@ -229,18 +235,18 @@ public class TeethSelect extends AbstractCompositeField<Div, TeethSelect, Set<To
 
     private static class ToothPropertyDisplay extends Div {
 
-        private final Div typeDiv;
-        private final Div propertyDiv;
+        private final Div option1;
+        private final Div option2;
 
         private ToothPropertyDisplay() {
-            typeDiv = new Div();
-            propertyDiv = new Div();
-            this.add(typeDiv, propertyDiv);
+            option1 = new Div();
+            option2 = new Div();
+            this.add(option1, option2);
         }
 
-        void setValue(final ToothType type, final ToothProperty property) {
-            typeDiv.setText(type.toString());
-            propertyDiv.setText(property.toString());
+        void setValue(final ToothOption o1, final ToothOption o2) {
+            option1.setText(o1.getAbbreviation());
+            option2.setText(o2.getAbbreviation());
         }
     }
 }
