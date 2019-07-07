@@ -26,4 +26,5 @@ public interface DataService {
 	List<CalendarEvent> getCalendarEvents(final LocalDate start, final LocalDate end);
 	Optional<GeneralData> getGeneralData();
 	GeneralData saveGeneralData(final GeneralData generalData);
+	List<User> getAllTechnicians();
 }

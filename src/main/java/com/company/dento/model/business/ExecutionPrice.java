@@ -14,11 +14,26 @@ import lombok.ToString;
 @ToString
 @Entity
 @Table(name = "execution_prices")
-public class ExecutionPrice extends Base {
+public class ExecutionPrice extends Base implements Price<User> {
 	
 	@OneToOne
 	private User technician;
 
 	@Basic
 	private int price;
+
+	@Override
+	public User getKey() {
+		return technician;
+	}
+
+	@Override
+	public void setKey(final User key) {
+		this.technician = key;
+	}
+
+	@Override
+	public String getKeyName() {
+		return String.format("%s %s", technician.getFirstName(), technician.getLastName());
+	}
 }

@@ -342,6 +342,13 @@ public class DataServiceImpl implements DataService {
 		return generalDataDao.save(generalData);
 	}
 
+	@Override
+	public List<User> getAllTechnicians() {
+		return userDao.findAll().stream()
+				.filter(u -> u.getRoles().contains(Role.TECHNICIAN))
+				.collect(Collectors.toList());
+	}
+
 	private List<Sort.Order> extractSortOrders(final Map<String, Boolean> sortOrder) {
 		return sortOrder.entrySet().stream()
 				.map(e -> new Sort.Order(e.getValue() ? Sort.Direction.ASC : Sort.Direction.DESC, e.getKey()))

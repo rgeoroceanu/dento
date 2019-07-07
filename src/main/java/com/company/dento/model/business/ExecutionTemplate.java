@@ -5,8 +5,8 @@ import lombok.Getter;
 import lombok.Setter;
 
 import javax.persistence.*;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * 
@@ -29,8 +29,8 @@ public class ExecutionTemplate extends Base {
 	@Basic
 	private boolean active;
 
-	@OneToMany
-	private List<ExecutionPrice> individualPrices  = new ArrayList<>();
+	@ElementCollection(fetch = FetchType.LAZY)
+	private Set<ExecutionPrice> individualPrices  = new HashSet<>();
 
 	@Basic
 	private int coefficient;
