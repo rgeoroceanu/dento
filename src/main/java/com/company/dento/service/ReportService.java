@@ -9,11 +9,16 @@ import net.sf.jasperreports.engine.JRException;
 import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Service;
 
+import javax.imageio.ImageIO;
+import java.awt.*;
+import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.List;
 import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
@@ -25,24 +30,29 @@ public class ReportService {
 
     private final JasperWriter jasperWriter;
     private final Resource orderReportTemplate;
+    private final DataService dataService;
+    private final DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("dd.MM.yyyy");
 
-    public ReportService(final JasperWriter jasperWriter, final Resource orderReportTemplate) {
+    public ReportService(final JasperWriter jasperWriter, final Resource orderReportTemplate,
+                         final DataService dataService) {
+
         this.jasperWriter = jasperWriter;
         this.orderReportTemplate = orderReportTemplate;
+        this.dataService = dataService;
     }
 
     public File createOrderReport(final Order order) throws CannotGenerateReportException {
         Preconditions.checkNotNull(order, "Order cannot be null");
         log.info("Creating order report {}", order);
 
+        final GeneralData generalData = dataService.getGeneralData()
+                .orElseThrow(() -> new CannotGenerateReportException("Error generating report: missing general data!"));
+
         try {
-            return jasperWriter.writeReport(orderReportTemplate.getFile(), constructOrderParameters(order));
-        } catch (final JRException e) {
-            e.printStackTrace();
-        } catch (final IOException e) {
-            e.printStackTrace();
+            return jasperWriter.writeReport(orderReportTemplate.getFile(), constructOrderParameters(order, generalData));
+        } catch (final JRException | IOException e) {
+            throw new CannotGenerateReportException("Error generating report!", e);
         }
-        return null;
     }
 
     public File createOrdersReport(final List<Order> orders) throws CannotGenerateReportException {
@@ -51,18 +61,23 @@ public class ReportService {
        return null;
     }
 
-    private Map<String, Object> constructOrderParameters(final Order order) {
+    private Map<String, Object> constructOrderParameters(final Order order, final GeneralData generalData) {
         final Map<String, Object> parameters = new HashMap<>();
-        parameters.put("COMPANY_NAME", "Dento");
-        parameters.put("ADDRESS1", "Aici adresa");
-        parameters.put("ADDRESS2", "Oras, cod");
-        parameters.put("CONTACT", "Telefon, mail");
+        parameters.put("COMPANY_NAME", generalData.getLaboratoryName());
+        parameters.put("ADDRESS1", generalData.getAddress());
+        parameters.put("ADDRESS2", String.format("%s, %s", generalData.getPostalCode(), generalData.getTown()));
+        parameters.put("CONTACT", String.format("%s, %s",generalData.getPhone(), generalData.getEmail()));
         parameters.put("CLINIC", order.getClinic().getName());
         parameters.put("DOCTOR", order.getDoctor().toString());
         parameters.put("ORDER_NO", order.getId());
         parameters.put("COLOR", order.getToothColor().getName());
-        parameters.put("DELIVERY_DATE", order.getDeliveryDate().toLocalDate());
+        parameters.put("DELIVERY_DATE", dateFormatter.format(order.getDeliveryDate()));
         parameters.put("JOBS", constructJobsParameter(order));
+        parameters.put("ORDER_DATE", dateFormatter.format(order.getDate()));
+
+        if (generalData.getLogo() != null) {
+            parameters.put("LOGO", getLogoImage(generalData));
+        }
 
         parameters.put("TEETH1", constructTeethParameter(order, 11, 18, true));
         parameters.put("TEETH2", constructTeethParameter(order, 21, 28, false));
@@ -72,6 +87,18 @@ public class ReportService {
         parameters.put("EXECUTIONS", constructExecutionsParameter(order));
 
         return parameters;
+    }
+
+    private Image getLogoImage(final GeneralData generalData) {
+        final StoredFile logoFile = generalData.getLogo();
+        final InputStream in = new ByteArrayInputStream(logoFile.getContent());
+
+        try {
+            return ImageIO.read(in);
+        } catch (final IOException e) {
+            log.error("Error loading logo image: ", e);
+            return null;
+        }
     }
 
     private List<ToothDisplay> constructTeethParameter(final Order order, final int startNumber, final int endNumber,

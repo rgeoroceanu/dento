@@ -65,13 +65,15 @@
 	<parameter name="ORDER_NO" class="java.lang.Long"/>
 	<parameter name="PACIENT" class="java.lang.String"/>
 	<parameter name="COLOR" class="java.lang.String"/>
-	<parameter name="DELIVERY_DATE" class="java.time.LocalDate"/>
+	<parameter name="DELIVERY_DATE" class="java.lang.String"/>
 	<parameter name="OBSERVATIONS" class="java.lang.String"/>
 	<parameter name="JOBS" class="java.util.List"/>
 	<parameter name="TEETH1" class="java.util.List"/>
 	<parameter name="TEETH2" class="java.util.List"/>
 	<parameter name="TEETH3" class="java.util.List"/>
 	<parameter name="TEETH4" class="java.util.List"/>
+	<parameter name="ORDER_DATE" class="java.lang.String"/>
+	<parameter name="LOGO" class="java.awt.Image"/>
 	<detail>
 		<band height="595" splitType="Stretch">
 			<line>
@@ -93,10 +95,11 @@
 				<textElement>
 					<font fontName="DejaVu Sans"/>
 				</textElement>
-				<textFieldExpression><![CDATA[new java.util.Date()]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$P{ORDER_DATE}]]></textFieldExpression>
 			</textField>
 			<image hAlign="Center">
 				<reportElement x="0" y="0" width="130" height="60" uuid="94883631-a913-43e2-b182-ab8d77d0181e"/>
+				<imageExpression class="java.awt.Image"><![CDATA[$P{LOGO}]]></imageExpression>
 			</image>
 			<staticText>
 				<reportElement x="0" y="90" width="240" height="25" uuid="30ffc959-3537-4989-9a19-70056548ce59">
