@@ -111,6 +111,7 @@ public class FilterableGrid<T extends Base, V extends Specification<T>> extends 
     @Override
     public void localize() {
         this.getColumns().stream()
+                .filter(column -> column.getKey() != null)
                 .filter(column -> !Arrays.asList("remove", "add", "edit", "print").contains(column.getKey()))
                 .forEach(column -> column.setHeader(Localizer.getLocalizedString(column.getKey())));
         this.setItemDetailsRenderer(new ComponentRenderer<>(this::createItemDetails));

@@ -14,6 +14,6 @@ public interface OrderDao extends PageableRepository<Order, Long> {
     @EntityGraph(attributePaths = {"jobs", "jobs.teeth", "storedFiles", "jobs.samples", "jobs.executions"}, type = EntityGraph.EntityGraphType.LOAD)
     Optional<Order> findById(Long id);
 
-    @EntityGraph(value = "order.jobs", attributePaths = {"jobs"}, type = EntityGraph.EntityGraphType.LOAD)
+    @EntityGraph(value = "order.jobs", attributePaths = {"jobs", "jobs.executions"}, type = EntityGraph.EntityGraphType.LOAD)
     List<Order> findAll(Specification<Order> spec, int offset, int limit, Sort sort);
 }

@@ -33,14 +33,14 @@ import com.vaadin.flow.spring.annotation.UIScope;
 import lombok.extern.log4j.Log4j2;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.math.NumberUtils;
-import org.springframework.security.access.annotation.Secured;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.*;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @UIScope
@@ -59,7 +59,6 @@ public class OrdersPage extends ListPage<Order, OrderSpecification> implements L
     private final TextField patientFilter;
     private final ComboBox<Clinic> clinicFilter;
     private final ComboBox<Doctor> doctorFilter;
-    private final TextField priceFilter;
     private final ConfirmDialog confirmDialog;
     private final ReportService reportService;
 
@@ -75,7 +74,6 @@ public class OrdersPage extends ListPage<Order, OrderSpecification> implements L
         paidFilter = new ComboBox<>();
         idFilter = new TextField();
         patientFilter = new TextField();
-        priceFilter = new TextField();
         confirmDialog = new ConfirmDialog();
 
         grid.addColumn(new LocalDateRenderer<>(Order::getDate, "d.M.yyyy"))
@@ -156,9 +154,6 @@ public class OrdersPage extends ListPage<Order, OrderSpecification> implements L
                 .filter(StringUtils::isNumeric)
                 .map(Long::valueOf).orElse(null));
         criteria.setPatient(patientFilter.getOptionalValue().filter(val -> !val.isEmpty()).orElse(null));
-        criteria.setPrice(priceFilter.getOptionalValue()
-                .filter(NumberUtils::isCreatable)
-                .map(Integer::valueOf).orElse(null));
         grid.refresh(criteria);
     }
 
@@ -247,7 +242,6 @@ public class OrdersPage extends ListPage<Order, OrderSpecification> implements L
         doctorFilter.setValue(null);
         clinicFilter.setValue(null);
         idFilter.setValue("");
-        priceFilter.setValue("");
     }
 
     @Override
@@ -276,7 +270,6 @@ public class OrdersPage extends ListPage<Order, OrderSpecification> implements L
         filterDialog.addFilter("Doctor", doctorFilter);
         filterDialog.addFilter("Platit", paidFilter);
         filterDialog.addFilter("Finalizat", finalizedFilter);
-        filterDialog.addFilter("Pret", priceFilter);
     }
 
     private Component createCollectionColumn(final Collection<String> values) {

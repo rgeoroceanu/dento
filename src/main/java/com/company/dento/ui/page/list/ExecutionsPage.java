@@ -1,183 +1,201 @@
 package com.company.dento.ui.page.list;
 
-import com.company.dento.dao.specification.ExecutionSpecification;
-import com.company.dento.model.business.Execution;
-import com.company.dento.model.business.ExecutionTemplate;
+import com.company.dento.dao.specification.OrderSpecification;
+import com.company.dento.model.business.Job;
+import com.company.dento.model.business.Order;
 import com.company.dento.model.business.User;
 import com.company.dento.service.DataService;
-import com.company.dento.service.exception.DataDoesNotExistException;
+import com.company.dento.service.ReportService;
+import com.company.dento.service.exception.CannotGenerateReportException;
 import com.company.dento.ui.component.common.ConfirmDialog;
 import com.company.dento.ui.localization.Localizable;
 import com.company.dento.ui.localization.Localizer;
+import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.combobox.ComboBox;
 import com.vaadin.flow.component.datepicker.DatePicker;
-import com.vaadin.flow.component.icon.Icon;
-import com.vaadin.flow.component.icon.VaadinIcon;
-import com.vaadin.flow.component.notification.Notification;
+import com.vaadin.flow.component.grid.Grid;
+import com.vaadin.flow.component.html.Div;
+import com.vaadin.flow.component.html.Label;
+import com.vaadin.flow.component.html.Paragraph;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
-import com.vaadin.flow.component.textfield.TextField;
+import com.vaadin.flow.data.provider.Query;
 import com.vaadin.flow.data.renderer.LocalDateRenderer;
 import com.vaadin.flow.router.Route;
 import com.vaadin.flow.spring.annotation.UIScope;
 import lombok.extern.log4j.Log4j2;
-import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.math.NumberUtils;
-import org.springframework.security.access.annotation.Secured;
-import org.springframework.stereotype.Component;
+import org.apache.commons.io.FileUtils;
 
+import java.io.IOException;
 import java.io.InputStream;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
+import java.util.Collection;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @UIScope
-@Component
+@org.springframework.stereotype.Component
 @Route(value = "executions")
 @Log4j2
-public class ExecutionsPage extends ListPage<Execution, ExecutionSpecification> implements Localizable {
-	
-	private static final long serialVersionUID = 1L;
+public class ExecutionsPage extends ListPage<Order, OrderSpecification> implements Localizable {
 
-    private final ComboBox<User> technicianFilter;
+    private static final long serialVersionUID = 1L;
+
     private final DatePicker fromDateFilter;
     private final DatePicker toDateFilter;
+    private final ComboBox<User> technicianFilter;
     private final ComboBox<Boolean> finalizedFilter;
-    private final TextField orderIdFilter;
-    private final ComboBox<String> templateNameFilter;
-    private final TextField countFilter;
-    private final TextField priceFilter;
     private final ConfirmDialog confirmDialog;
+    private final ReportService reportService;
 
-	public ExecutionsPage(final DataService dataService) {
-	    super(Execution.class, dataService, "Manopere");
+    final Label jobTypeLabel = new Label("Tip Lucrare");
+    final Label executionNameLabel = new Label("Nume Manoperă");
+    final Label countLabel = new Label("Cantitate");
+    final Label pricePerElementLabel = new Label("Valoare Unitară");
+    final Label priceTotalLabel = new Label("Valoare Totală");
+    final Div totalSumLabel = new Div();
+
+    public ExecutionsPage(final DataService dataService, final ReportService reportService) {
+        super(Order.class, dataService, "Manopere Tehnicieni");
+        this.reportService = reportService;
 
         technicianFilter = new ComboBox<>();
         fromDateFilter = new DatePicker();
         toDateFilter = new DatePicker();
         finalizedFilter = new ComboBox<>();
-        orderIdFilter = new TextField();
-        templateNameFilter = new ComboBox<>();
-        countFilter = new TextField();
-        priceFilter = new TextField();
         confirmDialog = new ConfirmDialog();
+        technicianFilter.setPreventInvalidInput(true);
+        technicianFilter.setAllowCustomValue(false);
 
-        grid.addColumn(new LocalDateRenderer<>(item -> item.getCreated().toLocalDate(), "d.M.yyyy"))
+        final HorizontalLayout jobsHeader = new HorizontalLayout(jobTypeLabel, executionNameLabel,
+                countLabel, pricePerElementLabel, priceTotalLabel);
+
+        jobsHeader.getStyle().set("padding-left", "16px");
+        jobTypeLabel.setWidth("25%");
+        executionNameLabel.setWidth("25%");
+        countLabel.setWidth("15%");
+        pricePerElementLabel.setWidth("15%");
+        priceTotalLabel.setWidth("15%");
+
+        grid.addColumn(new LocalDateRenderer<>(Order::getDate, "d.M.yyyy"))
                 .setKey("date");
-        grid.addColumn("template.name");
 
-        grid.addColumn("job.order.id");
-        grid.addColumn("technician");
-        grid.addColumn("count");
-        grid.addColumn("price");
+        grid.addColumn("id");
+        grid.addColumn("patient");
+        grid.addColumn("clinic.name");
+        grid.addColumn("doctor");
 
-        grid.addComponentColumn(item -> {
-            final Icon icon = new Icon(item.getJob().getOrder().isFinalized() ? VaadinIcon.CHECK : VaadinIcon.CLOSE_SMALL);
-            icon.addClassName("dento-grid-icon");
-            final String color = item.getJob().getOrder().isFinalized() ? "green": "red";
-            icon.setColor(color);
-            return icon;
-        }).setKey("jobFinalized");
+        grid.addComponentColumn(item -> createJobsColumn(item.getJobs()))
+                .setWidth("40%").setHeader(jobsHeader);
 
-        addRemoveColumn();
-        addButton.setVisible(false);
+        grid.appendFooterRow().getCells().get(5).setComponent(totalSumLabel);
+        totalSumLabel.setWidthFull();
+        totalSumLabel.setText("Total: 100,00 RON");
+        totalSumLabel.getStyle().set("text-align", "right");
+        totalSumLabel.getStyle().set("font-weight", "bold");
 
+        this.addPrintButton("raport_manopere_tehnicieni");
+        this.addButton.setVisible(false);
+
+        //grid.setHeightByRows(true);
         grid.setNonResponsiveColumns(grid.getColumns().get(0), grid.getColumns().get(1));
+        grid.setDetailColumns(grid.getColumns().get(2), grid.getColumns().get(3), grid.getColumns().get(4));
 
         initFilters();
-	}
-	
-	@Override
-	public void localize() {
-		super.localize();
-		confirmDialog.localize();
+    }
+
+    @Override
+    public void localize() {
+        super.localize();
+        confirmDialog.localize();
         finalizedFilter.setItemLabelGenerator(item ->
                 item ? Localizer.getLocalizedString("yes") : Localizer.getLocalizedString("no"));
-	}
-
-    @Override
-    protected void add() { }
-
-    protected void confirmRemove(final Execution item) {
-	    confirmDialog.setHeader(String.format(Localizer.getLocalizedString("confirmRemove.header"),
-                Localizer.getLocalizedString("execution")));
-        confirmDialog.setText(String.format(Localizer.getLocalizedString("confirmRemove.text"),
-                item.getTemplate().getName()));
-	    confirmDialog.addConfirmListener(e -> remove(item));
-	    confirmDialog.open();
     }
 
-    @Override
-    protected void edit(Execution item) { }
-
-    private void remove(final Execution item) {
-        try {
-            dataService.deleteEntity(item.getId(), Execution.class);
-        } catch (DataDoesNotExistException e) {
-            log.warn("Tried to delete non-nexisting execution: {}", item.getId());
-        }
-        Notification.show(String.format(Localizer.getLocalizedString("confirmRemove.success"),
-                item.getTemplate().getName()), 3000, Notification.Position.BOTTOM_CENTER);
-    }
+    protected void confirmRemove(final Order item) { }
 
     protected void refresh() {
-	    final ExecutionSpecification criteria = new ExecutionSpecification();
-	    final Optional<LocalDateTime> startDate = fromDateFilter.getOptionalValue().map(LocalDate::atStartOfDay);
+        final OrderSpecification criteria = new OrderSpecification();
+        final Optional<LocalDateTime> startDate = fromDateFilter.getOptionalValue().map(LocalDate::atStartOfDay);
         final Optional<LocalDateTime> endDate = toDateFilter.getOptionalValue().map(val -> val.plusDays(1).atStartOfDay());
-	    criteria.setStartDate(startDate.orElse(null));
+        criteria.setStartDate(startDate.orElse(null));
         criteria.setEndDate(endDate.orElse(null));
-        criteria.setTechnician(technicianFilter.getOptionalValue().orElse(null));
         criteria.setFinalized(finalizedFilter.getOptionalValue().orElse(null));
-        criteria.setOrderId(orderIdFilter.getOptionalValue()
-                .filter(StringUtils::isNumeric)
-                .map(Long::valueOf).orElse(null));
-        criteria.setTemplateName(templateNameFilter.getOptionalValue().orElse(null));
-        criteria.setCount(countFilter.getOptionalValue()
-                .filter(StringUtils::isNumeric)
-                .map(Integer::valueOf).orElse(null));
-        criteria.setPrice(priceFilter.getOptionalValue()
-                .filter(NumberUtils::isCreatable)
-                .map(Integer::valueOf).orElse(null));
+        criteria.setTechnician(technicianFilter.getOptionalValue().orElse(null));
 
         grid.refresh(criteria);
     }
-    
+
+    protected void add() { }
+
+    protected void edit(final Order item) {}
 
     protected void clearFilters() {
-	    technicianFilter.setItems(dataService.getAll(User.class));
-        templateNameFilter.setItems(dataService.getAll(ExecutionTemplate.class).stream().map(ExecutionTemplate::getName));
-        technicianFilter.setValue(null);
+        technicianFilter.setItems(dataService.getAllTechnicians());
         fromDateFilter.setValue(null);
         toDateFilter.setValue(null);
-        finalizedFilter.setValue(false);
-        templateNameFilter.setValue(null);
-        countFilter.setValue("");
-        orderIdFilter.setValue("");
-        priceFilter.setValue("");
         finalizedFilter.setValue(null);
+        technicianFilter.setValue(null);
     }
 
     @Override
     protected InputStream createPrintContent() {
-        return null;
+        try {
+            return FileUtils.openInputStream(reportService
+                    .createOrdersReport(grid.getDataProvider().fetch(new Query<>()).collect(Collectors.toList())));
+        } catch (CannotGenerateReportException | IOException e) {
+            e.printStackTrace();
+            return null;
+        }
     }
 
     protected void initFilters() {
         final HorizontalLayout dateFilterLayout = new HorizontalLayout();
         dateFilterLayout.setMargin(false);
+        finalizedFilter.setItems(Arrays.asList(true, false));
+        dateFilterLayout.add(fromDateFilter, toDateFilter);
         fromDateFilter.setWidth("47%");
         toDateFilter.setWidth("47%");
-        dateFilterLayout.add(fromDateFilter, toDateFilter);
-        finalizedFilter.setItems(Arrays.asList(true, false));
-
         filterDialog.addFilter("Data", dateFilterLayout);
-        filterDialog.addFilter("Nume", templateNameFilter);
-        filterDialog.addFilter("Id Comanda", orderIdFilter);
         filterDialog.addFilter("Tehnician", technicianFilter);
-        filterDialog.addFilter("Cantitate", countFilter);
-        filterDialog.addFilter("Pret", priceFilter);
-        filterDialog.addFilter("Finalizata", finalizedFilter);
+        filterDialog.addFilter("Finalizat", finalizedFilter);
+    }
+
+    private Component createJobsColumn(final Collection<Job> jobs) {
+        final Grid<Job> grid = new Grid<>(Job.class);
+        grid.removeAllColumns();
+        grid.addColumn("template.name").setWidth("25%");;
+        grid.addComponentColumn( j -> createCollectionColumn(j.getExecutions().stream()
+                .map(e -> e.getTemplate().getName())
+                .collect(Collectors.toList())))
+                .setWidth("25%");
+
+        grid.addComponentColumn( j -> createCollectionColumn(j.getExecutions().stream()
+                .map(e ->  String.valueOf(e.getCount()))
+                .collect(Collectors.toList())))
+                .setWidth("15%");
+
+        grid.addComponentColumn( j -> createCollectionColumn(j.getExecutions().stream()
+                .map(e ->  String.valueOf(e.getPrice()))
+                .collect(Collectors.toList())))
+                .setWidth("15%");
+
+        grid.addComponentColumn( j -> createCollectionColumn(j.getExecutions().stream()
+                .map(e ->  String.valueOf(e.getCount() * e.getCount()))
+                .collect(Collectors.toList())))
+                .setWidth("15%");
+
+        grid.setItems(jobs);
+        grid.addClassNames("dento-grid", "dento-no-header-grid");
+        grid.getElement().setAttribute("theme", "no-border row-stripes");
+        grid.setHeightByRows(true);
+        return grid;
+    }
+
+    private Component createCollectionColumn(final Collection<String> values) {
+        final Div div = new Div();
+        values.stream().map(Paragraph::new).forEach(div::add);
+        return div;
     }
 }

@@ -44,6 +44,7 @@ import java.util.stream.Collectors;
 @HtmlImport("frontend://styles/dento-noheader-grid.html")
 @HtmlImport("frontend://styles/upload-display-button.html")
 @HtmlImport("frontend://styles/dento-menu-details.html")
+@HtmlImport("frontend://styles/dento-no-header-grid.html")
 public abstract class Page extends HorizontalLayout implements Localizable, BeforeEnterObserver, PageConfigurator, AfterNavigationObserver {
 	private static final long serialVersionUID = 1L;
 	

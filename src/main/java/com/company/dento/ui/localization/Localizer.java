@@ -1,12 +1,11 @@
 package com.company.dento.ui.localization;
 
-import java.util.Locale;
-
+import com.google.common.base.Preconditions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.context.NoSuchMessageException;
 
-import com.google.common.base.Preconditions;
+import java.util.Locale;
 
 /**
  * Class that provides methods for localizing messages. Uses a message source bound to a locale.
@@ -43,8 +42,12 @@ public final class Localizer {
 	 * @return the localized string.
 	 */
 	public static String getLocalizedString(final String id) {
-		Preconditions.checkNotNull(id);
 		Preconditions.checkNotNull(instance.locale);
+
+		if (id == null) {
+			return "";
+		}
+
 		String localizedName = id;
 		try {
 			localizedName = instance.messageSource.getMessage(id, null, instance.locale);

@@ -1,16 +1,12 @@
 package com.company.dento.dao.specification;
 
-import com.company.dento.model.business.Clinic;
-import com.company.dento.model.business.Doctor;
-import com.company.dento.model.business.Execution;
 import com.company.dento.model.business.Order;
+import com.company.dento.model.business.*;
 import lombok.Setter;
+import org.apache.commons.lang.StringUtils;
 import org.springframework.data.jpa.domain.Specification;
 
-import javax.persistence.criteria.CriteriaBuilder;
-import javax.persistence.criteria.CriteriaQuery;
-import javax.persistence.criteria.Predicate;
-import javax.persistence.criteria.Root;
+import javax.persistence.criteria.*;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -33,39 +29,55 @@ public class OrderSpecification implements Specification<Order> {
     private Integer price;
     private Boolean finalized;
     private Boolean paid;
+    private User technician;
 
     @Override
     public Predicate toPredicate(final Root<Order> root, final CriteriaQuery<?> query, CriteriaBuilder builder) {
 
         final List<Predicate> predicates = new ArrayList<>();
+
         if (doctor != null) {
-            predicates.add(builder.and(builder.equal(root.get("doctor"), doctor)));
+            predicates.add(builder.equal(root.get("doctor"), doctor));
         }
-        if (patient != null) {
-            predicates.add(builder.and(builder.like(builder.lower(root.get("patient")), "%" + patient.toLowerCase() + "%")));
+
+        if (StringUtils.isNotEmpty(patient)) {
+            predicates.add(builder.like(builder.lower(root.get("patient")), "%" + patient.toLowerCase() + "%"));
         }
+
         if (clinic != null) {
-            predicates.add(builder.and(builder.equal(root.get("clinic"), clinic)));
+            predicates.add(builder.equal(root.get("clinic"), clinic));
         }
+
         if (id != null) {
-            predicates.add(builder.and(builder.equal(root.get("id"), id)));
+            predicates.add(builder.equal(root.get("id"), id));
         }
+
         if (startDate != null) {
-            predicates.add(builder.and(builder.greaterThanOrEqualTo(root.get("created"), startDate)));
+            predicates.add(builder.greaterThanOrEqualTo(root.get("created"), startDate));
         }
+
         if (endDate != null) {
-            predicates.add(builder.and(builder.lessThanOrEqualTo(root.get("created"), endDate.toLocalDate().plusDays(1).atStartOfDay())));
+            predicates.add(builder.lessThanOrEqualTo(root.get("created"), endDate.toLocalDate().plusDays(1).atStartOfDay()));
         }
+
         if (price != null) {
-            predicates.add(builder.and(builder.equal(root.get("price"), price)));
+            predicates.add(builder.equal(root.get("price"), price));
         }
+
         if (finalized != null) {
-            predicates.add(builder.and(builder.equal(root.get("finalized"), finalized)));
+            predicates.add(builder.equal(root.get("finalized"), finalized));
         }
+
         if (paid != null) {
-            predicates.add(builder.and(builder.equal(root.get("paid"), paid)));
+            predicates.add(builder.equal(root.get("paid"), paid));
         }
-        Predicate[] predicatesArray = new Predicate[predicates.size()];
+
+        if (technician != null) {
+            final Join<Order, Execution> executions = root.join("jobs").join("executions");
+            predicates.add(builder.equal(executions.get("technician"), technician));
+        }
+
+        final Predicate[] predicatesArray = new Predicate[predicates.size()];
         return builder.and(predicates.toArray(predicatesArray));
     }
 }
