@@ -24,6 +24,7 @@ import com.vaadin.flow.router.Route;
 import com.vaadin.flow.spring.annotation.UIScope;
 import lombok.extern.log4j.Log4j2;
 import org.apache.commons.io.FileUtils;
+import org.apache.tomcat.jni.Local;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -31,6 +32,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Locale;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -49,12 +51,12 @@ public class ExecutionsPage extends ListPage<Order, OrderSpecification> implemen
     private final ConfirmDialog confirmDialog;
     private final ReportService reportService;
 
-    final Label jobTypeLabel = new Label("Tip Lucrare");
-    final Label executionNameLabel = new Label("Nume Manoperă");
-    final Label countLabel = new Label("Cantitate");
-    final Label pricePerElementLabel = new Label("Valoare Unitară");
-    final Label priceTotalLabel = new Label("Valoare Totală");
-    final Div totalSumLabel = new Div();
+    private final Label jobTypeLabel = new Label("Tip Lucrare");
+    private final Label executionNameLabel = new Label("Nume Manoperă");
+    private final Label countLabel = new Label("Cantitate");
+    private final Label pricePerElementLabel = new Label("Valoare Unitară");
+    private final Label priceTotalLabel = new Label("Valoare Totală");
+    private final Div totalSumLabel = new Div();
 
     public ExecutionsPage(final DataService dataService, final ReportService reportService) {
         super(Order.class, dataService, "Manopere Tehnicieni");
@@ -91,7 +93,6 @@ public class ExecutionsPage extends ListPage<Order, OrderSpecification> implemen
 
         grid.appendFooterRow().getCells().get(5).setComponent(totalSumLabel);
         totalSumLabel.setWidthFull();
-        totalSumLabel.setText("Total: 100,00 RON");
         totalSumLabel.getStyle().set("text-align", "right");
         totalSumLabel.getStyle().set("font-weight", "bold");
 
@@ -123,8 +124,10 @@ public class ExecutionsPage extends ListPage<Order, OrderSpecification> implemen
         criteria.setEndDate(endDate.orElse(null));
         criteria.setFinalized(finalizedFilter.getOptionalValue().orElse(null));
         criteria.setTechnician(technicianFilter.getOptionalValue().orElse(null));
+        criteria.setWithExecutions(true);
 
         grid.refresh(criteria);
+        updateTotal(criteria);
     }
 
     protected void add() { }
@@ -172,17 +175,17 @@ public class ExecutionsPage extends ListPage<Order, OrderSpecification> implemen
                 .setWidth("25%");
 
         grid.addComponentColumn( j -> createCollectionColumn(j.getExecutions().stream()
-                .map(e ->  String.valueOf(e.getCount()))
+                .map(e ->  String.format(Localizer.getCurrentLocale(), "%d", e.getCount()))
                 .collect(Collectors.toList())))
                 .setWidth("15%");
 
         grid.addComponentColumn( j -> createCollectionColumn(j.getExecutions().stream()
-                .map(e ->  String.valueOf(e.getPrice()))
+                .map(e ->  String.format(Localizer.getCurrentLocale(), "%.2f", e.getPrice()))
                 .collect(Collectors.toList())))
                 .setWidth("15%");
 
         grid.addComponentColumn( j -> createCollectionColumn(j.getExecutions().stream()
-                .map(e ->  String.valueOf(e.getCount() * e.getCount()))
+                .map(e ->  String.format(Localizer.getCurrentLocale(), "%.2f", e.getCount() * e.getPrice()))
                 .collect(Collectors.toList())))
                 .setWidth("15%");
 
@@ -197,5 +200,10 @@ public class ExecutionsPage extends ListPage<Order, OrderSpecification> implemen
         final Div div = new Div();
         values.stream().map(Paragraph::new).forEach(div::add);
         return div;
+    }
+
+    private void updateTotal(final OrderSpecification criteria) {
+        final Double total = dataService.getExecutionsPriceTotal(criteria);
+        totalSumLabel.setText(String.format(Localizer.getCurrentLocale(),"Total: %.2f", total));
     }
 }

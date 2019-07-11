@@ -28,7 +28,7 @@ public class Execution extends Base {
 	private Job job;
 
 	@Basic
-	private int price;
+	private float price;
 
 	@Basic
 	private int count = 1;

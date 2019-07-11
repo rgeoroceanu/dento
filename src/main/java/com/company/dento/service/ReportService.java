@@ -16,7 +16,6 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.*;
@@ -30,14 +29,19 @@ public class ReportService {
 
     private final JasperWriter jasperWriter;
     private final Resource orderReportTemplate;
+    private final Resource ordersReportTemplate;
+    private final Resource executionsReportTemplate;
     private final DataService dataService;
     private final DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("dd.MM.yyyy");
 
     public ReportService(final JasperWriter jasperWriter, final Resource orderReportTemplate,
+                         final Resource ordersReportTemplate, final Resource executionsReportTemplate,
                          final DataService dataService) {
 
         this.jasperWriter = jasperWriter;
         this.orderReportTemplate = orderReportTemplate;
+        this.ordersReportTemplate = ordersReportTemplate;
+        this.executionsReportTemplate = executionsReportTemplate;
         this.dataService = dataService;
     }
 
@@ -58,7 +62,14 @@ public class ReportService {
     public File createOrdersReport(final List<Order> orders) throws CannotGenerateReportException {
         log.info("Creating jobs report for {} orders", orders.size());
 
-       return null;
+        final GeneralData generalData = dataService.getGeneralData()
+                .orElseThrow(() -> new CannotGenerateReportException("Error generating report: missing general data!"));
+
+        try {
+            return jasperWriter.writeReport(ordersReportTemplate.getFile(), constructOrdersParameters(orders, generalData));
+        } catch (final JRException | IOException e) {
+            throw new CannotGenerateReportException("Error generating report!", e);
+        }
     }
 
     private Map<String, Object> constructOrderParameters(final Order order, final GeneralData generalData) {
@@ -85,6 +96,23 @@ public class ReportService {
         parameters.put("TEETH4", constructTeethParameter(order, 41, 48, true));
         parameters.put("SAMPLES", constructSamplesParameter(order));
         parameters.put("EXECUTIONS", constructExecutionsParameter(order));
+
+        return parameters;
+    }
+
+    private Map<String, Object> constructOrdersParameters(final List<Order> orders, final GeneralData generalData) {
+        final Map<String, Object> parameters = new HashMap<>();
+        parameters.put("COMPANY_NAME", generalData.getLaboratoryName());
+        parameters.put("ADDRESS1", generalData.getAddress());
+        parameters.put("ADDRESS2", String.format("%s, %s", generalData.getPostalCode(), generalData.getTown()));
+        parameters.put("CONTACT", String.format("%s, %s",generalData.getPhone(), generalData.getEmail()));
+        parameters.put("DATE", dateFormatter.format(LocalDate.now()));
+
+        if (generalData.getLogo() != null) {
+            parameters.put("LOGO", getLogoImage(generalData));
+        }
+
+        parameters.put("ORDERS", constructOrdersParameter(orders));
 
         return parameters;
     }
@@ -126,6 +154,12 @@ public class ReportService {
                 .collect(Collectors.toList());
     }
 
+    private List<OrderDisplay> constructOrdersParameter(final List<Order> orders) {
+        return orders.stream()
+                .map(OrderDisplay::new)
+                .collect(Collectors.toList());
+    }
+
     private List<ExecutionDisplay> constructExecutionsParameter(final Order order) {
         return order.getJobs().stream()
                 .map(Job::getExecutions)
@@ -138,72 +172,5 @@ public class ReportService {
         return order.getJobs().stream()
                 .map(Job::getTemplate)
                 .collect(Collectors.toList());
-    }
-
-    private String formatDateTime(final LocalDateTime dateTime) {
-        return dateTime != null ? DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm").format(dateTime) : "";
-    }
-
-    private String formatDate(final LocalDate date) {
-        return date != null ? DateTimeFormatter.ofPattern("dd.MM.yyyy").format(date) : "";
-    }
-
-    private List<String> extractJobNames(final Order order) {
-        return order.getJobs().stream()
-                .map(job -> job.getTemplate().getName())
-                .collect(Collectors.toList());
-    }
-
-    private String extractPricesPerJob(final Order order) {
-        return order.getJobs().stream()
-                .map(job -> String.valueOf(job.getPrice()))
-                .collect(Collectors.joining(System.lineSeparator()));
-    }
-
-    private String extractPricesTotal(final Order order) {
-        return order.getJobs().stream()
-                .map(job -> String.valueOf(job.getPrice() * job.getCount()))
-                .collect(Collectors.joining(System.lineSeparator()));
-    }
-
-    private List<List<String>> extractSampleRows(final Order order) {
-        return order.getJobs().stream()
-                .map(Job::getSamples)
-                .flatMap(Collection::stream)
-                .map(sample -> Arrays.asList(sample.getTemplate().getName(),
-                        sample.getJob().getTemplate().getName(),
-                        formatDate(sample.getDate())))
-                .collect(Collectors.toList());
-    }
-
-    private List<List<String>> extractExecutionRows(final Order order) {
-        return order.getJobs().stream()
-                .map(Job::getExecutions)
-                .flatMap(Collection::stream)
-                .map(ex -> Arrays.asList(ex.getTemplate().getName(),
-                        ex.getJob().getTemplate().getName(),
-                        ex.getTechnician() != null ? ex.getTechnician().toString() : ""))
-                .collect(Collectors.toList());
-    }
-
-    private List<List<String>> extractOrdersRows(final List<Order> orders) {
-        return orders.stream()
-                .map(this::extractOrderColumns)
-                .collect(Collectors.toList());
-    }
-
-    private List<String> extractOrderColumns(final Order order) {
-        final List<String> columns = new ArrayList<>();
-        columns.add(formatDate(order.getDate()));
-        columns.add(String.format("%d", order.getId()));
-        columns.add(order.getPatient());
-        columns.add(String.format("%s%n%s", order.getClinic().getName(), order.getDoctor().toString()));
-        columns.add(String.format("%d", order.getPrice()));
-        columns.add(extractJobNames(order).stream().collect(Collectors.joining(System.lineSeparator())));
-        columns.add(extractPricesPerJob(order));
-        columns.add(extractPricesTotal(order));
-        columns.add(order.isFinalized() ? "Finalizată" : "Nefinalizată");
-        columns.add(order.isPaid() ? "Achitată" : "Neachitată");
-        return columns;
     }
 }

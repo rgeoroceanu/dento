@@ -2,7 +2,7 @@ package com.company.dento.dao.specification;
 
 import com.company.dento.model.business.Order;
 import com.company.dento.model.business.*;
-import lombok.Setter;
+import lombok.Data;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.data.jpa.domain.Specification;
 
@@ -17,7 +17,7 @@ import java.util.List;
  * @author Radu Georoceanu <rgeoroceanu@yahoo.com>
  *
  */
-@Setter
+@Data
 public class OrderSpecification implements Specification<Order> {
 
     private Long id;
@@ -26,10 +26,10 @@ public class OrderSpecification implements Specification<Order> {
     private String patient;
     private Doctor doctor;
     private Clinic clinic;
-    private Integer price;
     private Boolean finalized;
     private Boolean paid;
     private User technician;
+    private Boolean withExecutions;
 
     @Override
     public Predicate toPredicate(final Root<Order> root, final CriteriaQuery<?> query, CriteriaBuilder builder) {
@@ -60,10 +60,6 @@ public class OrderSpecification implements Specification<Order> {
             predicates.add(builder.lessThanOrEqualTo(root.get("created"), endDate.toLocalDate().plusDays(1).atStartOfDay()));
         }
 
-        if (price != null) {
-            predicates.add(builder.equal(root.get("price"), price));
-        }
-
         if (finalized != null) {
             predicates.add(builder.equal(root.get("finalized"), finalized));
         }
@@ -72,10 +68,20 @@ public class OrderSpecification implements Specification<Order> {
             predicates.add(builder.equal(root.get("paid"), paid));
         }
 
+        final Join<Order, Job> jobs = root.join("jobs");
+
         if (technician != null) {
-            final Join<Order, Execution> executions = root.join("jobs").join("executions");
+            final Join<Order, Execution> executions = jobs.join("executions");
             predicates.add(builder.equal(executions.get("technician"), technician));
         }
+
+        if (withExecutions != null && withExecutions) {
+            predicates.add(builder.and(
+                    builder.greaterThan(builder.size(root.get("jobs")), 0),
+                    builder.greaterThan(builder.size(jobs.get("executions")), 0)));
+        }
+
+        query.distinct(true);
 
         final Predicate[] predicatesArray = new Predicate[predicates.size()];
         return builder.and(predicates.toArray(predicatesArray));

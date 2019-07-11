@@ -1,6 +1,7 @@
 package com.company.dento.service;
 
 import com.company.dento.dao.*;
+import com.company.dento.dao.specification.OrderSpecification;
 import com.company.dento.model.business.*;
 import com.company.dento.model.type.MeasurementUnit;
 import com.company.dento.model.type.Role;
@@ -131,7 +132,6 @@ public class DataServiceImpl implements DataService {
 			order.setDoctor(doctor);
 			order.setPatient("Gheorghe");
 			order.setClinic(clinic);
-			order.setPrice(450);
 			order.setToothColor(toothColor);
 			order.setDeliveryDate(LocalDateTime.now());
 			saveEntity(order);
@@ -140,7 +140,6 @@ public class DataServiceImpl implements DataService {
 			Order order2 = new Order();
 			order2.setDate(LocalDate.now());
 			order2.setDoctor(doctor);
-			order2.setPrice(111);
 			order2.setPatient("Gheorghe");
 			order2.setClinic(clinic);
 			order2.setToothColor(toothColor);
@@ -338,21 +337,47 @@ public class DataServiceImpl implements DataService {
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public Optional<GeneralData> getGeneralData() {
 		return generalDataDao.findOne(Example.of(new GeneralData(), ExampleMatcher.matchingAny().withIgnoreNullValues()));
 	}
 
 	@Override
+	@Transactional
 	public GeneralData saveGeneralData(final GeneralData generalData) {
 		this.getGeneralData().ifPresent(prev -> generalData.setId(prev.getId()));
 		return generalDataDao.save(generalData);
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public List<User> getAllTechnicians() {
 		return userDao.findAll().stream()
 				.filter(u -> u.getRoles().contains(Role.TECHNICIAN))
 				.collect(Collectors.toList());
+	}
+
+	@Override
+	@Transactional(readOnly = true)
+	public double getExecutionsPriceTotal(final OrderSpecification spec) {
+		Preconditions.checkNotNull(spec, "Search specification must not be null!");
+		log.info("Calculate total execution price!");
+
+		final Long technicianId = spec.getTechnician() != null ? spec.getTechnician().getId() : null;
+		return orderDao.calculateExecutionsPriceTotal(technicianId, spec.getFinalized(),
+				spec.getStartDate(), spec.getEndDate());
+	}
+
+	@Override
+	@Transactional(readOnly = true)
+	public double getJobsPriceTotal(final OrderSpecification spec) {
+		Preconditions.checkNotNull(spec, "Search specification must not be null!");
+		log.info("Calculate total orders price!");
+
+		final Long doctorId = spec.getDoctor() != null ? spec.getDoctor().getId() : null;
+		final Long clinicId = spec.getClinic() != null ? spec.getClinic().getId() : null;
+		return orderDao.calculateJobsPriceTotal(spec.getId(), spec.getStartDate(), spec.getEndDate(),
+				spec.getPatient(), doctorId, clinicId, spec.getFinalized(), spec.getPaid());
 	}
 
 	private List<Sort.Order> extractSortOrders(final Map<String, Boolean> sortOrder) {

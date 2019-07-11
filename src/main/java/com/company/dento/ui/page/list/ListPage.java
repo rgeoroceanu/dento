@@ -88,7 +88,7 @@ public abstract class ListPage<T extends Base, V extends Specification<T>> exten
         final Button printButton = new Button();
         printButton.setIcon(new Icon(VaadinIcon.PRINT));
 
-        final String filename = printFilePrefix + ".xlsx";
+        final String filename = printFilePrefix + ".pdf";
         final Anchor anchor = new Anchor(new StreamResource(filename, this::createPrintContent), "");
         anchor.getElement().setAttribute("download", true);
         anchor.add(printButton);

@@ -27,9 +27,6 @@ public class Order extends Base {
 	private Clinic clinic;
 
 	@Basic
-	private int price;
-
-	@Basic
 	@Column(length = 4000)
 	private String description;
 
@@ -56,5 +53,9 @@ public class Order extends Base {
 
 	@Basic
 	private LocalDateTime deliveryDate;
+
+	public Double getTotalPrice() {
+		return this.getJobs().stream().mapToDouble(job -> job.getPrice() * job.getCount()).sum();
+	}
 
 }

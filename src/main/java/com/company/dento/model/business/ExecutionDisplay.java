@@ -13,6 +13,7 @@ public class ExecutionDisplay {
         this.name = execution.getTemplate().getName();
         this.job = execution.getJob().getTemplate().getName();
         final User technician = execution.getTechnician();
-        this.technician = String.format("%s %s", technician.getFirstName(), technician.getLastName());
+        this.technician = String.format("%s %s", technician != null ? technician.getFirstName() : "",
+                technician != null ? technician.getLastName() : "");
     }
 }

@@ -32,7 +32,7 @@ public class Job extends Base {
 	private Order order;
 
 	@Basic
-	private int price;
+	private float price;
 
 	@Basic
 	private int count = 1;

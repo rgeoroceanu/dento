@@ -1,6 +1,10 @@
 package com.company.dento.service;
 
-import com.company.dento.model.business.*;
+import com.company.dento.dao.specification.OrderSpecification;
+import com.company.dento.model.business.Base;
+import com.company.dento.model.business.CalendarEvent;
+import com.company.dento.model.business.GeneralData;
+import com.company.dento.model.business.User;
 import com.company.dento.service.exception.DataDoesNotExistException;
 import com.company.dento.service.exception.InvalidDataTypeException;
 import org.springframework.data.jpa.domain.Specification;
@@ -27,4 +31,6 @@ public interface DataService {
 	Optional<GeneralData> getGeneralData();
 	GeneralData saveGeneralData(final GeneralData generalData);
 	List<User> getAllTechnicians();
+	double getExecutionsPriceTotal(final OrderSpecification spec);
+	double getJobsPriceTotal(final OrderSpecification spec);
 }

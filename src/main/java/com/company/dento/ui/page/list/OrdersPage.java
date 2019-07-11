@@ -61,6 +61,7 @@ public class OrdersPage extends ListPage<Order, OrderSpecification> implements L
     private final ComboBox<Doctor> doctorFilter;
     private final ConfirmDialog confirmDialog;
     private final ReportService reportService;
+    private final Div totalSumLabel = new Div();
 
 	public OrdersPage(final DataService dataService, final ReportService reportService) {
 	    super(Order.class, dataService, "Comenzi");
@@ -83,7 +84,6 @@ public class OrdersPage extends ListPage<Order, OrderSpecification> implements L
         grid.addColumn("patient");
         grid.addColumn("clinic.name");
         grid.addColumn("doctor");
-        grid.addColumn("price");
 
         grid.addComponentColumn(item -> createCollectionColumn(item.getJobs().stream()
                 .map(job -> job.getTemplate().getName())
@@ -91,19 +91,21 @@ public class OrdersPage extends ListPage<Order, OrderSpecification> implements L
                 .setKey("job.template.name");
 
         grid.addComponentColumn(item -> createCollectionColumn(item.getJobs().stream()
-                .map(job -> String.valueOf(job.getCount()))
+                .map(job -> String.format(Localizer.getCurrentLocale(), "%d", job.getCount()))
                 .collect(Collectors.toList())))
                 .setKey("count");
 
         grid.addComponentColumn(item -> createCollectionColumn(item.getJobs().stream()
-                .map(job -> String.valueOf(job.getPrice()))
+                .map(job -> String.format(Localizer.getCurrentLocale(), "%.2f", job.getPrice()))
                 .collect(Collectors.toList())))
                 .setKey("job.price.element");
 
         grid.addComponentColumn(item -> createCollectionColumn(item.getJobs().stream()
-                .map(job -> String.valueOf(job.getPrice() * job.getCount()))
+                .map(job -> String.format(Localizer.getCurrentLocale(), "%.2f", job.getPrice() * job.getCount()))
                 .collect(Collectors.toList())))
                 .setKey("job.price.total");
+
+        grid.addColumn(o -> String.format(Localizer.getCurrentLocale(), "%.2f", o.getTotalPrice())).setKey("price");
 
         grid.addComponentColumn(this::createFinalizedComponent).setKey("finalized").setWidth("50px");
         grid.addComponentColumn(this::createPaidComponent).setKey("paid").setWidth("50px");
@@ -117,6 +119,11 @@ public class OrdersPage extends ListPage<Order, OrderSpecification> implements L
         grid.setNonResponsiveColumns(grid.getColumns().get(0), grid.getColumns().get(1));
         grid.setDetailColumns(grid.getColumns().get(2), grid.getColumns().get(3), grid.getColumns().get(4),
                 grid.getColumns().get(5), grid.getColumns().get(6), grid.getColumns().get(10), grid.getColumns().get(11));
+
+        grid.appendFooterRow().getCells().get(9).setComponent(totalSumLabel);
+        totalSumLabel.setWidthFull();
+        totalSumLabel.getStyle().set("text-align", "right");
+        totalSumLabel.getStyle().set("font-weight", "bold");
 
         initFilters();
 	}
@@ -141,6 +148,20 @@ public class OrdersPage extends ListPage<Order, OrderSpecification> implements L
     }
 
     protected void refresh() {
+        final OrderSpecification criteria = getCurrentFilter();
+        grid.refresh(criteria);
+        updateTotal(criteria);
+    }
+
+    protected void add() {
+        UI.getCurrent().navigate(OrderEditPage.class);
+    }
+
+    protected void edit(final Order item) {
+        UI.getCurrent().navigate(OrderEditPage.class, item.getId());
+    }
+
+    private OrderSpecification getCurrentFilter() {
         final OrderSpecification criteria = new OrderSpecification();
         final Optional<LocalDateTime> startDate = fromDateFilter.getOptionalValue().map(LocalDate::atStartOfDay);
         final Optional<LocalDateTime> endDate = toDateFilter.getOptionalValue().map(val -> val.plusDays(1).atStartOfDay());
@@ -154,15 +175,7 @@ public class OrdersPage extends ListPage<Order, OrderSpecification> implements L
                 .filter(StringUtils::isNumeric)
                 .map(Long::valueOf).orElse(null));
         criteria.setPatient(patientFilter.getOptionalValue().filter(val -> !val.isEmpty()).orElse(null));
-        grid.refresh(criteria);
-    }
-
-    protected void add() {
-        UI.getCurrent().navigate(OrderEditPage.class);
-    }
-
-    protected void edit(final Order item) {
-        UI.getCurrent().navigate(OrderEditPage.class, item.getId());
+        return criteria;
     }
 
     private void addPrintColumn() {
@@ -246,11 +259,16 @@ public class OrdersPage extends ListPage<Order, OrderSpecification> implements L
 
     @Override
     protected InputStream createPrintContent() {
+	    if (dataService.countByCriteria(Order.class, getCurrentFilter()) > 1000) {
+            Notification.show("Prea multe rezultate! Aplicați mai multe filtre!", 5000, Notification.Position.BOTTOM_CENTER);
+	        return null;
+        }
+
         try {
             return FileUtils.openInputStream(reportService
                     .createOrdersReport(grid.getDataProvider().fetch(new Query<>()).collect(Collectors.toList())));
         } catch (CannotGenerateReportException | IOException e) {
-            e.printStackTrace();
+            Notification.show("Raportul nu a putut fi generat!", 5000, Notification.Position.BOTTOM_CENTER);
             return null;
         }
     }
@@ -276,5 +294,10 @@ public class OrdersPage extends ListPage<Order, OrderSpecification> implements L
 	    final Div div = new Div();
 	    values.stream().map(Paragraph::new).forEach(div::add);
 	    return div;
+    }
+
+    private void updateTotal(final OrderSpecification criteria) {
+        final Double total = dataService.getJobsPriceTotal(criteria);
+        totalSumLabel.setText(String.format(Localizer.getCurrentLocale(), "Total: %.2f", total));
     }
 }
