@@ -26,7 +26,7 @@ public class ReportServiceTests {
 	@Test
 	public void testCreateOrderReport() throws CannotGenerateReportException {
 		final Order order = createOrder();
-		final File reportFile = reportService.createOrderReport(order);
+		final File reportFile = reportService.createOrderReport(order.getId());
 
 		assertNotNull(reportFile);
 		assertTrue(reportFile.exists());

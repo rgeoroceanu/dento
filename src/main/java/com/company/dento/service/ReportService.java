@@ -1,8 +1,11 @@
 package com.company.dento.service;
 
+import com.company.dento.dao.specification.OrderSpecification;
 import com.company.dento.model.business.*;
 import com.company.dento.report.JasperWriter;
 import com.company.dento.service.exception.CannotGenerateReportException;
+import com.company.dento.service.exception.TooManyResultsException;
+import com.company.dento.ui.localization.Localizer;
 import com.google.common.base.Preconditions;
 import lombok.extern.log4j.Log4j2;
 import net.sf.jasperreports.engine.JRException;
@@ -45,28 +48,39 @@ public class ReportService {
         this.dataService = dataService;
     }
 
-    public File createOrderReport(final Order order) throws CannotGenerateReportException {
-        Preconditions.checkNotNull(order, "Order cannot be null");
-        log.info("Creating order report {}", order);
+    public File createOrderReport(final Long orderId) throws CannotGenerateReportException {
+        Preconditions.checkNotNull(orderId, "Order id cannot be null");
+        log.info("Creating order report for order with id{}", orderId);
+
+        final Order oder = dataService.getEntity(orderId, Order.class)
+                .orElseThrow(() -> new CannotGenerateReportException("Error generating report: order id invalid!"));
 
         final GeneralData generalData = dataService.getGeneralData()
                 .orElseThrow(() -> new CannotGenerateReportException("Error generating report: missing general data!"));
 
         try {
-            return jasperWriter.writeReport(orderReportTemplate.getFile(), constructOrderParameters(order, generalData));
+            return jasperWriter.writeReport(orderReportTemplate.getFile(), constructOrderParameters(oder, generalData));
         } catch (final JRException | IOException e) {
             throw new CannotGenerateReportException("Error generating report!", e);
         }
     }
 
-    public File createOrdersReport(final List<Order> orders) throws CannotGenerateReportException {
-        log.info("Creating jobs report for {} orders", orders.size());
+    public File createOrdersReport(final OrderSpecification orderSpecification) throws CannotGenerateReportException, TooManyResultsException {
+        log.info("Creating jobs report for order {} ", orderSpecification);
+
+        if (dataService.countByCriteria(Order.class, orderSpecification) > 1000) {
+            throw new TooManyResultsException("Too many entries for report generation!");
+        }
 
         final GeneralData generalData = dataService.getGeneralData()
                 .orElseThrow(() -> new CannotGenerateReportException("Error generating report: missing general data!"));
 
+        final List<Order> orders = dataService.getByCriteria(Order.class, orderSpecification, 0, 1000, Collections.emptyMap());
+
+        final Double totalPrice = dataService.getJobsPriceTotal(orderSpecification);;
+
         try {
-            return jasperWriter.writeReport(ordersReportTemplate.getFile(), constructOrdersParameters(orders, generalData));
+            return jasperWriter.writeReport(ordersReportTemplate.getFile(), constructOrdersParameters(orders, generalData, totalPrice));
         } catch (final JRException | IOException e) {
             throw new CannotGenerateReportException("Error generating report!", e);
         }
@@ -100,13 +114,16 @@ public class ReportService {
         return parameters;
     }
 
-    private Map<String, Object> constructOrdersParameters(final List<Order> orders, final GeneralData generalData) {
+    private Map<String, Object> constructOrdersParameters(final List<Order> orders, final GeneralData generalData,
+                                                          final Double totalPrice) {
+
         final Map<String, Object> parameters = new HashMap<>();
         parameters.put("COMPANY_NAME", generalData.getLaboratoryName());
         parameters.put("ADDRESS1", generalData.getAddress());
         parameters.put("ADDRESS2", String.format("%s, %s", generalData.getPostalCode(), generalData.getTown()));
         parameters.put("CONTACT", String.format("%s, %s",generalData.getPhone(), generalData.getEmail()));
         parameters.put("DATE", dateFormatter.format(LocalDate.now()));
+        parameters.put("TOTAL_PRICE", String.format(Localizer.getCurrentLocale(), "%.2f", totalPrice));
 
         if (generalData.getLogo() != null) {
             parameters.put("LOGO", getLogoImage(generalData));

@@ -36,6 +36,7 @@
 		</box>
 	</style>
 	<subDataset name="orders" uuid="2914f7c6-c2d7-448b-b0c1-090970e18ed6">
+		<parameter name="TOTAL_PRICE" class="java.lang.String"/>
 		<field name="date" class="java.lang.String"/>
 		<field name="id" class="java.lang.Long"/>
 		<field name="pacient" class="java.lang.String"/>
@@ -59,6 +60,7 @@
 	<parameter name="DATE" class="java.lang.String"/>
 	<parameter name="LOGO" class="java.awt.Image"/>
 	<parameter name="ORDERS" class="java.util.List"/>
+	<parameter name="TOTAL_PRICE" class="java.lang.String"/>
 	<detail>
 		<band height="550" splitType="Stretch">
 			<line>
@@ -125,8 +127,12 @@
 				</reportElement>
 				<jr:table xmlns:jr="http://jasperreports.sourceforge.net/jasperreports/components" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports/components http://jasperreports.sourceforge.net/xsd/components.xsd" whenNoDataType="AllSectionsNoDetail">
 					<datasetRun subDataset="orders" uuid="b6d4e3bd-9d53-474a-a096-32af71960f4b">
+						<datasetParameter name="TOTAL_PRICE">
+							<datasetParameterExpression><![CDATA[$P{TOTAL_PRICE}]]></datasetParameterExpression>
+						</datasetParameter>
 						<dataSourceExpression><![CDATA[new net.sf.jasperreports.engine.data.JRBeanCollectionDataSource($P{ORDERS})]]></dataSourceExpression>
 					</datasetRun>
+
 					<jr:columnGroup width="820" uuid="48db1d0d-a73c-4f32-947a-118c85073a9e">
 						<property name="com.jaspersoft.studio.components.table.model.column.name" value="Columns [4]"/>
 						<jr:tableHeader style="Table 1_TH" height="30" rowSpan="1" >
@@ -138,6 +144,28 @@
 								<text><![CDATA[Raport Comenzi]]></text>
 							</staticText>
 						</jr:tableHeader>
+
+						<jr:tableFooter height="20" rowSpan="1" >
+							<staticText>
+								<reportElement x="580" y="0" width="70" height="20" uuid="f60d1675-6fb6-4569-93ca-de32b3a8e458"/>
+								<box rightPadding="10">
+									<rightPen lineWidth="0.5" lineColor="#000000"/>
+								</box>
+								<textElement textAlignment="Right" verticalAlignment="Middle" markup="none">
+									<font fontName="DejaVu Sans" size="9" isBold="true"/>
+								</textElement>
+								<text><![CDATA[Total]]></text>
+							</staticText>
+							<textField>
+								<reportElement x="650" y="0" width="50" height="20" uuid="f60d1675-6fb6-4569-93ca-de32b3a8e861"/>
+								<box leftPadding="10">
+								</box>
+								<textElement textAlignment="Left" verticalAlignment="Middle" markup="none">
+									<font fontName="DejaVu Sans" size="9" isBold="true"/>
+								</textElement>
+								<textFieldExpression><![CDATA[$P{TOTAL_PRICE}]]></textFieldExpression>
+							</textField>
+						</jr:tableFooter>
 
 						<jr:column width="60" uuid="46ee58eb-2d43-450e-9460-758ef9ff7cf8">
 							<property name="com.jaspersoft.studio.components.table.model.column.name" value="Column1"/>

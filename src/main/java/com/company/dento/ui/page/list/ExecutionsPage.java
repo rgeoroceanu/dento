@@ -7,6 +7,7 @@ import com.company.dento.model.business.User;
 import com.company.dento.service.DataService;
 import com.company.dento.service.ReportService;
 import com.company.dento.service.exception.CannotGenerateReportException;
+import com.company.dento.service.exception.TooManyResultsException;
 import com.company.dento.ui.component.common.ConfirmDialog;
 import com.company.dento.ui.localization.Localizable;
 import com.company.dento.ui.localization.Localizer;
@@ -18,13 +19,11 @@ import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.html.Label;
 import com.vaadin.flow.component.html.Paragraph;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
-import com.vaadin.flow.data.provider.Query;
 import com.vaadin.flow.data.renderer.LocalDateRenderer;
 import com.vaadin.flow.router.Route;
 import com.vaadin.flow.spring.annotation.UIScope;
 import lombok.extern.log4j.Log4j2;
 import org.apache.commons.io.FileUtils;
-import org.apache.tomcat.jni.Local;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -32,7 +31,6 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.Locale;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -145,9 +143,11 @@ public class ExecutionsPage extends ListPage<Order, OrderSpecification> implemen
     @Override
     protected InputStream createPrintContent() {
         try {
-            return FileUtils.openInputStream(reportService
-                    .createOrdersReport(grid.getDataProvider().fetch(new Query<>()).collect(Collectors.toList())));
+            return FileUtils.openInputStream(reportService.createOrdersReport(null));
         } catch (CannotGenerateReportException | IOException e) {
+            e.printStackTrace();
+            return null;
+        } catch (TooManyResultsException e) {
             e.printStackTrace();
             return null;
         }

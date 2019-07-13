@@ -8,6 +8,7 @@ import com.company.dento.service.DataService;
 import com.company.dento.service.ReportService;
 import com.company.dento.service.exception.CannotGenerateReportException;
 import com.company.dento.service.exception.DataDoesNotExistException;
+import com.company.dento.service.exception.TooManyResultsException;
 import com.company.dento.ui.component.common.ConfirmDialog;
 import com.company.dento.ui.localization.Localizable;
 import com.company.dento.ui.localization.Localizer;
@@ -25,7 +26,6 @@ import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.component.notification.Notification;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.textfield.TextField;
-import com.vaadin.flow.data.provider.Query;
 import com.vaadin.flow.data.renderer.LocalDateRenderer;
 import com.vaadin.flow.router.Route;
 import com.vaadin.flow.server.StreamResource;
@@ -217,16 +217,9 @@ public class OrdersPage extends ListPage<Order, OrderSpecification> implements L
     }
 
     private InputStream generateReport(final Order item) {
-
-	    final Optional<Order> fullOrder = dataService.getEntity(item.getId(), Order.class);
-
-	    if (!fullOrder.isPresent()) {
-	        return null;
-        }
-
 	    InputStream reportStream = null;
         try {
-            reportStream = FileUtils.openInputStream(reportService.createOrderReport(fullOrder.get()));
+            reportStream = FileUtils.openInputStream(reportService.createOrderReport(item.getId()));
         } catch (IOException | CannotGenerateReportException e) {
             log.error("Error generating report for order {}", item.getId());
             Notification.show("", 5000, Notification.Position.BOTTOM_CENTER);
@@ -259,16 +252,13 @@ public class OrdersPage extends ListPage<Order, OrderSpecification> implements L
 
     @Override
     protected InputStream createPrintContent() {
-	    if (dataService.countByCriteria(Order.class, getCurrentFilter()) > 1000) {
-            Notification.show("Prea multe rezultate! Aplicați mai multe filtre!", 5000, Notification.Position.BOTTOM_CENTER);
-	        return null;
-        }
-
         try {
-            return FileUtils.openInputStream(reportService
-                    .createOrdersReport(grid.getDataProvider().fetch(new Query<>()).collect(Collectors.toList())));
+            return FileUtils.openInputStream(reportService.createOrdersReport(getCurrentFilter()));
         } catch (CannotGenerateReportException | IOException e) {
-            Notification.show("Raportul nu a putut fi generat!", 5000, Notification.Position.BOTTOM_CENTER);
+            Notification.show("Raportul nu a putut fi generat! Eroare interna!", 5000, Notification.Position.BOTTOM_CENTER);
+            return null;
+        } catch (TooManyResultsException e) {
+            Notification.show("Prea multe rezultate! Aplicați mai multe filtre!", 5000, Notification.Position.BOTTOM_CENTER);
             return null;
         }
     }
