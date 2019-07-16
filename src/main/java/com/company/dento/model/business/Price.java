@@ -4,7 +4,7 @@ public interface Price<S> {
 
     S getKey();
     void setKey(S key);
-    int getPrice();
-    void setPrice(int price);
+    float getPrice();
+    void setPrice(float price);
     String getKeyName();
 }

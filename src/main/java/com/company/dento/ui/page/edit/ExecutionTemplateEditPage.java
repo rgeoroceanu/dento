@@ -30,7 +30,7 @@ import java.util.Optional;
 
 @UIScope
 @Component
-@Route(value = "executionTemplates/id")
+@Route(value = "admin/executions/id")
 @Log4j2
 public class ExecutionTemplateEditPage extends EditPage<ExecutionTemplate> {
 

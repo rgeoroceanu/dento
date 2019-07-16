@@ -27,7 +27,7 @@ public class JobTemplate extends Base {
 	private String color;
 
 	@Basic
-	private int standardPrice;
+	private float standardPrice;
 
 	@Basic
 	private boolean active;
@@ -35,13 +35,15 @@ public class JobTemplate extends Base {
 	@ElementCollection(fetch = FetchType.LAZY)
 	private Set<JobPrice> individualPrices = new HashSet<>();
 
-	@ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-	private Set<Material> materials = new HashSet<>();
+	@ElementCollection(fetch = FetchType.LAZY)
+	private Set<DefaultMaterial> materials = new HashSet<>();
 
-	@ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+	@ManyToMany(fetch = FetchType.LAZY)
+	@JoinTable(name="job_templates_samples", joinColumns=@JoinColumn(name="job_template_id"), inverseJoinColumns=@JoinColumn(name="sample_template_id"))
 	private Set<SampleTemplate> sampleTemplates = new HashSet<>();
 
-	@ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+	@ManyToMany(fetch = FetchType.LAZY)
+	@JoinTable(name="job_templates_executions", joinColumns=@JoinColumn(name="job_template_id"), inverseJoinColumns=@JoinColumn(name="execution_template_id"))
 	private Set<ExecutionTemplate> executionTemplates = new HashSet<>();
 
 	public String toString() {

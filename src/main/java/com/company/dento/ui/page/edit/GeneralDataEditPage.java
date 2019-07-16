@@ -25,7 +25,7 @@ import java.util.Optional;
 
 @UIScope
 @Component
-@Route(value = "general")
+@Route(value = "admin/general")
 @Log4j2
 public class GeneralDataEditPage extends EditPage<GeneralData> {
 

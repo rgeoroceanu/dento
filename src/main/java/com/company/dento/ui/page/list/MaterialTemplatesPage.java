@@ -1,15 +1,14 @@
 package com.company.dento.ui.page.list;
 
-import com.company.dento.dao.specification.MaterialSpecification;
+import com.company.dento.dao.specification.MaterialTemplateSpecification;
 import com.company.dento.model.business.JobTemplate;
-import com.company.dento.model.business.Material;
+import com.company.dento.model.business.MaterialTemplate;
 import com.company.dento.service.DataService;
 import com.company.dento.service.exception.DataDoesNotExistException;
 import com.company.dento.ui.component.common.ConfirmDialog;
 import com.company.dento.ui.localization.Localizable;
 import com.company.dento.ui.localization.Localizer;
-import com.company.dento.ui.page.edit.JobTemplateEditPage;
-import com.company.dento.ui.page.edit.MaterialEditPage;
+import com.company.dento.ui.page.edit.MaterialTemplateEditPage;
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.html.Label;
@@ -19,25 +18,21 @@ import com.vaadin.flow.component.notification.Notification;
 import com.vaadin.flow.router.Route;
 import com.vaadin.flow.spring.annotation.UIScope;
 import lombok.extern.log4j.Log4j2;
-import org.apache.tomcat.jni.Local;
-import org.springframework.security.access.annotation.Secured;
 
 import java.io.InputStream;
-import java.util.Collections;
-import java.util.List;
 
 @UIScope
 @org.springframework.stereotype.Component
-@Route(value = "materials")
+@Route(value = "admin/materials")
 @Log4j2
-public class MaterialsPage extends ListPage<Material, MaterialSpecification> implements Localizable {
+public class MaterialTemplatesPage extends ListPage<MaterialTemplate, MaterialTemplateSpecification> implements Localizable {
 
 	private static final long serialVersionUID = 1L;
 
     private final ConfirmDialog confirmDialog;
 
-	public MaterialsPage(final DataService dataService) {
-	    super(Material.class, dataService, "Materiale");
+	public MaterialTemplatesPage(final DataService dataService) {
+	    super(MaterialTemplate.class, dataService, "Materiale");
 
         confirmDialog = new ConfirmDialog();
 
@@ -65,7 +60,7 @@ public class MaterialsPage extends ListPage<Material, MaterialSpecification> imp
 		confirmDialog.localize();
 	}
 
-    protected void confirmRemove(final Material item) {
+    protected void confirmRemove(final MaterialTemplate item) {
 	    confirmDialog.setHeader(String.format(Localizer.getLocalizedString("confirmRemove.header"),
                 Localizer.getLocalizedString("material")));
         confirmDialog.setText(String.format(Localizer.getLocalizedString("confirmRemove.text"),
@@ -75,7 +70,7 @@ public class MaterialsPage extends ListPage<Material, MaterialSpecification> imp
     }
 
     protected void refresh() {
-        final MaterialSpecification criteria = new MaterialSpecification();
+        final MaterialTemplateSpecification criteria = new MaterialTemplateSpecification();
         grid.refresh(criteria);
     }
 
@@ -83,14 +78,14 @@ public class MaterialsPage extends ListPage<Material, MaterialSpecification> imp
     protected void clearFilters() { }
 
     protected void add() {
-        UI.getCurrent().navigate(MaterialEditPage.class);
+        UI.getCurrent().navigate(MaterialTemplateEditPage.class);
     }
 
-    protected void edit(final Material item) {
-        UI.getCurrent().navigate(MaterialEditPage.class, item.getId());
+    protected void edit(final MaterialTemplate item) {
+        UI.getCurrent().navigate(MaterialTemplateEditPage.class, item.getId());
     }
 
-    private Component createActiveComponent(final Material item) {
+    private Component createActiveComponent(final MaterialTemplate item) {
         final Icon icon = new Icon(item.isActive() ? VaadinIcon.CHECK : VaadinIcon.CLOSE_SMALL);
         icon.addClassName("dento-grid-icon");
         final String color = item.isActive() ? "green": "red";
@@ -98,11 +93,11 @@ public class MaterialsPage extends ListPage<Material, MaterialSpecification> imp
         return icon;
     }
 
-    private Component createPerJobComponent(final Material item) {
+    private Component createPerJobComponent(final MaterialTemplate item) {
         return new Label(item.isPerJob() ? "pe lucrare" : "pe dinte");
     }
 
-    private void remove(final Material item) {
+    private void remove(final MaterialTemplate item) {
         try {
             dataService.deleteEntity(item.getId(), JobTemplate.class);
         } catch (DataDoesNotExistException e) {

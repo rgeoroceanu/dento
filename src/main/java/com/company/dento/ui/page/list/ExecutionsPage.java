@@ -18,7 +18,9 @@ import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.html.Label;
 import com.vaadin.flow.component.html.Paragraph;
+import com.vaadin.flow.component.notification.Notification;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
+import com.vaadin.flow.data.provider.SortDirection;
 import com.vaadin.flow.data.renderer.LocalDateRenderer;
 import com.vaadin.flow.router.Route;
 import com.vaadin.flow.spring.annotation.UIScope;
@@ -29,9 +31,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @UIScope
@@ -115,14 +115,7 @@ public class ExecutionsPage extends ListPage<Order, OrderSpecification> implemen
     protected void confirmRemove(final Order item) { }
 
     protected void refresh() {
-        final OrderSpecification criteria = new OrderSpecification();
-        final Optional<LocalDateTime> startDate = fromDateFilter.getOptionalValue().map(LocalDate::atStartOfDay);
-        final Optional<LocalDateTime> endDate = toDateFilter.getOptionalValue().map(val -> val.plusDays(1).atStartOfDay());
-        criteria.setStartDate(startDate.orElse(null));
-        criteria.setEndDate(endDate.orElse(null));
-        criteria.setFinalized(finalizedFilter.getOptionalValue().orElse(null));
-        criteria.setTechnician(technicianFilter.getOptionalValue().orElse(null));
-        criteria.setWithExecutions(true);
+        final OrderSpecification criteria = getCurrentFilter();
 
         grid.refresh(criteria);
         updateTotal(criteria);
@@ -142,13 +135,17 @@ public class ExecutionsPage extends ListPage<Order, OrderSpecification> implemen
 
     @Override
     protected InputStream createPrintContent() {
+        final Map<String, Boolean> sortOrder = new LinkedHashMap<>();
+        grid.getSortOrder().forEach(sort -> sortOrder.put(sort.getSorted().getKey(),
+                sort.getDirection() == SortDirection.ASCENDING));
+
         try {
-            return FileUtils.openInputStream(reportService.createOrdersReport(null));
+            return FileUtils.openInputStream(reportService.createExecutionsReport(getCurrentFilter(), sortOrder));
         } catch (CannotGenerateReportException | IOException e) {
-            e.printStackTrace();
+            Notification.show("Raportul nu a putut fi generat! Eroare interna!", 5000, Notification.Position.BOTTOM_CENTER);
             return null;
         } catch (TooManyResultsException e) {
-            e.printStackTrace();
+            Notification.show("Prea multe rezultate! Aplicați mai multe filtre!", 5000, Notification.Position.BOTTOM_CENTER);
             return null;
         }
     }
@@ -163,6 +160,18 @@ public class ExecutionsPage extends ListPage<Order, OrderSpecification> implemen
         filterDialog.addFilter("Data", dateFilterLayout);
         filterDialog.addFilter("Tehnician", technicianFilter);
         filterDialog.addFilter("Finalizat", finalizedFilter);
+    }
+
+    private OrderSpecification getCurrentFilter() {
+        final OrderSpecification criteria = new OrderSpecification();
+        final Optional<LocalDateTime> startDate = fromDateFilter.getOptionalValue().map(LocalDate::atStartOfDay);
+        final Optional<LocalDateTime> endDate = toDateFilter.getOptionalValue().map(val -> val.plusDays(1).atStartOfDay());
+        criteria.setStartDate(startDate.orElse(null));
+        criteria.setEndDate(endDate.orElse(null));
+        criteria.setFinalized(finalizedFilter.getOptionalValue().orElse(null));
+        criteria.setTechnician(technicianFilter.getOptionalValue().orElse(null));
+        criteria.setWithExecutions(true);
+        return criteria;
     }
 
     private Component createJobsColumn(final Collection<Job> jobs) {

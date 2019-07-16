@@ -57,7 +57,7 @@ public class MenuLayout extends Div implements Localizable {
 		this.doctorsButton = addAdminItem(DoctorsPage.class);
 		this.executionTemplatesButton = addAdminItem(ExecutionTemplatesPage.class);
 		this.jobTemplatesButton = addAdminItem(JobTemplatesPage.class);
-		this.materialsButton = addAdminItem(MaterialsPage.class);
+		this.materialsButton = addAdminItem(MaterialTemplatesPage.class);
 		this.sampleTemplatesButton = addAdminItem(SampleTemplatesPage.class);
 		this.usersButton = addAdminItem(UsersPage.class);
 		adminDetails.setVisible(adminButtonsLayout.getChildren().count() != 0);

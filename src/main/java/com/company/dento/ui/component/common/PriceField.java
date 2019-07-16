@@ -13,8 +13,8 @@ import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.data.binder.Binder;
-import com.vaadin.flow.data.converter.StringToIntegerConverter;
-import com.vaadin.flow.data.validator.IntegerRangeValidator;
+import com.vaadin.flow.data.converter.StringToFloatConverter;
+import com.vaadin.flow.data.validator.FloatRangeValidator;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -129,7 +129,6 @@ public class PriceField<T extends Price<S>, S extends Base> extends AbstractComp
         setModelValue(value, true);
     }
 
-
     private Optional<T> createItem() {
         try {
             return Optional.of(this.itemClass.getDeclaredConstructor().newInstance());
@@ -155,8 +154,8 @@ public class PriceField<T extends Price<S>, S extends Base> extends AbstractComp
         final TextField priceField = new TextField();
         final Binder<T> binder = new Binder<>();
         binder.forField(priceField)
-                .withConverter(new StringToIntegerConverter(Localizer.getLocalizedString("integerRangeValidation")))
-                .withValidator(new IntegerRangeValidator("integerRangeValidation", 0, 100000))
+                .withConverter(new StringToFloatConverter(Localizer.getLocalizedString("integerRangeValidation")))
+                .withValidator(new FloatRangeValidator("integerRangeValidation", 0f, 100000f))
                 .bind(T::getPrice, T::setPrice);
 
         binder.setBean(price);

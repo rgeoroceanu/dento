@@ -1,6 +1,6 @@
 package com.company.dento.dao.specification;
 
-import com.company.dento.model.business.Material;
+import com.company.dento.model.business.MaterialTemplate;
 import lombok.Setter;
 import org.springframework.data.jpa.domain.Specification;
 
@@ -12,16 +12,16 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Specification for advanced search of {@link Material} entities.
+ * Specification for advanced search of {@link MaterialTemplate} entities.
  *
  * @author Radu Georoceanu <rgeoroceanu@yahoo.com>
  *
  */
 @Setter
-public class MaterialSpecification implements Specification<Material> {
+public class MaterialTemplateSpecification implements Specification<MaterialTemplate> {
 
     @Override
-    public Predicate toPredicate(final Root<Material> root,
+    public Predicate toPredicate(final Root<MaterialTemplate> root,
                                  final CriteriaQuery<?> query, CriteriaBuilder builder) {
 
         final List<Predicate> predicates = new ArrayList<>();

@@ -24,7 +24,7 @@ import java.util.List;
 
 @UIScope
 @org.springframework.stereotype.Component
-@Route(value = "jobTemplates")
+@Route(value = "admin/jobs")
 @Log4j2
 public class JobTemplatesPage extends ListPage<JobTemplate, JobTemplateSpecification> implements Localizable {
 

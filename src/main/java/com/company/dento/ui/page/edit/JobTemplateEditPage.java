@@ -3,6 +3,7 @@ package com.company.dento.ui.page.edit;
 import com.company.dento.model.business.*;
 import com.company.dento.model.type.SelectionType;
 import com.company.dento.service.DataService;
+import com.company.dento.ui.component.common.MaterialField;
 import com.company.dento.ui.component.common.PriceField;
 import com.company.dento.ui.localization.Localizer;
 import com.company.dento.ui.page.list.JobTemplatesPage;
@@ -21,17 +22,15 @@ import com.vaadin.flow.router.OptionalParameter;
 import com.vaadin.flow.router.Route;
 import com.vaadin.flow.spring.annotation.UIScope;
 import lombok.extern.log4j.Log4j2;
-import org.springframework.security.access.annotation.Secured;
 import org.springframework.stereotype.Component;
 import org.vaadin.gatanaso.MultiselectComboBox;
 
-import java.util.Collections;
-import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @UIScope
 @Component
-@Route(value = "jobTemplates/id")
+@Route(value = "admin/jobs/id")
 @Log4j2
 public class JobTemplateEditPage extends EditPage<JobTemplate> {
 
@@ -42,7 +41,7 @@ public class JobTemplateEditPage extends EditPage<JobTemplate> {
     private final TextField standardPriceField = new TextField();
     private final MultiselectComboBox<SampleTemplate> sampleTemplatesField = new MultiselectComboBox<>();
     private final MultiselectComboBox<ExecutionTemplate> executionTemplatesField = new MultiselectComboBox<>();
-    private final MultiselectComboBox<Material> materialsField = new MultiselectComboBox<>();
+    private final MaterialField materialsField = new MaterialField();
     private final PriceField<JobPrice, Clinic> individualPricesField = new PriceField<>(JobPrice.class);
 
     private final Label nameLabel = new Label();
@@ -99,13 +98,14 @@ public class JobTemplateEditPage extends EditPage<JobTemplate> {
         executionTemplatesLabel.setText(Localizer.getLocalizedString("executions"));
         materialsLabel.setText(Localizer.getLocalizedString("materials"));
         individualPricesLabel.setText(Localizer.getLocalizedString("individualPrices"));
+        materialsField.localize();
     }
 
     protected void reload() {
         selectionTypeField.setItems(SelectionType.values());
         sampleTemplatesField.setItems(dataService.getAll(SampleTemplate.class));
         executionTemplatesField.setItems(dataService.getAll(ExecutionTemplate.class));
-        materialsField.setItems(dataService.getAll(Material.class));
+        materialsField.setTemplates(dataService.getAll(MaterialTemplate.class));
         individualPricesField.setOptions(dataService.getAll(Clinic.class));
     }
 
@@ -113,11 +113,11 @@ public class JobTemplateEditPage extends EditPage<JobTemplate> {
         generalLayout.addFormItem(nameField, nameLabel).getStyle();
         generalLayout.addFormItem(activeField, activeLabel);
         generalLayout.addFormItem(selectionTypeField, selectionTypeLabel);
-        generalLayout.addFormItem(materialsField, materialsLabel).getStyle().set("align-items", "end");
         generalLayout.addFormItem(sampleTemplatesField, sampleTemplatesLabel).getStyle().set("align-items", "end");
         generalLayout.addFormItem(executionTemplatesField, executionTemplatesLabel).getStyle().set("align-items", "end");
-        generalLayout.addFormItem(individualPricesField, individualPricesLabel).getStyle().set("align-items", "end");
         generalLayout.addFormItem(standardPriceField, standardPriceLabel);
+        generalLayout.addFormItem(individualPricesField, individualPricesLabel).getStyle().set("align-items", "end");
+        generalLayout.addFormItem(materialsField, materialsLabel).getStyle().set("align-items", "end");
         generalLayout.addClassName("dento-form-layout");
         nameField.addClassName("dento-form-field");
         selectionTypeField.addClassName("dento-form-field");
@@ -125,11 +125,9 @@ public class JobTemplateEditPage extends EditPage<JobTemplate> {
         activeField.addClassName("dento-form-field");
         sampleTemplatesField.addClassName("dento-form-field");
         executionTemplatesField.addClassName("dento-form-field");
-        materialsField.addClassName("dento-form-field");
         selectionTypeField.setItemLabelGenerator(val -> Localizer.getLocalizedString(val.name().toLowerCase()));
         executionTemplatesField.setItemLabelGenerator(ExecutionTemplate::getName);
         sampleTemplatesField.setItemLabelGenerator(SampleTemplate::getName);
-        materialsField.setItemLabelGenerator(Material::getName);
         final FormLayout.ResponsiveStep rs1 = new FormLayout.ResponsiveStep("0", 1, FormLayout.ResponsiveStep.LabelsPosition.TOP);
         final FormLayout.ResponsiveStep rs2 = new FormLayout.ResponsiveStep("500px", 2, FormLayout.ResponsiveStep.LabelsPosition.ASIDE);
         generalLayout.setResponsiveSteps(rs1, rs2);
@@ -159,7 +157,12 @@ public class JobTemplateEditPage extends EditPage<JobTemplate> {
                 .bind(JobTemplate::getExecutionTemplates, JobTemplate::setExecutionTemplates);
 
         binder.forField(materialsField)
-                .bind(JobTemplate::getMaterials, JobTemplate::setMaterials);
+                .bind(jt -> jt.getMaterials().stream()
+                        .map(mat -> new Material(mat.getTemplate(), null, 0f, mat.getQuantity()))
+                                .collect(Collectors.toSet()),
+                        (jt, materials) -> jt.setMaterials(materials.stream()
+                                .map(m -> new DefaultMaterial(m.getTemplate(), m.getQuantity()))
+                                .collect(Collectors.toSet())));
 
         binder.forField(individualPricesField)
                 .bind(JobTemplate::getIndividualPrices, JobTemplate::setIndividualPrices);

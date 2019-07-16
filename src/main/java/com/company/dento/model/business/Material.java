@@ -1,43 +1,32 @@
 package com.company.dento.model.business;
 
-import com.company.dento.model.type.MeasurementUnit;
-import lombok.EqualsAndHashCode;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
-import javax.persistence.*;
-import java.util.HashSet;
-import java.util.Set;
+import javax.persistence.Basic;
+import javax.persistence.Entity;
+import javax.persistence.ManyToOne;
+import javax.persistence.Table;
 
 @Getter
 @Setter
 @Entity
-@Table(name = "material_templates")
-@EqualsAndHashCode(callSuper = true, exclude = "individualPrices")
+@Table(name = "materials")
+@EqualsAndHashCode(callSuper = true, exclude = {"job"})
+@NoArgsConstructor
+@AllArgsConstructor
 public class Material extends Base {
-	
-	@Column(unique = true, nullable = false)
-	private String name;
 
-	@Enumerated(EnumType.STRING)
-	private MeasurementUnit measurementUnit;
+	@ManyToOne(optional = false)
+	private MaterialTemplate template;
 
-	@Basic
-	private int pricePerUnit;
+	@ManyToOne(optional = false)
+	private Job job;
 
 	@Basic
-	private boolean perJob;
-
-	@ElementCollection(fetch = FetchType.LAZY)
-	private Set<MaterialPrice> individualPrices = new HashSet<>();
+	private float price;
 
 	@Basic
-	private boolean active;
-	
-	public String toString() {
-		if (name != null) {
-			return name;
-		}
-		return super.toString();
-	}
+	private float quantity;
+
+
 }

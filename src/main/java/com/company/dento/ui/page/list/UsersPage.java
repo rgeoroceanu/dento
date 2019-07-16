@@ -24,7 +24,7 @@ import java.util.List;
 
 @UIScope
 @org.springframework.stereotype.Component
-@Route(value = "users")
+@Route(value = "admin/users")
 @Log4j2
 public class UsersPage extends ListPage<User, UserSpecification> implements Localizable {
 

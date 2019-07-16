@@ -8,9 +8,7 @@ import lombok.Setter;
 import javax.persistence.*;
 import java.time.LocalDate;
 import java.time.LocalTime;
-import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 /**
@@ -22,7 +20,7 @@ import java.util.Set;
 @Setter
 @Entity
 @Table(name = "jobs")
-@EqualsAndHashCode(callSuper = true, exclude = {"order", "executions", "samples", "teeth"})
+@EqualsAndHashCode(callSuper = true, exclude = {"order", "executions", "samples", "teeth", "materials"})
 public class Job extends Base {
 	
 	@ManyToOne(optional = false)
@@ -48,7 +46,10 @@ public class Job extends Base {
 
 	@ElementCollection(fetch = FetchType.LAZY)
 	private Set<Tooth> teeth = new HashSet<>();
-	
+
+	@OneToMany(fetch = FetchType.LAZY, mappedBy = "job", orphanRemoval = true, cascade = CascadeType.ALL)
+	private Set<Material> materials = new HashSet<>();
+
 	public String toString() {
 		if (template != null && order != null) {
 			return template.getName() + " : " + order.getId();

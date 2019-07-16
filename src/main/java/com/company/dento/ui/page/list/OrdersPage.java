@@ -26,6 +26,7 @@ import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.component.notification.Notification;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.textfield.TextField;
+import com.vaadin.flow.data.provider.SortDirection;
 import com.vaadin.flow.data.renderer.LocalDateRenderer;
 import com.vaadin.flow.router.Route;
 import com.vaadin.flow.server.StreamResource;
@@ -38,9 +39,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @UIScope
@@ -252,8 +251,13 @@ public class OrdersPage extends ListPage<Order, OrderSpecification> implements L
 
     @Override
     protected InputStream createPrintContent() {
+        final Map<String, Boolean> sortOrder = new LinkedHashMap<>();
+        grid.getSortOrder()
+                .forEach(sort -> sortOrder.put(sort.getSorted().getKey(),
+                        sort.getDirection() == SortDirection.ASCENDING));
+
         try {
-            return FileUtils.openInputStream(reportService.createOrdersReport(getCurrentFilter()));
+            return FileUtils.openInputStream(reportService.createOrdersReport(getCurrentFilter(), sortOrder));
         } catch (CannotGenerateReportException | IOException e) {
             Notification.show("Raportul nu a putut fi generat! Eroare interna!", 5000, Notification.Position.BOTTOM_CENTER);
             return null;

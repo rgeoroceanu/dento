@@ -20,7 +20,7 @@ public class MaterialPrice implements Price<JobTemplate> {
 	private JobTemplate jobTemplate;
 
 	@Basic
-	private int price;
+	private float price;
 
 	@Override
 	public JobTemplate getKey() {

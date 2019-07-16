@@ -28,7 +28,7 @@ import java.util.Optional;
 
 @UIScope
 @Component
-@Route(value = "doctors/id")
+@Route(value = "admin/doctors/id")
 @Log4j2
 public class DoctorEditPage extends EditPage<Doctor> {
 

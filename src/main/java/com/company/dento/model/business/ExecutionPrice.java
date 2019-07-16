@@ -20,7 +20,7 @@ public class ExecutionPrice extends Base implements Price<User> {
 	private User technician;
 
 	@Basic
-	private int price;
+	private float price;
 
 	@Override
 	public User getKey() {

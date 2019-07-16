@@ -24,7 +24,7 @@ import java.util.List;
 
 @UIScope
 @org.springframework.stereotype.Component
-@Route(value = "executionTemplates")
+@Route(value = "admin/executions")
 @Log4j2
 public class ExecutionTemplatesPage extends ListPage<ExecutionTemplate, ExecutionTemplateSpecification> implements Localizable {
 

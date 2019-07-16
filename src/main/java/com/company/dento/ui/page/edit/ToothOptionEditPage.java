@@ -27,7 +27,7 @@ import java.util.Optional;
 
 @UIScope
 @Component
-@Route(value = "toothOptions/id")
+@Route(value = "admin/tooth_options/id")
 @Log4j2
 public class ToothOptionEditPage extends EditPage<ToothOption> {
 

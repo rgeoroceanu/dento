@@ -25,7 +25,7 @@ import java.util.Optional;
 
 @UIScope
 @Component
-@Route(value = "sampleTemplates/id")
+@Route(value = "admin/samples/id")
 @Log4j2
 public class SampleTemplateEditPage extends EditPage<SampleTemplate> {
 

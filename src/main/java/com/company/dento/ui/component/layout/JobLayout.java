@@ -1,10 +1,8 @@
 package com.company.dento.ui.component.layout;
 
-import com.company.dento.model.business.Job;
-import com.company.dento.model.business.Tooth;
-import com.company.dento.model.business.ToothOption;
-import com.company.dento.model.business.User;
+import com.company.dento.model.business.*;
 import com.company.dento.ui.component.common.ExecutionSelect;
+import com.company.dento.ui.component.common.MaterialField;
 import com.company.dento.ui.component.common.SampleSelect;
 import com.company.dento.ui.component.common.TeethSelect;
 import com.company.dento.ui.localization.Localizable;
@@ -15,8 +13,11 @@ import com.vaadin.flow.component.datepicker.DatePicker;
 import com.vaadin.flow.component.formlayout.FormLayout;
 import com.vaadin.flow.component.html.Label;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
+import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.component.timepicker.TimePicker;
 import com.vaadin.flow.data.binder.Binder;
+import com.vaadin.flow.data.converter.StringToFloatConverter;
+import com.vaadin.flow.data.validator.FloatRangeValidator;
 
 import java.util.List;
 import java.util.Locale;
@@ -26,15 +27,19 @@ import java.util.stream.Collectors;
 public class JobLayout extends FormLayout implements Localizable {
 
     private final DatePicker dateField = new DatePicker();
+    private final TextField priceField = new TextField();
     private final TimePicker timeField = new TimePicker();
     private final TeethSelect teethSelect = new TeethSelect();
     private final SampleSelect sampleSelect = new SampleSelect();
     private final ExecutionSelect executionSelect = new ExecutionSelect();
+    private final MaterialField materialsField = new MaterialField();
 
     private final Label dateLabel = new Label();
     private final Label teethSelectLabel = new Label();
     private final Label sampleSelectLabel = new Label();
     private final Label executionSelectLabel = new Label();
+    private final Label materialLabel = new Label();
+    private final Label priceLabel = new Label();
 
     private Binder<Job> binder = new Binder<>();
 
@@ -51,14 +56,21 @@ public class JobLayout extends FormLayout implements Localizable {
         executionSelect.setTechnicians(technicians);
     }
 
+    public void setMaterialTemplates(final List<MaterialTemplate> materialTemplates) {
+        materialsField.setTemplates(materialTemplates);
+    }
+
     @Override
     public void localize() {
         dateLabel.setText(Localizer.getLocalizedString("deliveryDate"));
         teethSelectLabel.setText(Localizer.getLocalizedString("teeth"));
         sampleSelectLabel.setText(Localizer.getLocalizedString("samples"));
         executionSelectLabel.setText(Localizer.getLocalizedString("executions"));
+        materialLabel.setText(Localizer.getLocalizedString("materials"));
+        priceLabel.setText(Localizer.getLocalizedString("price"));
         sampleSelect.localize();
         executionSelect.localize();
+        materialsField.localize();
     }
 
     public void setJob(final Job job) {
@@ -104,11 +116,13 @@ public class JobLayout extends FormLayout implements Localizable {
         final FormLayout.FormItem fi1 = fl1.addFormItem(dateLayout, dateLabel);
         final FormLayout.FormItem fi2 = fl1.addFormItem(sampleSelect, sampleSelectLabel);
         final FormLayout.FormItem fi3 = fl1.addFormItem(executionSelect, executionSelectLabel);
+        final FormLayout.FormItem fi5 = fl2.addFormItem(materialsField, materialLabel);
         final FormLayout.FormItem fi4 = fl2.addFormItem(teethSelect, teethSelectLabel);
         fi1.getStyle().set("align-items", "initial");
         fi2.getStyle().set("align-items", "initial");
         fi3.getStyle().set("align-items", "initial");
         fi4.getStyle().set("align-items", "initial");
+        fi5.getStyle().set("align-items", "initial");
 
         final FormLayout.ResponsiveStep rs1 = new FormLayout.ResponsiveStep("0", 1, FormLayout.ResponsiveStep.LabelsPosition.TOP);
         final FormLayout.ResponsiveStep rs2 = new FormLayout.ResponsiveStep("500px", 1, FormLayout.ResponsiveStep.LabelsPosition.ASIDE);
@@ -145,5 +159,18 @@ public class JobLayout extends FormLayout implements Localizable {
         binder.forField(sampleSelect)
                 //.asRequired(Localizer.getLocalizedString("requiredValidation"))
                 .bind(Job::getSamples, Job::setSamples);
+
+        binder.forField(materialsField)
+                .bind(Job::getMaterials, this::setJobMaterials);
+
+        binder.forField(priceField)
+                .withConverter(new StringToFloatConverter(Localizer.getLocalizedString("integerRangeValidation")))
+                .withValidator(new FloatRangeValidator("integerRangeValidation", 0f, 100000f))
+                .bind(Job::getPrice, Job::setPrice);
+    }
+
+    private void setJobMaterials(final Job job, final Set<Material> materials) {
+        materials.forEach(m -> m.setJob(job));
+        job.setMaterials(materials);
     }
 }

@@ -20,7 +20,7 @@ public class JobPrice implements Price<Clinic> {
 	private Clinic clinic;
 
 	@Basic
-	private int price;
+	private float price;
 
 	@Override
 	public Clinic getKey() {

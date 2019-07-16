@@ -17,6 +17,7 @@ import com.vaadin.flow.component.combobox.ComboBox;
 import com.vaadin.flow.component.html.Label;
 import com.vaadin.flow.component.icon.Icon;
 import com.vaadin.flow.component.icon.VaadinIcon;
+import com.vaadin.flow.component.notification.Notification;
 import com.vaadin.flow.component.orderedlayout.FlexComponent;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
@@ -34,6 +35,7 @@ public class JobsField extends AbstractCompositeField<VerticalLayout, JobsField,
     private final List<User> technicians = new ArrayList<>();
     private final List<ToothOption> optionsColumn1 = new ArrayList<>();
     private final List<ToothOption> optionsColumn2 = new ArrayList<>();
+    private final List<MaterialTemplate> materialTemplates = new ArrayList<>();
 
     public JobsField() {
         super(null);
@@ -64,8 +66,15 @@ public class JobsField extends AbstractCompositeField<VerticalLayout, JobsField,
         this.optionsColumn2.addAll(optionsColumn2);
     }
 
+    public void setMaterialTemplates(final List<MaterialTemplate> materialTemplates) {
+        this.materialTemplates.clear();
+        this.materialTemplates.addAll(materialTemplates);
+    }
+
     @Override
     public void setPresentationValue(final Set<Job> value) {
+        accordion.close();
+        accordion.getChildren().forEach(accordion::remove);
         this.value.clear();
         value.forEach(this::addJob);
         accordion.close();
@@ -91,6 +100,7 @@ public class JobsField extends AbstractCompositeField<VerticalLayout, JobsField,
         jobLayout.setTechnicians(technicians);
         jobLayout.setTeethOptions(this.optionsColumn1, this.optionsColumn2);
         jobLayout.addTeethSelectListener(e -> value.values().forEach(jl -> jl.updateTeeth(this.getValue())));
+        jobLayout.setMaterialTemplates(materialTemplates);
         panel.setContent(jobLayout);
         accordion.add(panel);
         this.value.put(job, jobLayout);
@@ -150,6 +160,7 @@ public class JobsField extends AbstractCompositeField<VerticalLayout, JobsField,
         final Job job = new Job();
         job.setOrder(order);
         job.setTemplate(jobTemplate);
+        job.setPrice(extractDefaultPrice(jobTemplate, order));
 
         jobTemplate.getSampleTemplates().stream()
                 .map(template -> {
@@ -167,14 +178,37 @@ public class JobsField extends AbstractCompositeField<VerticalLayout, JobsField,
                     return execution;
                 }).forEach(execution -> job.getExecutions().add(execution));
 
+        jobTemplate.getMaterials().stream()
+                .map(defaultMaterial -> {
+                    final Material material = new Material();
+                    material.setTemplate(defaultMaterial.getTemplate());
+                    material.setJob(job);
+                    material.setPrice(defaultMaterial.getTemplate().getPricePerUnit());
+                    material.setQuantity(defaultMaterial.getQuantity());
+                    return material;
+                }).forEach(material -> job.getMaterials().add(material));
+
         return job;
     }
 
     private void handleAddJob() {
+        if (order.getClinic() == null) {
+            Notification.show("Selectați clinica mai intâi!", 5000, Notification.Position.BOTTOM_CENTER);
+            return;
+        }
+
         jobTemplatesField.getOptionalValue()
                 .ifPresent(jobTemplate -> {
                     this.addJob(createJob(jobTemplate));
                     accordion.close();
                 });
+    }
+
+    private float extractDefaultPrice(final JobTemplate jobTemplate, final Order order) {
+        return jobTemplate.getIndividualPrices().stream()
+                .filter(p -> p.getClinic().getId().equals(order.getClinic() != null ? order.getClinic().getId() : null))
+                .map(JobPrice::getPrice)
+                .findFirst()
+                .orElse(jobTemplate.getStandardPrice());
     }
 }

@@ -20,7 +20,7 @@ import java.util.List;
 
 @UIScope
 @org.springframework.stereotype.Component
-@Route(value = "clinics")
+@Route(value = "admin/clinics")
 @Log4j2
 public class ClinicsPage extends ListPage<Clinic, ClinicSpecification> implements Localizable {
 

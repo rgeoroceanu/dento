@@ -65,7 +65,9 @@ public class ReportService {
         }
     }
 
-    public File createOrdersReport(final OrderSpecification orderSpecification) throws CannotGenerateReportException, TooManyResultsException {
+    public File createOrdersReport(final OrderSpecification orderSpecification,
+                                   final Map<String, Boolean> sortOrder) throws CannotGenerateReportException, TooManyResultsException {
+
         log.info("Creating jobs report for order {} ", orderSpecification);
 
         if (dataService.countByCriteria(Order.class, orderSpecification) > 1000) {
@@ -75,12 +77,35 @@ public class ReportService {
         final GeneralData generalData = dataService.getGeneralData()
                 .orElseThrow(() -> new CannotGenerateReportException("Error generating report: missing general data!"));
 
-        final List<Order> orders = dataService.getByCriteria(Order.class, orderSpecification, 0, 1000, Collections.emptyMap());
+        final List<Order> orders = dataService.getByCriteria(Order.class, orderSpecification, 0, 1000, sortOrder);
 
         final Double totalPrice = dataService.getJobsPriceTotal(orderSpecification);;
 
         try {
             return jasperWriter.writeReport(ordersReportTemplate.getFile(), constructOrdersParameters(orders, generalData, totalPrice));
+        } catch (final JRException | IOException e) {
+            throw new CannotGenerateReportException("Error generating report!", e);
+        }
+    }
+
+    public File createExecutionsReport(final OrderSpecification orderSpecification,
+                                       final Map<String, Boolean> sortOrder) throws CannotGenerateReportException, TooManyResultsException {
+
+        log.info("Creating executions report for order {} ", orderSpecification);
+
+        if (dataService.countByCriteria(Order.class, orderSpecification) > 1000) {
+            throw new TooManyResultsException("Too many entries for report generation!");
+        }
+
+        final GeneralData generalData = dataService.getGeneralData()
+                .orElseThrow(() -> new CannotGenerateReportException("Error generating report: missing general data!"));
+
+        final List<Order> orders = dataService.getByCriteria(Order.class, orderSpecification, 0, 1000, sortOrder);
+
+        final Double totalPrice = dataService.getExecutionsPriceTotal(orderSpecification);;
+
+        try {
+            return jasperWriter.writeReport(executionsReportTemplate.getFile(), constructExecutionsParameters(orders, generalData, totalPrice));
         } catch (final JRException | IOException e) {
             throw new CannotGenerateReportException("Error generating report!", e);
         }
@@ -116,6 +141,26 @@ public class ReportService {
 
     private Map<String, Object> constructOrdersParameters(final List<Order> orders, final GeneralData generalData,
                                                           final Double totalPrice) {
+
+        final Map<String, Object> parameters = new HashMap<>();
+        parameters.put("COMPANY_NAME", generalData.getLaboratoryName());
+        parameters.put("ADDRESS1", generalData.getAddress());
+        parameters.put("ADDRESS2", String.format("%s, %s", generalData.getPostalCode(), generalData.getTown()));
+        parameters.put("CONTACT", String.format("%s, %s",generalData.getPhone(), generalData.getEmail()));
+        parameters.put("DATE", dateFormatter.format(LocalDate.now()));
+        parameters.put("TOTAL_PRICE", String.format(Localizer.getCurrentLocale(), "%.2f", totalPrice));
+
+        if (generalData.getLogo() != null) {
+            parameters.put("LOGO", getLogoImage(generalData));
+        }
+
+        parameters.put("ORDERS", constructOrdersParameter(orders));
+
+        return parameters;
+    }
+
+    private Map<String, Object> constructExecutionsParameters(final List<Order> orders, final GeneralData generalData,
+                                                              final Double totalPrice) {
 
         final Map<String, Object> parameters = new HashMap<>();
         parameters.put("COMPANY_NAME", generalData.getLaboratoryName());

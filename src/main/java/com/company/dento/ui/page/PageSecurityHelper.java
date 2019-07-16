@@ -24,7 +24,7 @@ public class PageSecurityHelper {
             put(DoctorsPage.class, Collections.singletonList("ADMIN"));
             put(ExecutionTemplatesPage.class, Collections.singletonList("ADMIN"));
             put(JobTemplatesPage.class, Collections.singletonList("ADMIN"));
-            put(MaterialsPage.class, Collections.singletonList("ADMIN"));
+            put(MaterialTemplatesPage.class, Collections.singletonList("ADMIN"));
             put(SampleTemplatesPage.class, Collections.singletonList("ADMIN"));
             put(ToothColorsPage.class, Collections.singletonList("ADMIN"));
             put(ToothOptionsPage.class, Collections.singletonList("ADMIN"));
@@ -34,7 +34,7 @@ public class PageSecurityHelper {
             put(DoctorEditPage.class, Collections.singletonList("ADMIN"));
             put(ExecutionTemplateEditPage.class, Collections.singletonList("ADMIN"));
             put(JobTemplateEditPage.class, Collections.singletonList("ADMIN"));
-            put(MaterialEditPage.class, Collections.singletonList("ADMIN"));
+            put(MaterialTemplateEditPage.class, Collections.singletonList("ADMIN"));
             put(SampleTemplateEditPage.class, Collections.singletonList("ADMIN"));
             put(ToothColorEditPage.class, Collections.singletonList("ADMIN"));
             put(ToothOptionEditPage.class, Collections.singletonList("ADMIN"));

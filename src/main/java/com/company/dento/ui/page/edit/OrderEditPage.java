@@ -27,12 +27,8 @@ import com.vaadin.flow.router.OptionalParameter;
 import com.vaadin.flow.router.Route;
 import com.vaadin.flow.spring.annotation.UIScope;
 import lombok.extern.log4j.Log4j2;
-import org.springframework.security.access.annotation.Secured;
 import org.springframework.stereotype.Component;
 
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -85,8 +81,9 @@ public class OrderEditPage extends EditPage<Order> {
     @Override
     public void afterNavigation(final AfterNavigationEvent afterNavigationEvent) {
         super.afterNavigation(afterNavigationEvent);
-        generalTab.setSelected(true);
         toggleTabSelection(0);
+        tabs.setSelectedIndex(0);
+        generalTab.setSelected(true);
     }
 
     @Override
@@ -138,6 +135,7 @@ public class OrderEditPage extends EditPage<Order> {
                 .collect(Collectors.toList()));
 
         jobsField.setJobTemplates(dataService.getAll(JobTemplate.class));
+        jobsField.setMaterialTemplates(dataService.getAll(MaterialTemplate.class));
     }
 
     private void initGeneralTab() {

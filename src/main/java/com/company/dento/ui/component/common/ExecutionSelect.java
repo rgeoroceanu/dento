@@ -41,6 +41,7 @@ public class ExecutionSelect extends AbstractCompositeField<VerticalLayout, Exec
         this.getContent().add(grid);
         this.getContent().setPadding(false);
         this.getContent().getStyle().set("margin-bottom", "15px");
+        this.getContent().getStyle().set("margin-top", "10px");
         this.getContent().setMaxHeight("20em");
         this.getContent().setWidth("90%");
         this.getContent().getStyle().set("min-width", "200px");

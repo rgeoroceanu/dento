@@ -32,7 +32,7 @@ public class DataServiceImpl implements DataService {
 	
 	private final JobDao jobDao;
 	private final JobTemplateDao jobTemplateDao;
-	private final MaterialDao materialDao;
+	private final MaterialTemplatesDao materialTemplatesDao;
 	private final ExecutionTemplateDao executionTemplateDao;
 	private final ExecutionDao executionDao;
 	private final OrderDao orderDao;
@@ -49,7 +49,7 @@ public class DataServiceImpl implements DataService {
 	@Autowired
 	private PasswordEncoder passwordEncoder;
 
-	public DataServiceImpl(final JobDao jobDao, final JobTemplateDao jobTemplateDao, final MaterialDao materialDao,
+	public DataServiceImpl(final JobDao jobDao, final JobTemplateDao jobTemplateDao, final MaterialTemplatesDao materialTemplatesDao,
 						   final ExecutionTemplateDao executionTemplateDao, final ExecutionDao executionDao,
 						   final OrderDao orderDao, final SampleDao sampleDao, final SampleTemplateDao sampleTemplateDao,
 						   final DoctorDao doctorDao, final UserDao userDao, final ClinicDao clinicDao,
@@ -57,7 +57,7 @@ public class DataServiceImpl implements DataService {
 
 		this.jobDao = jobDao;
 		this.jobTemplateDao = jobTemplateDao;
-		this.materialDao = materialDao;
+		this.materialTemplatesDao = materialTemplatesDao;
 		this.executionTemplateDao = executionTemplateDao;
 		this.executionDao = executionDao;
 		this.orderDao = orderDao;
@@ -66,7 +66,6 @@ public class DataServiceImpl implements DataService {
 		this.doctorDao = doctorDao;
 		this.userDao = userDao;
 		this.clinicDao = clinicDao;
-		//this.passwordEncoder = passwordEncoder;
 		this.toothColorDao = toothColorDao;
 		this.toothOptionDao = toothOptionDao;
 		this.calendarEventDao = calendarEventDao;
@@ -81,8 +80,8 @@ public class DataServiceImpl implements DataService {
 			user.setFirstName("Admin");
 			user.setLastName("Admin");
 			user.setUsername("admin");
-			user.setPassword("admin12345678");
-			user.setRoles(new HashSet<>(Arrays.asList(Role.USER)));
+			user.setPassword("admin");
+			user.setRoles(new HashSet<>(Arrays.asList(Role.USER, Role.ADMIN)));
 			saveUserAndEncodePassword(user);
 			
 			// TODO remove this
@@ -104,12 +103,12 @@ public class DataServiceImpl implements DataService {
 			sampleTemplate1.setName("Proba Ceramica");
 			saveEntity(sampleTemplate1);
 			
-			Material material = new Material();
-			material.setName("Material 1");
-			material.setMeasurementUnit(MeasurementUnit.CM);
-			material.setPerJob(true);
-			material.setPricePerUnit(100);
-			saveEntity(material);
+			MaterialTemplate materialTemplate = new MaterialTemplate();
+			materialTemplate.setName("MaterialTemplate 1");
+			materialTemplate.setMeasurementUnit(MeasurementUnit.CM);
+			materialTemplate.setPerJob(true);
+			materialTemplate.setPricePerUnit(100);
+			saveEntity(materialTemplate);
 			
 			Clinic clinic = new Clinic();
 			clinic.setName("Clinic 1");
@@ -258,8 +257,8 @@ public class DataServiceImpl implements DataService {
 			return (JpaRepository<T, Long>) jobDao;
 		} else if (entityClass == JobTemplate.class) {
 			return (JpaRepository<T, Long>) jobTemplateDao;
-		} else if (entityClass == Material.class) {
-			return (JpaRepository<T, Long>) materialDao;
+		} else if (entityClass == MaterialTemplate.class) {
+			return (JpaRepository<T, Long>) materialTemplatesDao;
 		} else if (entityClass == Order.class) {
 			return (JpaRepository<T, Long>) orderDao;
 		} else if (entityClass == Sample.class) {

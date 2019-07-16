@@ -21,7 +21,7 @@ import java.util.List;
 
 @UIScope
 @org.springframework.stereotype.Component
-@Route(value = "toothColors")
+@Route(value = "admin/tooth_colors")
 @Log4j2
 public class ToothColorsPage extends ListPage<ToothColor, ToothColorSpecification> implements Localizable {
 

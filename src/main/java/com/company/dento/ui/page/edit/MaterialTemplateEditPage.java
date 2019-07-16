@@ -1,13 +1,13 @@
 package com.company.dento.ui.page.edit;
 
 import com.company.dento.model.business.JobTemplate;
-import com.company.dento.model.business.Material;
 import com.company.dento.model.business.MaterialPrice;
+import com.company.dento.model.business.MaterialTemplate;
 import com.company.dento.model.type.MeasurementUnit;
 import com.company.dento.service.DataService;
 import com.company.dento.ui.component.common.PriceField;
 import com.company.dento.ui.localization.Localizer;
-import com.company.dento.ui.page.list.MaterialsPage;
+import com.company.dento.ui.page.list.MaterialTemplatesPage;
 import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.checkbox.Checkbox;
 import com.vaadin.flow.component.combobox.ComboBox;
@@ -15,8 +15,8 @@ import com.vaadin.flow.component.formlayout.FormLayout;
 import com.vaadin.flow.component.html.Label;
 import com.vaadin.flow.component.notification.Notification;
 import com.vaadin.flow.component.textfield.TextField;
-import com.vaadin.flow.data.converter.StringToIntegerConverter;
-import com.vaadin.flow.data.validator.IntegerRangeValidator;
+import com.vaadin.flow.data.converter.StringToFloatConverter;
+import com.vaadin.flow.data.validator.FloatRangeValidator;
 import com.vaadin.flow.router.AfterNavigationEvent;
 import com.vaadin.flow.router.BeforeEvent;
 import com.vaadin.flow.router.OptionalParameter;
@@ -29,9 +29,9 @@ import java.util.Optional;
 
 @UIScope
 @Component
-@Route(value = "materials/id")
+@Route(value = "admin/materials/id")
 @Log4j2
-public class MaterialEditPage extends EditPage<Material> {
+public class MaterialTemplateEditPage extends EditPage<MaterialTemplate> {
 
     private final FormLayout generalLayout = new FormLayout();
     private final TextField nameField = new TextField();
@@ -48,8 +48,8 @@ public class MaterialEditPage extends EditPage<Material> {
     private final Label perJobLabel = new Label();
     private final Label individualPricesLabel = new Label();
 
-    public MaterialEditPage(final DataService dataService) {
-        super(dataService, "Material");
+    public MaterialTemplateEditPage(final DataService dataService) {
+        super(dataService, "Editare Material");
 
         initGeneralLayout();
         reload();
@@ -68,17 +68,17 @@ public class MaterialEditPage extends EditPage<Material> {
     public void setParameter(final BeforeEvent beforeEvent, final @OptionalParameter Long itemId) {
         reload();
 
-        final Optional<Material> item;
+        final Optional<MaterialTemplate> item;
         if (itemId != null) {
-            item = dataService.getEntity(itemId, Material.class);
+            item = dataService.getEntity(itemId, MaterialTemplate.class);
         } else {
-            item = Optional.of(new Material());
+            item = Optional.of(new MaterialTemplate());
         }
 
         if (item.isPresent()) {
             binder.setBean(item.get());
         } else {
-            beforeEvent.rerouteTo(MaterialsPage.class);
+            beforeEvent.rerouteTo(MaterialTemplatesPage.class);
         }
     }
 
@@ -120,33 +120,33 @@ public class MaterialEditPage extends EditPage<Material> {
     protected void bindFields() {
         binder.forField(nameField)
                 .asRequired(Localizer.getLocalizedString("requiredValidation"))
-                .bind(Material::getName, Material::setName);
+                .bind(MaterialTemplate::getName, MaterialTemplate::setName);
 
         binder.forField(measurementUnitField)
                 .asRequired(Localizer.getLocalizedString("requiredValidation"))
-                .bind(Material::getMeasurementUnit, Material::setMeasurementUnit);
+                .bind(MaterialTemplate::getMeasurementUnit, MaterialTemplate::setMeasurementUnit);
 
         binder.forField(pricePerUnitField)
-                .withConverter(new StringToIntegerConverter(Localizer.getLocalizedString("integerRangeValidation")))
-                .withValidator(new IntegerRangeValidator("integerRangeValidation", 0, 100000))
-                .bind(Material::getPricePerUnit, Material::setPricePerUnit);
+                .withConverter(new StringToFloatConverter(Localizer.getLocalizedString("integerRangeValidation")))
+                .withValidator(new FloatRangeValidator("integerRangeValidation", 0f, 100000f))
+                .bind(MaterialTemplate::getPricePerUnit, MaterialTemplate::setPricePerUnit);
 
         binder.forField(activeField)
-                .bind(Material::isActive, Material::setActive);
+                .bind(MaterialTemplate::isActive, MaterialTemplate::setActive);
 
         binder.forField(perJobField)
-                .bind(Material::isPerJob, Material::setPerJob);
+                .bind(MaterialTemplate::isPerJob, MaterialTemplate::setPerJob);
 
         binder.forField(individualPricesField)
-                .bind(Material::getIndividualPrices, Material::setIndividualPrices);
+                .bind(MaterialTemplate::getIndividualPrices, MaterialTemplate::setIndividualPrices);
 
     }
 
     protected void save() {
         if (binder.isValid()) {
-            final Material item = binder.getBean();
+            final MaterialTemplate item = binder.getBean();
             dataService.saveEntity(item);
-            UI.getCurrent().navigate(MaterialsPage.class);
+            UI.getCurrent().navigate(MaterialTemplatesPage.class);
         } else {
             Notification.show(Localizer.getLocalizedString("validationError"),
                     5000, Notification.Position.BOTTOM_CENTER);
@@ -154,6 +154,6 @@ public class MaterialEditPage extends EditPage<Material> {
     }
 
     protected void discard() {
-        UI.getCurrent().navigate(MaterialsPage.class);
+        UI.getCurrent().navigate(MaterialTemplatesPage.class);
     }
 }
