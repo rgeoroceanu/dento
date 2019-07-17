@@ -80,7 +80,7 @@ public class OrdersPage extends ListPage<Order, OrderSpecification> implements L
 
         grid.addColumn("id");
         grid.addColumn("patient");
-        grid.addColumn("clinic.name");
+        grid.addColumn("doctor.clinic.name");
         grid.addColumn("doctor");
 
         grid.addComponentColumn(item -> createCollectionColumn(item.getJobs().stream()
@@ -255,12 +255,16 @@ public class OrdersPage extends ListPage<Order, OrderSpecification> implements L
         try {
             return FileUtils.openInputStream(reportService.createOrdersReport(getCurrentFilter(), sortOrder));
         } catch (CannotGenerateReportException | IOException e) {
-            Notification.show("Raportul nu a putut fi generat! Eroare interna!", 5000, Notification.Position.BOTTOM_CENTER);
+            displayReportError("Raportul nu a putut fi generat! Eroare interna!");
             return null;
         } catch (TooManyResultsException e) {
-            Notification.show("Prea multe rezultate! Aplicați mai multe filtre!", 5000, Notification.Position.BOTTOM_CENTER);
+            displayReportError("Prea multe rezultate! Aplicați mai multe filtre!");
             return null;
         }
+    }
+
+    private void displayReportError(final String message) {
+	    UI.getCurrent().access(() -> Notification.show(message, 5000, Notification.Position.BOTTOM_CENTER));
     }
 
     protected void initFilters() {

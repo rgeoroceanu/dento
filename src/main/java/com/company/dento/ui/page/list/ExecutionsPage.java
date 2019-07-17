@@ -83,7 +83,7 @@ public class ExecutionsPage extends ListPage<Order, OrderSpecification> implemen
 
         grid.addColumn("id");
         grid.addColumn("patient");
-        grid.addColumn("clinic.name");
+        grid.addColumn("doctor.clinic.name");
         grid.addColumn("doctor");
 
         grid.addComponentColumn(item -> createJobsColumn(item.getJobs()))

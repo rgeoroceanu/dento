@@ -56,11 +56,15 @@ public class ReportService {
                 .orElseThrow(() -> new CannotGenerateReportException("Error generating report: order id invalid!"));
 
         final GeneralData generalData = dataService.getGeneralData()
-                .orElseThrow(() -> new CannotGenerateReportException("Error generating report: missing general data!"));
+                .orElseThrow(() -> {
+                    log.error("Error generating report: missing general data!");
+                    return new CannotGenerateReportException("Error generating report: missing general data!");
+                });
 
         try {
             return jasperWriter.writeReport(orderReportTemplate.getFile(), constructOrderParameters(oder, generalData));
         } catch (final JRException | IOException e) {
+            log.error("Error generating report: {}", e.getMessage());
             throw new CannotGenerateReportException("Error generating report!", e);
         }
     }
@@ -71,11 +75,15 @@ public class ReportService {
         log.info("Creating jobs report for order {} ", orderSpecification);
 
         if (dataService.countByCriteria(Order.class, orderSpecification) > 1000) {
+            log.error("Error generating report: too many results");
             throw new TooManyResultsException("Too many entries for report generation!");
         }
 
         final GeneralData generalData = dataService.getGeneralData()
-                .orElseThrow(() -> new CannotGenerateReportException("Error generating report: missing general data!"));
+                .orElseThrow(() -> {
+                    log.error("Error generating report: missing general data!");
+                    return new CannotGenerateReportException("Error generating report: missing general data!");
+                });
 
         final List<Order> orders = dataService.getByCriteria(Order.class, orderSpecification, 0, 1000, sortOrder);
 
@@ -84,6 +92,7 @@ public class ReportService {
         try {
             return jasperWriter.writeReport(ordersReportTemplate.getFile(), constructOrdersParameters(orders, generalData, totalPrice));
         } catch (final JRException | IOException e) {
+            log.error("Error generating report: {}", e.getMessage());
             throw new CannotGenerateReportException("Error generating report!", e);
         }
     }
@@ -94,11 +103,16 @@ public class ReportService {
         log.info("Creating executions report for order {} ", orderSpecification);
 
         if (dataService.countByCriteria(Order.class, orderSpecification) > 1000) {
+            log.error("Error generating report: too many results");
             throw new TooManyResultsException("Too many entries for report generation!");
         }
 
         final GeneralData generalData = dataService.getGeneralData()
-                .orElseThrow(() -> new CannotGenerateReportException("Error generating report: missing general data!"));
+                .orElseThrow(() -> {
+                    log.error("Error generating report: missing general data!");
+                    return new CannotGenerateReportException("Error generating report: missing general data!");
+                });
+
 
         final List<Order> orders = dataService.getByCriteria(Order.class, orderSpecification, 0, 1000, sortOrder);
 
@@ -107,6 +121,7 @@ public class ReportService {
         try {
             return jasperWriter.writeReport(executionsReportTemplate.getFile(), constructExecutionsParameters(orders, generalData, totalPrice));
         } catch (final JRException | IOException e) {
+            log.error("Error generating report: {}", e.getMessage());
             throw new CannotGenerateReportException("Error generating report!", e);
         }
     }
