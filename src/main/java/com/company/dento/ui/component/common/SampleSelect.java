@@ -1,49 +1,16 @@
 package com.company.dento.ui.component.common;
 
 import com.company.dento.model.business.Sample;
-import com.company.dento.ui.localization.Localizable;
+import com.company.dento.model.business.SampleTemplate;
 import com.company.dento.ui.localization.Localizer;
-import com.vaadin.flow.component.AbstractCompositeField;
+import com.vaadin.flow.component.ItemLabelGenerator;
 import com.vaadin.flow.component.datepicker.DatePicker;
-import com.vaadin.flow.component.grid.FooterRow;
-import com.vaadin.flow.component.grid.Grid;
-import com.vaadin.flow.component.html.Label;
-import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.timepicker.TimePicker;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-
-public class SampleSelect extends AbstractCompositeField<VerticalLayout, SampleSelect, Set<Sample>> implements Localizable {
-
-    private final List<Sample> value = new ArrayList<>();
-    private final Grid<Sample> grid;
-    private final Label emptyText = new Label();
+public class SampleSelect extends ListSelectField<Sample, SampleTemplate> {
 
     public SampleSelect() {
-        super(null);
-
-        grid = new Grid<>(Sample.class);
-        grid.getElement().setAttribute("theme", "row-stripes no-border");
-        grid.getColumns().forEach(grid::removeColumn);
-        grid.addColumn("template.name").setSortable(false);
-        grid.addComponentColumn(this::addDatePickerColumn).setKey("date").setFlexGrow(0).setWidth("10em").setSortable(false);
-        grid.addComponentColumn(this::addTimePickerColumn).setKey("time").setFlexGrow(0).setWidth("8em").setSortable(false);
-        grid.addClassName("dento-grid");
-        grid.setHeightByRows(true);
-        final FooterRow footer = grid.appendFooterRow();
-        footer.getCells().get(0).setComponent(emptyText);
-
-        this.getContent().add(grid);
-        this.getContent().setPadding(false);
-        this.getContent().getStyle().set("margin-bottom", "15px");
-        this.getContent().getStyle().set("margin-top", "10px");
-        this.getContent().setMaxHeight("20em");
-        this.getContent().setWidth("90%");
-        this.getContent().getStyle().set("min-width", "200px");
-        this.getContent().getStyle().set("max-width", "650px");
+        super(Sample.class);
     }
 
     @Override
@@ -51,19 +18,30 @@ public class SampleSelect extends AbstractCompositeField<VerticalLayout, SampleS
         grid.getColumns().get(0).setHeader(Localizer.getLocalizedString("name"));
         grid.getColumnByKey("date").setHeader(Localizer.getLocalizedString("date"));
         grid.getColumnByKey("time").setHeader(Localizer.getLocalizedString("time"));
-        emptyText.setText(Localizer.getLocalizedString("emptySamples"));
     }
 
     @Override
-    public void setPresentationValue(final Set<Sample> value) {
-        this.value.clear();
-        this.value.addAll(value);
-        grid.setItems(value);
-        emptyText.setVisible(value.isEmpty());
+    protected ItemLabelGenerator<SampleTemplate> getOptionsLabelGenerator() {
+        return SampleTemplate::getName;
     }
 
-    public Set<Sample> getValue() {
-        return new HashSet<>(value);
+    @Override
+    protected void addColumns() {
+        grid.addColumn("template.name").setSortable(false);
+        grid.addComponentColumn(this::addDatePickerColumn).setKey("date").setFlexGrow(0).setWidth("10em").setSortable(false);
+        grid.addComponentColumn(this::addTimePickerColumn).setKey("time").setFlexGrow(0).setWidth("8em").setSortable(false);
+    }
+
+    @Override
+    protected Sample createNewItem(SampleTemplate option) {
+        final Sample item = new Sample();
+        item.setTemplate(option);
+        return item;
+    }
+
+    @Override
+    protected Long getItemOptionId(final Sample item) {
+        return item.getTemplate().getId();
     }
 
     private DatePicker addDatePickerColumn(final Sample sample) {

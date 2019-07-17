@@ -3,7 +3,6 @@ package com.company.dento.ui.page.list;
 import com.company.dento.dao.specification.SampleTemplateSpecification;
 import com.company.dento.model.business.SampleTemplate;
 import com.company.dento.service.DataService;
-import com.company.dento.service.exception.DataDoesNotExistException;
 import com.company.dento.ui.component.common.ConfirmDialog;
 import com.company.dento.ui.localization.Localizable;
 import com.company.dento.ui.localization.Localizer;
@@ -16,11 +15,8 @@ import com.vaadin.flow.component.notification.Notification;
 import com.vaadin.flow.router.Route;
 import com.vaadin.flow.spring.annotation.UIScope;
 import lombok.extern.log4j.Log4j2;
-import org.springframework.security.access.annotation.Secured;
 
 import java.io.InputStream;
-import java.util.Collections;
-import java.util.List;
 
 @UIScope
 @org.springframework.stereotype.Component
@@ -91,11 +87,7 @@ public class SampleTemplatesPage extends ListPage<SampleTemplate, SampleTemplate
     }
 
     private void remove(final SampleTemplate item) {
-        try {
-            dataService.deleteEntity(item.getId(), SampleTemplate.class);
-        } catch (DataDoesNotExistException e) {
-            log.warn("Tried to delete non-nexisting sample template: {}", item.getId());
-        }
+	    dataService.softDeleteEntity(item.getId(), SampleTemplate.class);
         Notification.show(String.format(Localizer.getLocalizedString("confirmRemove.success"),
                 item.getId()), 3000, Notification.Position.BOTTOM_CENTER);
     }

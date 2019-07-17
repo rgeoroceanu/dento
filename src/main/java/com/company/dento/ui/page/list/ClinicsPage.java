@@ -3,7 +3,6 @@ package com.company.dento.ui.page.list;
 import com.company.dento.dao.specification.ClinicSpecification;
 import com.company.dento.model.business.Clinic;
 import com.company.dento.service.DataService;
-import com.company.dento.service.exception.DataDoesNotExistException;
 import com.company.dento.ui.component.common.ConfirmDialog;
 import com.company.dento.ui.localization.Localizable;
 import com.company.dento.ui.localization.Localizer;
@@ -15,8 +14,6 @@ import com.vaadin.flow.spring.annotation.UIScope;
 import lombok.extern.log4j.Log4j2;
 
 import java.io.InputStream;
-import java.util.Collections;
-import java.util.List;
 
 @UIScope
 @org.springframework.stereotype.Component
@@ -81,11 +78,7 @@ public class ClinicsPage extends ListPage<Clinic, ClinicSpecification> implement
     }
 
     private void remove(final Clinic item) {
-        try {
-            dataService.deleteEntity(item.getId(), Clinic.class);
-        } catch (DataDoesNotExistException e) {
-            log.warn("Tried to delete non-nexisting clinic: {}", item.getId());
-        }
+	    dataService.softDeleteEntity(item.getId(), Clinic.class);
         Notification.show(String.format(Localizer.getLocalizedString("confirmRemove.success"),
                 item.getId()), 3000, Notification.Position.BOTTOM_CENTER);
     }

@@ -26,6 +26,7 @@ import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Component;
 
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @UIScope
 @Component
@@ -95,7 +96,8 @@ public class MaterialTemplateEditPage extends EditPage<MaterialTemplate> {
 
     protected void reload() {
         measurementUnitField.setItems(MeasurementUnit.values());
-        individualPricesField.setOptions(dataService.getAll(JobTemplate.class));
+        individualPricesField.setOptions(dataService.getAll(JobTemplate.class)
+                .stream().filter(JobTemplate::isActive).collect(Collectors.toList()));
     }
 
     private void initGeneralLayout() {

@@ -7,7 +7,6 @@ import com.company.dento.model.business.Order;
 import com.company.dento.service.DataService;
 import com.company.dento.service.ReportService;
 import com.company.dento.service.exception.CannotGenerateReportException;
-import com.company.dento.service.exception.DataDoesNotExistException;
 import com.company.dento.service.exception.TooManyResultsException;
 import com.company.dento.ui.component.common.ConfirmDialog;
 import com.company.dento.ui.localization.Localizable;
@@ -227,11 +226,7 @@ public class OrdersPage extends ListPage<Order, OrderSpecification> implements L
     }
 
     private void remove(final Order item) {
-        try {
-            dataService.deleteEntity(item.getId(), Order.class);
-        } catch (DataDoesNotExistException e) {
-            log.warn("Tried to delete non-nexisting order: {}", item.getId());
-        }
+        dataService.deleteEntity(item.getId(), Order.class);
         Notification.show(String.format(Localizer.getLocalizedString("confirmRemove.success"),
                 item.getId()), 3000, Notification.Position.BOTTOM_CENTER);
     }

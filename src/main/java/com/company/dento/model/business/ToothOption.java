@@ -10,7 +10,7 @@ import javax.persistence.*;
 @Setter
 @Entity
 @Table(name = "tooth_options")
-public class ToothOption extends Base {
+public class ToothOption extends Base implements SoftDelete {
 
     @Basic
     private String name;
@@ -23,4 +23,10 @@ public class ToothOption extends Base {
 
     @ManyToOne(fetch = FetchType.EAGER)
     private JobTemplate specificJob;
+
+    @Basic
+    private boolean deleted;
+
+    @Basic
+    private boolean active = true;
 }

@@ -125,7 +125,8 @@ public class OrderEditPage extends EditPage<Order> {
     protected void reload() {
         doctorField.setItems(dataService.getAll(Doctor.class));
         colorField.setItems(dataService.getAll(ToothColor.class));
-        jobsField.setTechnicians(dataService.getAll(User.class));
+        jobsField.setTechnicians(dataService.getAll(User.class).stream().filter(User::isActive).collect(Collectors.toList()));
+
         jobsField.setColumn1Options(dataService.getAll(ToothOption.class).stream()
                 .filter(o -> o.getDisplayColumn().equals(ToothOptionColumn.COLOANA_1))
                 .collect(Collectors.toList()));
@@ -134,8 +135,14 @@ public class OrderEditPage extends EditPage<Order> {
                 .filter(o -> o.getDisplayColumn().equals(ToothOptionColumn.COLOANA_2))
                 .collect(Collectors.toList()));
 
-        jobsField.setJobTemplates(dataService.getAll(JobTemplate.class));
-        jobsField.setMaterialTemplates(dataService.getAll(MaterialTemplate.class));
+        jobsField.setJobTemplates(dataService.getAll(JobTemplate.class)
+                .stream().filter(JobTemplate::isActive).collect(Collectors.toList()));
+
+        jobsField.setMaterialTemplates(dataService.getAll(MaterialTemplate.class)
+                .stream().filter(MaterialTemplate::isActive).collect(Collectors.toList()));
+
+        jobsField.setExecutionTemplates(dataService.getAll(ExecutionTemplate.class)
+                .stream().filter(ExecutionTemplate::isActive).collect(Collectors.toList()));
     }
 
     private void initGeneralTab() {

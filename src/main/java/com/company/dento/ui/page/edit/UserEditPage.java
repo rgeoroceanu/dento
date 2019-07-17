@@ -22,8 +22,6 @@ import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Component;
 import org.vaadin.gatanaso.MultiselectComboBox;
 
-import java.util.Collections;
-import java.util.List;
 import java.util.Optional;
 
 @UIScope

@@ -10,11 +10,17 @@ import javax.persistence.*;
 @Setter
 @Entity
 @Table(name = "tooth_colors")
-public class ToothColor extends Base {
+public class ToothColor extends Base implements SoftDelete {
 
     @Basic
     private String name;
 
     @Enumerated(EnumType.STRING)
     private ColorCategory category;
+
+    @Basic
+    private boolean deleted;
+
+    @Basic
+    private boolean active = true;
 }

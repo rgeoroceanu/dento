@@ -4,7 +4,6 @@ import com.company.dento.dao.specification.MaterialTemplateSpecification;
 import com.company.dento.model.business.JobTemplate;
 import com.company.dento.model.business.MaterialTemplate;
 import com.company.dento.service.DataService;
-import com.company.dento.service.exception.DataDoesNotExistException;
 import com.company.dento.ui.component.common.ConfirmDialog;
 import com.company.dento.ui.localization.Localizable;
 import com.company.dento.ui.localization.Localizer;
@@ -98,11 +97,7 @@ public class MaterialTemplatesPage extends ListPage<MaterialTemplate, MaterialTe
     }
 
     private void remove(final MaterialTemplate item) {
-        try {
-            dataService.deleteEntity(item.getId(), JobTemplate.class);
-        } catch (DataDoesNotExistException e) {
-            log.warn("Tried to delete non-nexisting material: {}", item.getId());
-        }
+	    dataService.softDeleteEntity(item.getId(), JobTemplate.class);
         Notification.show(String.format(Localizer.getLocalizedString("confirmRemove.success"),
                 item.getId()), 3000, Notification.Position.BOTTOM_CENTER);
     }

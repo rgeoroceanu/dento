@@ -27,6 +27,7 @@ public class ToothOptionSpecification implements Specification<ToothOption> {
 
         final List<Predicate> predicates = new ArrayList<>();
         Predicate[] predicatesArray = new Predicate[predicates.size()];
+        predicates.add(builder.equal(root.get("deleted"), false));
         return builder.and(predicates.toArray(predicatesArray));
     }
 }

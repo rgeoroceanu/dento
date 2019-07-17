@@ -14,8 +14,8 @@ import com.vaadin.flow.component.formlayout.FormLayout;
 import com.vaadin.flow.component.html.Label;
 import com.vaadin.flow.component.notification.Notification;
 import com.vaadin.flow.component.textfield.TextField;
-import com.vaadin.flow.data.converter.StringToIntegerConverter;
-import com.vaadin.flow.data.validator.IntegerRangeValidator;
+import com.vaadin.flow.data.converter.StringToFloatConverter;
+import com.vaadin.flow.data.validator.FloatRangeValidator;
 import com.vaadin.flow.router.AfterNavigationEvent;
 import com.vaadin.flow.router.BeforeEvent;
 import com.vaadin.flow.router.OptionalParameter;
@@ -103,9 +103,12 @@ public class JobTemplateEditPage extends EditPage<JobTemplate> {
 
     protected void reload() {
         selectionTypeField.setItems(SelectionType.values());
-        sampleTemplatesField.setItems(dataService.getAll(SampleTemplate.class));
-        executionTemplatesField.setItems(dataService.getAll(ExecutionTemplate.class));
-        materialsField.setTemplates(dataService.getAll(MaterialTemplate.class));
+        sampleTemplatesField.setItems(dataService.getAll(SampleTemplate.class)
+                .stream().filter(SampleTemplate::isActive));
+        executionTemplatesField.setItems(dataService.getAll(ExecutionTemplate.class)
+                .stream().filter(ExecutionTemplate::isActive));
+        materialsField.setOptions(dataService.getAll(MaterialTemplate.class)
+                .stream().filter(MaterialTemplate::isActive).collect(Collectors.toList()));
         individualPricesField.setOptions(dataService.getAll(Clinic.class));
     }
 
@@ -143,8 +146,8 @@ public class JobTemplateEditPage extends EditPage<JobTemplate> {
                 .bind(JobTemplate::getSelectionType, JobTemplate::setSelectionType);
 
         binder.forField(standardPriceField)
-                .withConverter(new StringToIntegerConverter(Localizer.getLocalizedString("integerRangeValidation")))
-                .withValidator(new IntegerRangeValidator("integerRangeValidation", 0, 100000))
+                .withConverter(new StringToFloatConverter(Localizer.getLocalizedString("integerRangeValidation")))
+                .withValidator(new FloatRangeValidator("integerRangeValidation", 0f, 100000f))
                 .bind(JobTemplate::getStandardPrice, JobTemplate::setStandardPrice);
 
         binder.forField(activeField)
@@ -158,7 +161,7 @@ public class JobTemplateEditPage extends EditPage<JobTemplate> {
 
         binder.forField(materialsField)
                 .bind(jt -> jt.getMaterials().stream()
-                        .map(mat -> new Material(mat.getTemplate(), null, 0f, mat.getQuantity()))
+                                .map(mat -> new Material(mat.getTemplate(), null, 0f, mat.getQuantity()))
                                 .collect(Collectors.toSet()),
                         (jt, materials) -> jt.setMaterials(materials.stream()
                                 .map(m -> new DefaultMaterial(m.getTemplate(), m.getQuantity()))

@@ -18,7 +18,7 @@ import java.util.Set;
 @Entity
 @Table(name = "execution_templates")
 @EqualsAndHashCode(callSuper = true, exclude = "individualPrices")
-public class ExecutionTemplate extends Base {
+public class ExecutionTemplate extends Base implements SoftDelete {
 	
 	@Column(unique = true, nullable = false)
 	private String name;
@@ -27,11 +27,14 @@ public class ExecutionTemplate extends Base {
 	private int standardPrice;
 
 	@Basic
-	private boolean active;
+	private boolean active = true;
 
 	@ElementCollection(fetch = FetchType.LAZY)
 	private Set<ExecutionPrice> individualPrices  = new HashSet<>();
 
 	@Basic
 	private int coefficient;
+
+	@Basic
+	private boolean deleted;
 }

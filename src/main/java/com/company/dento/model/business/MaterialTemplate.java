@@ -14,7 +14,7 @@ import java.util.Set;
 @Entity
 @Table(name = "material_templates")
 @EqualsAndHashCode(callSuper = true, exclude = "individualPrices")
-public class MaterialTemplate extends Base {
+public class MaterialTemplate extends Base implements SoftDelete {
 	
 	@Column(unique = true, nullable = false)
 	private String name;
@@ -32,8 +32,11 @@ public class MaterialTemplate extends Base {
 	private Set<MaterialPrice> individualPrices = new HashSet<>();
 
 	@Basic
-	private boolean active;
-	
+	private boolean active = true;
+
+	@Basic
+	private boolean deleted;
+
 	public String toString() {
 		if (name != null) {
 			return name;

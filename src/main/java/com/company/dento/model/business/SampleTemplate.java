@@ -14,14 +14,17 @@ import javax.persistence.Table;
 @Entity
 @Table(name = "sample_templates")
 @EqualsAndHashCode(callSuper = true)
-public class SampleTemplate extends Base {
+public class SampleTemplate extends Base implements SoftDelete {
 	
 	@Column(unique = true, nullable = false)
 	private String name;
 
 	@Basic
-	private boolean active;
-	
+	private boolean active = true;
+
+	@Basic
+	private boolean deleted;
+
 	public String toString() {
 		if (name != null) {
 			return name;

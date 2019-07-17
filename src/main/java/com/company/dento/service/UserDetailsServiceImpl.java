@@ -1,8 +1,8 @@
 package com.company.dento.service;
 
-import java.util.HashSet;
-import java.util.Set;
-
+import com.company.dento.model.business.User;
+import com.company.dento.model.type.Role;
+import com.company.dento.service.exception.DataDoesNotExistException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -11,9 +11,8 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
-import com.company.dento.model.business.User;
-import com.company.dento.model.type.Role;
-import com.company.dento.service.exception.DataDoesNotExistException;
+import java.util.HashSet;
+import java.util.Set;
 
 @Service
 public class UserDetailsServiceImpl implements UserDetailsService {
@@ -29,6 +28,10 @@ public class UserDetailsServiceImpl implements UserDetailsService {
 		} catch (DataDoesNotExistException e) {
 			throw new UsernameNotFoundException("Username not found");
 		}
+
+		if (!user.isActive()) {
+		    throw new UsernameNotFoundException("User is not active anymore!");
+        }
 
         Set<GrantedAuthority> grantedAuthorities = new HashSet<>();
         for (Role role : user.getRoles()){

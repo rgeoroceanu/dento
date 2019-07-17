@@ -219,7 +219,7 @@ public class DataServiceImpl implements DataService {
 		
 		JpaRepository<T, Long> dao = getDaoByEntityClass(entityClass);
 		
-		return dao.findAll();
+		return dao.findAll().stream().filter(this::isNotSoftDeleted).collect(Collectors.toList());
 	}
 
 	@Override
@@ -233,13 +233,13 @@ public class DataServiceImpl implements DataService {
 		
 		final JpaRepository<T, Long> dao = getDaoByEntityClass(entityClass);
 		
-		return dao.findById(entityId);
+		return dao.findById(entityId).filter(this::isNotSoftDeleted);
 	}
 
 	@Override
 	@Transactional
 	public <T extends Base> void deleteEntity(final Long entityId, final Class<T> entityClass)
-			throws InvalidDataTypeException, DataDoesNotExistException {
+			throws InvalidDataTypeException {
 		
 		Preconditions.checkNotNull(entityClass, "Entity class cannot be null!");
 		Preconditions.checkNotNull(entityId, "Entity id cannot be null!");
@@ -248,41 +248,22 @@ public class DataServiceImpl implements DataService {
 		final JpaRepository<T, Long> dao = getDaoByEntityClass(entityClass);
 		dao.deleteById(entityId);
 	}
-	
-	@SuppressWarnings("unchecked")
-	private <T extends Base> JpaRepository<T, Long> getDaoByEntityClass(final Class<T> entityClass)
+
+	@Override
+	@Transactional
+	public <T extends Base & SoftDelete> void softDeleteEntity(final Long entityId, final Class<T> entityClass)
 			throws InvalidDataTypeException {
-		
-		if (entityClass == Job.class) {
-			return (JpaRepository<T, Long>) jobDao;
-		} else if (entityClass == JobTemplate.class) {
-			return (JpaRepository<T, Long>) jobTemplateDao;
-		} else if (entityClass == MaterialTemplate.class) {
-			return (JpaRepository<T, Long>) materialTemplatesDao;
-		} else if (entityClass == Order.class) {
-			return (JpaRepository<T, Long>) orderDao;
-		} else if (entityClass == Sample.class) {
-			return (JpaRepository<T, Long>) sampleDao;
-		} else if (entityClass == SampleTemplate.class) {
-			return (JpaRepository<T, Long>) sampleTemplateDao;
-		} else if (entityClass == Doctor.class) {
-			return (JpaRepository<T, Long>) doctorDao;
-		} else if (entityClass == User.class) {
-			return (JpaRepository<T, Long>) userDao;
-		} else if (entityClass == Clinic.class) {
-			return (JpaRepository<T, Long>) clinicDao;
-		} else if (entityClass == Execution.class) {
-			return (JpaRepository<T, Long>) executionDao;
-		} else if (entityClass == ExecutionTemplate.class) {
-			return (JpaRepository<T, Long>) executionTemplateDao;
-		} else if (entityClass == ToothColor.class) {
-			return (JpaRepository<T, Long>) toothColorDao;
-		} else if (entityClass == ToothOption.class) {
-			return (JpaRepository<T, Long>) toothOptionDao;
-		}
-		
-		log.warn("Invalid entity type " + entityClass.getSimpleName());
-		throw new InvalidDataTypeException("Invalid data type " + entityClass.getName());
+
+		Preconditions.checkNotNull(entityClass, "Entity class cannot be null!");
+		Preconditions.checkNotNull(entityId, "Entity id cannot be null!");
+		log.info("Deleting entity of type " + entityClass.getSimpleName() + " with id " + entityId);
+
+		final JpaRepository<T, Long> dao = getDaoByEntityClass(entityClass);
+		dao.findById(entityId).ifPresent(item -> {
+			item.setDeleted(true);
+			item.setActive(false);
+			dao.save(item);
+		});
 	}
 
 	@Override
@@ -291,6 +272,7 @@ public class DataServiceImpl implements DataService {
 		log.info("Retrieve user " + username);
 		
 		return userDao.findByUsername(username)
+				.filter(this::isNotSoftDeleted)
 				.orElseThrow(() -> new DataDoesNotExistException(String
 						.format("Invalid username requested: %s", username)));
 	}
@@ -383,5 +365,45 @@ public class DataServiceImpl implements DataService {
 		return sortOrder.entrySet().stream()
 				.map(e -> new Sort.Order(e.getValue() ? Sort.Direction.ASC : Sort.Direction.DESC, e.getKey()))
 				.collect(Collectors.toList());
+	}
+
+	private <T extends Base> boolean isNotSoftDeleted(final T item) {
+		return !(item instanceof SoftDelete && ((SoftDelete) item).isDeleted());
+	}
+
+	@SuppressWarnings("unchecked")
+	private <T extends Base> JpaRepository<T, Long> getDaoByEntityClass(final Class<T> entityClass)
+			throws InvalidDataTypeException {
+
+		if (entityClass == Job.class) {
+			return (JpaRepository<T, Long>) jobDao;
+		} else if (entityClass == JobTemplate.class) {
+			return (JpaRepository<T, Long>) jobTemplateDao;
+		} else if (entityClass == MaterialTemplate.class) {
+			return (JpaRepository<T, Long>) materialTemplatesDao;
+		} else if (entityClass == Order.class) {
+			return (JpaRepository<T, Long>) orderDao;
+		} else if (entityClass == Sample.class) {
+			return (JpaRepository<T, Long>) sampleDao;
+		} else if (entityClass == SampleTemplate.class) {
+			return (JpaRepository<T, Long>) sampleTemplateDao;
+		} else if (entityClass == Doctor.class) {
+			return (JpaRepository<T, Long>) doctorDao;
+		} else if (entityClass == User.class) {
+			return (JpaRepository<T, Long>) userDao;
+		} else if (entityClass == Clinic.class) {
+			return (JpaRepository<T, Long>) clinicDao;
+		} else if (entityClass == Execution.class) {
+			return (JpaRepository<T, Long>) executionDao;
+		} else if (entityClass == ExecutionTemplate.class) {
+			return (JpaRepository<T, Long>) executionTemplateDao;
+		} else if (entityClass == ToothColor.class) {
+			return (JpaRepository<T, Long>) toothColorDao;
+		} else if (entityClass == ToothOption.class) {
+			return (JpaRepository<T, Long>) toothOptionDao;
+		}
+
+		log.warn("Invalid entity type " + entityClass.getSimpleName());
+		throw new InvalidDataTypeException("Invalid data type " + entityClass.getName());
 	}
 }

@@ -57,7 +57,15 @@ public class JobLayout extends FormLayout implements Localizable {
     }
 
     public void setMaterialTemplates(final List<MaterialTemplate> materialTemplates) {
-        materialsField.setTemplates(materialTemplates);
+        materialsField.setOptions(materialTemplates);
+    }
+
+    public void setExecutionTemplates(final List<ExecutionTemplate> executionTemplates) {
+        executionSelect.setOptions(executionTemplates);
+    }
+
+    public void setSampleTemplates(final List<SampleTemplate> sampleTemplates) {
+        sampleSelect.setOptions(sampleTemplates);
     }
 
     @Override

@@ -36,6 +36,8 @@ public class JobsField extends AbstractCompositeField<VerticalLayout, JobsField,
     private final List<ToothOption> optionsColumn1 = new ArrayList<>();
     private final List<ToothOption> optionsColumn2 = new ArrayList<>();
     private final List<MaterialTemplate> materialTemplates = new ArrayList<>();
+    private final List<ExecutionTemplate> executionTemplates = new ArrayList<>();
+    private final List<SampleTemplate> sampleTemplates = new ArrayList<>();
 
     public JobsField() {
         super(null);
@@ -54,6 +56,16 @@ public class JobsField extends AbstractCompositeField<VerticalLayout, JobsField,
     public void setTechnicians(final List<User> technicians) {
         this.technicians.clear();
         this.technicians.addAll(technicians);
+    }
+
+    public void setExecutionTemplates(final List<ExecutionTemplate> executionTemplates) {
+        this.executionTemplates.clear();
+        this.executionTemplates.addAll(executionTemplates);
+    }
+
+    public void setSampleTemplates(final List<SampleTemplate> sampleTemplates) {
+        this.sampleTemplates.clear();
+        this.sampleTemplates.addAll(sampleTemplates);
     }
 
     public void setColumn1Options(final List<ToothOption> optionsColumn1) {
@@ -101,6 +113,8 @@ public class JobsField extends AbstractCompositeField<VerticalLayout, JobsField,
         jobLayout.setTeethOptions(this.optionsColumn1, this.optionsColumn2);
         jobLayout.addTeethSelectListener(e -> value.values().forEach(jl -> jl.updateTeeth(this.getValue())));
         jobLayout.setMaterialTemplates(materialTemplates);
+        jobLayout.setExecutionTemplates(executionTemplates);
+        jobLayout.setSampleTemplates(sampleTemplates);
         panel.setContent(jobLayout);
         accordion.add(panel);
         this.value.put(job, jobLayout);

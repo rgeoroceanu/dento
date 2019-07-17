@@ -14,7 +14,7 @@ import java.util.Set;
 @Entity
 @Table(name = "job_templates")
 @EqualsAndHashCode(callSuper = true, exclude = {"individualPrices", "materials", "sampleTemplates", "executionTemplates"})
-public class JobTemplate extends Base {
+public class JobTemplate extends Base implements SoftDelete {
 	
 	@Column(unique = true, nullable = false)
 	private String name;
@@ -30,7 +30,7 @@ public class JobTemplate extends Base {
 	private float standardPrice;
 
 	@Basic
-	private boolean active;
+	private boolean active = true;
 
 	@ElementCollection(fetch = FetchType.LAZY)
 	private Set<JobPrice> individualPrices = new HashSet<>();
@@ -45,6 +45,9 @@ public class JobTemplate extends Base {
 	@ManyToMany(fetch = FetchType.LAZY)
 	@JoinTable(name="job_templates_executions", joinColumns=@JoinColumn(name="job_template_id"), inverseJoinColumns=@JoinColumn(name="execution_template_id"))
 	private Set<ExecutionTemplate> executionTemplates = new HashSet<>();
+
+	@Basic
+	private boolean deleted;
 
 	public String toString() {
 		if (name != null) {

@@ -14,7 +14,7 @@ import java.util.Set;
 @Entity
 @Table(name = "users")
 @EqualsAndHashCode(callSuper = true, exclude = {"roles"})
-public class User extends Base {
+public class User extends Base implements SoftDelete {
 	
 	@ElementCollection(fetch = FetchType.EAGER)
 	private Set<Role> roles = new HashSet<>();
@@ -32,8 +32,11 @@ public class User extends Base {
 	private String lastName;
 
 	@Basic
-	private boolean active;
-	
+	private boolean active = true;
+
+	@Basic
+	private boolean deleted;
+
 	public String toString() {
 		if (lastName != null && firstName != null) {
 			return firstName + " " + lastName;

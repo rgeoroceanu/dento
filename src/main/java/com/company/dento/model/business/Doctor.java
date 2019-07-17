@@ -17,7 +17,7 @@ import lombok.Setter;
 @Setter
 @Entity
 @Table(name = "doctors")
-public class Doctor extends Base {
+public class Doctor extends Base implements SoftDelete {
 	
 	@Basic
 	private String firstName;
@@ -33,7 +33,13 @@ public class Doctor extends Base {
 
 	@Basic
 	private String phone;
-	
+
+	@Basic
+	private boolean deleted;
+
+	@Basic
+	private boolean active = true;
+
 	@Override
 	public String toString() {
 		if (lastName != null && firstName != null) {
