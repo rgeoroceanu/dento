@@ -1,5 +1,6 @@
 package com.company.dento.service;
 
+import com.company.dento.dao.specification.MaterialSpecification;
 import com.company.dento.dao.specification.OrderSpecification;
 import com.company.dento.model.business.*;
 import com.company.dento.service.exception.DataDoesNotExistException;
@@ -31,5 +32,6 @@ public interface DataService {
 	List<User> getAllTechnicians();
 	double getExecutionsPriceTotal(final OrderSpecification spec);
 	double getJobsPriceTotal(final OrderSpecification spec);
+	double getMaterialPriceTotal(final MaterialSpecification spec);
 	Order saveOrder(final Order order);
 }

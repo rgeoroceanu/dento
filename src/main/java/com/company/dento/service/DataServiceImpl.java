@@ -1,6 +1,7 @@
 package com.company.dento.service;
 
 import com.company.dento.dao.*;
+import com.company.dento.dao.specification.MaterialSpecification;
 import com.company.dento.dao.specification.OrderSpecification;
 import com.company.dento.model.business.*;
 import com.company.dento.model.type.MeasurementUnit;
@@ -45,6 +46,7 @@ public class DataServiceImpl implements DataService {
 	private final ToothOptionDao toothOptionDao;
 	private final CalendarEventDao calendarEventDao;
 	private final GeneralDataDao generalDataDao;
+	private final MaterialDao materialDao;
 
 	@Autowired
 	private PasswordEncoder passwordEncoder;
@@ -53,7 +55,8 @@ public class DataServiceImpl implements DataService {
 						   final ExecutionTemplateDao executionTemplateDao, final ExecutionDao executionDao,
 						   final OrderDao orderDao, final SampleDao sampleDao, final SampleTemplateDao sampleTemplateDao,
 						   final DoctorDao doctorDao, final UserDao userDao, final ClinicDao clinicDao,
-						   final ToothColorDao toothColorDao, ToothOptionDao toothOptionDao, final CalendarEventDao calendarEventDao, final GeneralDataDao generalDataDao) {
+						   final ToothColorDao toothColorDao, ToothOptionDao toothOptionDao, final CalendarEventDao calendarEventDao,
+						   final GeneralDataDao generalDataDao, final MaterialDao materialDao) {
 
 		this.jobDao = jobDao;
 		this.jobTemplateDao = jobTemplateDao;
@@ -70,6 +73,7 @@ public class DataServiceImpl implements DataService {
 		this.toothOptionDao = toothOptionDao;
 		this.calendarEventDao = calendarEventDao;
 		this.generalDataDao = generalDataDao;
+		this.materialDao = materialDao;
 	}
 
 	@PostConstruct
@@ -360,6 +364,20 @@ public class DataServiceImpl implements DataService {
 	}
 
 	@Override
+	@Transactional(readOnly = true)
+	public double getMaterialPriceTotal(final MaterialSpecification spec) {
+		Preconditions.checkNotNull(spec, "Search specification must not be null!");
+		log.info("Calculate total materials price!");
+
+		final Long doctorId = spec.getDoctor() != null ? spec.getDoctor().getId() : null;
+		final Long clinicId = spec.getClinic() != null ? spec.getClinic().getId() : null;
+		final Long templateId = spec.getTemplate() != null ? spec.getTemplate().getId() : null;
+		final Long jobId = spec.getJob() != null ? spec.getJob().getId() : null;
+		return materialDao.calculateMaterialsPriceTotal(templateId, jobId, doctorId, clinicId,
+				spec.getStartDate(), spec.getEndDate());
+	}
+
+	@Override
 	@Transactional
 	public Order saveOrder(final Order order) {
 		Preconditions.checkNotNull(order, "Order cannot be null!");
@@ -435,6 +453,8 @@ public class DataServiceImpl implements DataService {
 			return (JpaRepository<T, Long>) toothColorDao;
 		} else if (entityClass == ToothOption.class) {
 			return (JpaRepository<T, Long>) toothOptionDao;
+		} else if (entityClass == Material.class) {
+			return (JpaRepository<T, Long>) materialDao;
 		}
 
 		log.warn("Invalid entity type " + entityClass.getSimpleName());

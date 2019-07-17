@@ -1,5 +1,6 @@
 package com.company.dento.ui.page;
 
+import com.company.dento.model.business.Material;
 import com.company.dento.ui.page.edit.*;
 import com.company.dento.ui.page.list.*;
 import org.springframework.security.core.Authentication;
@@ -16,6 +17,7 @@ public class PageSecurityHelper {
             put(RootPage.class, Arrays.asList("ADMIN", "USER", "TECHNICIAN"));
             put(OrdersPage.class, Arrays.asList("ADMIN", "USER", "TECHNICIAN"));
             put(ExecutionsPage.class, Arrays.asList("ADMIN", "USER", "TECHNICIAN"));
+            put(MaterialsPage.class, Arrays.asList("ADMIN", "USER", "TECHNICIAN"));
             put(CalendarPage.class, Arrays.asList("ADMIN", "USER", "TECHNICIAN"));
             put(OrderEditPage.class, Arrays.asList("ADMIN", "USER", "TECHNICIAN"));
 

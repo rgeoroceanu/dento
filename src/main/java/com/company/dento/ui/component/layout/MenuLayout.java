@@ -1,5 +1,6 @@
 package com.company.dento.ui.component.layout;
 
+import com.company.dento.model.business.Material;
 import com.company.dento.ui.localization.Localizable;
 import com.company.dento.ui.localization.Localizer;
 import com.company.dento.ui.page.CalendarPage;
@@ -26,6 +27,7 @@ public class MenuLayout extends Div implements Localizable {
 	private final RouterLink ordersButton;
 	private final RouterLink calendarButton;
 	private final RouterLink doctorsButton;
+	private final RouterLink usedMaterialsButton;
 	private final RouterLink materialsButton;
 	private final RouterLink jobTemplatesButton;
 	private final RouterLink sampleTemplatesButton;
@@ -50,6 +52,7 @@ public class MenuLayout extends Div implements Localizable {
 		this.calendarButton = addMenuItem(CalendarPage.class, VaadinIcon.CALENDAR);
 		this.ordersButton = addMenuItem(OrdersPage.class, VaadinIcon.FILE);
 		this.executionsButton = addMenuItem(ExecutionsPage.class, VaadinIcon.SPECIALIST);
+		this.usedMaterialsButton = addMenuItem(MaterialsPage.class, VaadinIcon.TOOLBOX);
 		initAdminMenu();
 		this.clinicsButton = addAdminItem(ClinicsPage.class);
 		this.toothColorsButton = addAdminItem(ToothColorsPage.class);
@@ -73,6 +76,7 @@ public class MenuLayout extends Div implements Localizable {
 		adminLabel.setText(Localizer.getLocalizedString("administration"));
 		localizeMenuItem(doctorsButton, "doctors");
 		localizeMenuItem(materialsButton, "materials");
+		localizeMenuItem(usedMaterialsButton, "materials");
 		localizeMenuItem(executionTemplatesButton, "executions");
 		localizeMenuItem(clinicsButton, "clinics");
 		localizeMenuItem(sampleTemplatesButton, "samples");

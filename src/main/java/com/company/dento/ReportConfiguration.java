@@ -28,6 +28,9 @@ public class ReportConfiguration {
     @Value("classpath:templates/executions_template.jrxml")
     private Resource executionsTemplateResource;
 
+    @Value("classpath:templates/materials_template.jrxml")
+    private Resource materialsTemplateResource;
+
     @Bean
     public Resource orderReportTemplate() throws IOException, JRException {
         return compileReport(orderTemplateResource);
@@ -41,6 +44,11 @@ public class ReportConfiguration {
     @Bean
     public Resource executionsReportTemplate() throws IOException, JRException {
         return compileReport(executionsTemplateResource);
+    }
+
+    @Bean
+    public Resource materialsReportTemplate() throws IOException, JRException {
+        return compileReport(materialsTemplateResource);
     }
 
     private Resource compileReport(final Resource templateResource) throws IOException, JRException {

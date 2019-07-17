@@ -12,7 +12,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Specification for advanced search of {@link Execution} entities.
+ * Specification for advanced search of {@link Order} entities.
  *
  * @author Radu Georoceanu <rgeoroceanu@yahoo.com>
  *
@@ -53,11 +53,11 @@ public class OrderSpecification implements Specification<Order> {
         }
 
         if (startDate != null) {
-            predicates.add(builder.greaterThanOrEqualTo(root.get("created"), startDate));
+            predicates.add(builder.greaterThanOrEqualTo(root.get("date"), startDate));
         }
 
         if (endDate != null) {
-            predicates.add(builder.lessThanOrEqualTo(root.get("created"), endDate.toLocalDate().plusDays(1).atStartOfDay()));
+            predicates.add(builder.lessThanOrEqualTo(root.get("date"), endDate.toLocalDate().plusDays(1).atStartOfDay()));
         }
 
         if (finalized != null) {

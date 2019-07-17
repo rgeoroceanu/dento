@@ -1,5 +1,6 @@
 package com.company.dento.service;
 
+import com.company.dento.dao.specification.MaterialSpecification;
 import com.company.dento.dao.specification.OrderSpecification;
 import com.company.dento.model.business.*;
 import com.company.dento.report.JasperWriter;
@@ -34,17 +35,19 @@ public class ReportService {
     private final Resource orderReportTemplate;
     private final Resource ordersReportTemplate;
     private final Resource executionsReportTemplate;
+    private final Resource materialsReportTemplate;
     private final DataService dataService;
     private final DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("dd.MM.yyyy");
 
     public ReportService(final JasperWriter jasperWriter, final Resource orderReportTemplate,
                          final Resource ordersReportTemplate, final Resource executionsReportTemplate,
-                         final DataService dataService) {
+                         final Resource materialsReportTemplate, final DataService dataService) {
 
         this.jasperWriter = jasperWriter;
         this.orderReportTemplate = orderReportTemplate;
         this.ordersReportTemplate = ordersReportTemplate;
         this.executionsReportTemplate = executionsReportTemplate;
+        this.materialsReportTemplate = materialsReportTemplate;
         this.dataService = dataService;
     }
 
@@ -72,6 +75,8 @@ public class ReportService {
     public File createOrdersReport(final OrderSpecification orderSpecification,
                                    final Map<String, Boolean> sortOrder) throws CannotGenerateReportException, TooManyResultsException {
 
+        Preconditions.checkNotNull(orderSpecification, "Spec cannot be null");
+        Preconditions.checkNotNull(sortOrder, "Sort order map cannot be null");
         log.info("Creating jobs report for order {} ", orderSpecification);
 
         if (dataService.countByCriteria(Order.class, orderSpecification) > 1000) {
@@ -100,6 +105,8 @@ public class ReportService {
     public File createExecutionsReport(final OrderSpecification orderSpecification,
                                        final Map<String, Boolean> sortOrder) throws CannotGenerateReportException, TooManyResultsException {
 
+        Preconditions.checkNotNull(orderSpecification, "Spec cannot be null");
+        Preconditions.checkNotNull(sortOrder, "Sort order map cannot be null");
         log.info("Creating executions report for order {} ", orderSpecification);
 
         if (dataService.countByCriteria(Order.class, orderSpecification) > 1000) {
@@ -120,6 +127,37 @@ public class ReportService {
 
         try {
             return jasperWriter.writeReport(executionsReportTemplate.getFile(), constructExecutionsParameters(orders, generalData, totalPrice));
+        } catch (final JRException | IOException e) {
+            log.error("Error generating report: {}", e.getMessage());
+            throw new CannotGenerateReportException("Error generating report!", e);
+        }
+    }
+
+    public File createMaterialsReport(final MaterialSpecification materialSpecification,
+                                      final Map<String, Boolean> sortOrder) throws CannotGenerateReportException, TooManyResultsException {
+
+        Preconditions.checkNotNull(materialSpecification, "Spec cannot be null");
+        Preconditions.checkNotNull(sortOrder, "Sort order map cannot be null");
+        log.info("Creating materials report for spec {} ", materialSpecification);
+
+        if (dataService.countByCriteria(Material.class, materialSpecification) > 1000) {
+            log.error("Error generating report: too many results");
+            throw new TooManyResultsException("Too many entries for report generation!");
+        }
+
+        final GeneralData generalData = dataService.getGeneralData()
+                .orElseThrow(() -> {
+                    log.error("Error generating report: missing general data!");
+                    return new CannotGenerateReportException("Error generating report: missing general data!");
+                });
+
+
+        final List<Material> materials = dataService.getByCriteria(Material.class, materialSpecification, 0, 1000, sortOrder);
+
+        final Double totalPrice = dataService.getMaterialPriceTotal(materialSpecification);
+
+        try {
+            return jasperWriter.writeReport(materialsReportTemplate.getFile(), constructMaterialsParameters(materials, generalData, totalPrice));
         } catch (final JRException | IOException e) {
             log.error("Error generating report: {}", e.getMessage());
             throw new CannotGenerateReportException("Error generating report!", e);
@@ -194,6 +232,26 @@ public class ReportService {
         return parameters;
     }
 
+    private Map<String, Object> constructMaterialsParameters(final List<Material> materials, final GeneralData generalData,
+                                                             final Double totalPrice) {
+
+        final Map<String, Object> parameters = new HashMap<>();
+        parameters.put("COMPANY_NAME", generalData.getLaboratoryName());
+        parameters.put("ADDRESS1", generalData.getAddress());
+        parameters.put("ADDRESS2", String.format("%s, %s", generalData.getPostalCode(), generalData.getTown()));
+        parameters.put("CONTACT", String.format("%s, %s",generalData.getPhone(), generalData.getEmail()));
+        parameters.put("DATE", dateFormatter.format(LocalDate.now()));
+        parameters.put("TOTAL_PRICE", String.format(Localizer.getCurrentLocale(), "%.2f", totalPrice));
+
+        if (generalData.getLogo() != null) {
+            parameters.put("LOGO", getLogoImage(generalData));
+        }
+
+        parameters.put("MATERIALS", constructMaterialsParameter(materials));
+
+        return parameters;
+    }
+
     private Image getLogoImage(final GeneralData generalData) {
         final StoredFile logoFile = generalData.getLogo();
         final InputStream in = new ByteArrayInputStream(logoFile.getContent());
@@ -207,7 +265,7 @@ public class ReportService {
     }
 
     private List<ToothDisplay> constructTeethParameter(final Order order, final int startNumber, final int endNumber,
-                                                        boolean reversed) {
+                                                       boolean reversed) {
 
         final Map<Integer, Tooth> selectedTeeth = order.getJobs().stream()
                 .map(Job::getTeeth)
@@ -234,6 +292,12 @@ public class ReportService {
     private List<OrderDisplay> constructOrdersParameter(final List<Order> orders) {
         return orders.stream()
                 .map(OrderDisplay::new)
+                .collect(Collectors.toList());
+    }
+
+    private List<MaterialDisplay> constructMaterialsParameter(final List<Material> materials) {
+        return materials.stream()
+                .map(MaterialDisplay::new)
                 .collect(Collectors.toList());
     }
 
