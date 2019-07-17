@@ -229,6 +229,7 @@ public class OrdersPage extends ListPage<Order, OrderSpecification> implements L
         dataService.deleteEntity(item.getId(), Order.class);
         Notification.show(String.format(Localizer.getLocalizedString("confirmRemove.success"),
                 item.getId()), 3000, Notification.Position.BOTTOM_CENTER);
+        refresh();
     }
 
     protected void clearFilters() {

@@ -90,6 +90,7 @@ public class SampleTemplatesPage extends ListPage<SampleTemplate, SampleTemplate
 	    dataService.softDeleteEntity(item.getId(), SampleTemplate.class);
         Notification.show(String.format(Localizer.getLocalizedString("confirmRemove.success"),
                 item.getId()), 3000, Notification.Position.BOTTOM_CENTER);
+        refresh();
     }
 
     @Override

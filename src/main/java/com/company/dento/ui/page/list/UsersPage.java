@@ -84,6 +84,7 @@ public class UsersPage extends ListPage<User, UserSpecification> implements Loca
         dataService.softDeleteEntity(item.getId(), User.class);
         Notification.show(String.format(Localizer.getLocalizedString("confirmRemove.success"),
                 item.getId()), 3000, Notification.Position.BOTTOM_CENTER);
+        refresh();
     }
 
     @Override

@@ -81,6 +81,7 @@ public class ClinicsPage extends ListPage<Clinic, ClinicSpecification> implement
 	    dataService.softDeleteEntity(item.getId(), Clinic.class);
         Notification.show(String.format(Localizer.getLocalizedString("confirmRemove.success"),
                 item.getId()), 3000, Notification.Position.BOTTOM_CENTER);
+        refresh();
     }
 
     @Override

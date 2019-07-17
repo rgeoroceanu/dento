@@ -81,6 +81,7 @@ public class ToothOptionsPage extends ListPage<ToothOption, ToothOptionSpecifica
         dataService.softDeleteEntity(item.getId(), ToothOption.class);
         Notification.show(String.format(Localizer.getLocalizedString("confirmRemove.success"),
                 item.getId()), 3000, Notification.Position.BOTTOM_CENTER);
+        refresh();
     }
 
     @Override

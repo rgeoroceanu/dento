@@ -93,6 +93,7 @@ public class JobTemplatesPage extends ListPage<JobTemplate, JobTemplateSpecifica
 	    dataService.softDeleteEntity(item.getId(), JobTemplate.class);
         Notification.show(String.format(Localizer.getLocalizedString("confirmRemove.success"),
                 item.getId()), 3000, Notification.Position.BOTTOM_CENTER);
+        refresh();
     }
 
     @Override

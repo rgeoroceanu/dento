@@ -81,6 +81,7 @@ public class DoctorsPage extends ListPage<Doctor, DoctorSpecification> implement
 	    dataService.softDeleteEntity(item.getId(), Doctor.class);
         Notification.show(String.format(Localizer.getLocalizedString("confirmRemove.success"),
                 item.getId()), 3000, Notification.Position.BOTTOM_CENTER);
+        refresh();
     }
 
     @Override
