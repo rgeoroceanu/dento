@@ -12,6 +12,6 @@ public interface JobTemplateDao extends PageableRepository<JobTemplate, Long> {
     @EntityGraph(attributePaths = {"sampleTemplates", "executionTemplates", "materials", "individualPrices"}, type = EntityGraph.EntityGraphType.LOAD)
     Optional<JobTemplate> findById(final Long id);
 
-    @EntityGraph(attributePaths = {"sampleTemplates", "executionTemplates"}, type = EntityGraph.EntityGraphType.LOAD)
+    @EntityGraph(attributePaths = {"sampleTemplates", "executionTemplates", "individualPrices", "materials"}, type = EntityGraph.EntityGraphType.LOAD)
     List<JobTemplate> findAll();
 }

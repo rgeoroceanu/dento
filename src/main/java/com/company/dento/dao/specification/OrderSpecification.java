@@ -45,7 +45,7 @@ public class OrderSpecification implements Specification<Order> {
         }
 
         if (clinic != null) {
-            predicates.add(builder.equal(root.get("clinic"), clinic));
+            predicates.add(builder.equal(root.get("doctor").get("clinic"), clinic));
         }
 
         if (id != null) {

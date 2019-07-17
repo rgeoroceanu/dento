@@ -13,7 +13,9 @@ import com.vaadin.flow.component.formlayout.FormLayout;
 import com.vaadin.flow.component.html.Label;
 import com.vaadin.flow.component.notification.Notification;
 import com.vaadin.flow.component.textfield.TextField;
+import com.vaadin.flow.data.converter.StringToFloatConverter;
 import com.vaadin.flow.data.converter.StringToIntegerConverter;
+import com.vaadin.flow.data.validator.FloatRangeValidator;
 import com.vaadin.flow.data.validator.IntegerRangeValidator;
 import com.vaadin.flow.router.AfterNavigationEvent;
 import com.vaadin.flow.router.BeforeEvent;
@@ -111,8 +113,8 @@ public class ExecutionTemplateEditPage extends EditPage<ExecutionTemplate> {
                 .bind(ExecutionTemplate::getName, ExecutionTemplate::setName);
 
         binder.forField(standardPriceField)
-                .withConverter(new StringToIntegerConverter(Localizer.getLocalizedString("integerRangeValidation")))
-                .withValidator(new IntegerRangeValidator("integerRangeValidation", 0, 100000))
+                .withConverter(new StringToFloatConverter(Localizer.getLocalizedString("integerRangeValidation")))
+                .withValidator(new FloatRangeValidator("integerRangeValidation", 0f, 100000f))
                 .bind(ExecutionTemplate::getStandardPrice, ExecutionTemplate::setStandardPrice);
 
         binder.forField(activeField)

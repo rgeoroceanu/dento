@@ -23,9 +23,6 @@ public class Order extends Base {
 	@Basic
 	private String patient;
 
-	@ManyToOne
-	private Clinic clinic;
-
 	@Basic
 	@Column(length = 4000)
 	private String description;

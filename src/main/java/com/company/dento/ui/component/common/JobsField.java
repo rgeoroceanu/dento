@@ -206,7 +206,7 @@ public class JobsField extends AbstractCompositeField<VerticalLayout, JobsField,
     }
 
     private void handleAddJob() {
-        if (order.getClinic() == null) {
+        if (order.getDoctor() == null) {
             Notification.show("Selectați clinica mai intâi!", 5000, Notification.Position.BOTTOM_CENTER);
             return;
         }
@@ -220,7 +220,7 @@ public class JobsField extends AbstractCompositeField<VerticalLayout, JobsField,
 
     private float extractDefaultPrice(final JobTemplate jobTemplate, final Order order) {
         return jobTemplate.getIndividualPrices().stream()
-                .filter(p -> p.getClinic().getId().equals(order.getClinic() != null ? order.getClinic().getId() : null))
+                .filter(p -> p.getClinic().getId().equals(order.getDoctor().getClinic() != null ? order.getDoctor().getClinic().getId() : null))
                 .map(JobPrice::getPrice)
                 .findFirst()
                 .orElse(jobTemplate.getStandardPrice());

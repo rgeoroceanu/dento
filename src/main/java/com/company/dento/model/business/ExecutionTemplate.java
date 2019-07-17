@@ -24,7 +24,7 @@ public class ExecutionTemplate extends Base implements SoftDelete {
 	private String name;
 
 	@Basic
-	private int standardPrice;
+	private float standardPrice;
 
 	@Basic
 	private boolean active = true;

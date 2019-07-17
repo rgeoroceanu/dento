@@ -143,9 +143,18 @@ public class OrderEditPage extends EditPage<Order> {
 
         jobsField.setExecutionTemplates(dataService.getAll(ExecutionTemplate.class)
                 .stream().filter(ExecutionTemplate::isActive).collect(Collectors.toList()));
+
+        jobsField.setSampleTemplates(dataService.getAll(SampleTemplate.class)
+                .stream().filter(SampleTemplate::isActive).collect(Collectors.toList()));
     }
 
     private void initGeneralTab() {
+        doctorField.setItemLabelGenerator(doctor -> String.format("%s %s (%s)", doctor.getFirstName(),
+                doctor.getLastName(), doctor.getClinic().getName()));
+
+        doctorField.addValueChangeListener(e -> {
+            if (e.isFromClient()) updateJobPrices(binder.getBean(), e.getValue());
+        });
         generalLayout.addFormItem(doctorField, doctorLabel);
         generalLayout.addFormItem(dateField, dateLabel);
         generalLayout.addFormItem(patientField, patientLabel);
@@ -220,11 +229,25 @@ public class OrderEditPage extends EditPage<Order> {
         }
     }
 
+    private void updateJobPrices(final Order order, final Doctor doctor) {
+        order.getJobs().forEach(job -> {
+            final float price = job.getTemplate().getIndividualPrices().stream()
+                    .filter(p -> doctor != null && doctor.getClinic() != null && p.getClinic() != null)
+                    .filter(p -> p.getClinic().getId().equals(doctor.getClinic().getId()))
+                    .map(JobPrice::getPrice)
+                    .findFirst()
+                    .orElse(job.getTemplate().getStandardPrice());
+
+            job.setPrice(price);
+        });
+        jobsField.setValue(order.getJobs());
+    }
+
     protected void save() {
         if (binder.isValid()) {
             final Order item = binder.getBean();
             item.getJobs().forEach(job -> job.setOrder(item));
-            dataService.saveEntity(item);
+            dataService.saveOrder(item);
             UI.getCurrent().navigate(OrdersPage.class);
         } else {
             Notification.show(Localizer.getLocalizedString("validationError"),

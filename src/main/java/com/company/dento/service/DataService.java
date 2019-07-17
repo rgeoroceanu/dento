@@ -31,4 +31,5 @@ public interface DataService {
 	List<User> getAllTechnicians();
 	double getExecutionsPriceTotal(final OrderSpecification spec);
 	double getJobsPriceTotal(final OrderSpecification spec);
+	Order saveOrder(final Order order);
 }

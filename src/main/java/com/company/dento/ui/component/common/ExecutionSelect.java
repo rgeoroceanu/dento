@@ -1,6 +1,7 @@
 package com.company.dento.ui.component.common;
 
 import com.company.dento.model.business.Execution;
+import com.company.dento.model.business.ExecutionPrice;
 import com.company.dento.model.business.ExecutionTemplate;
 import com.company.dento.model.business.User;
 import com.company.dento.ui.localization.Localizer;

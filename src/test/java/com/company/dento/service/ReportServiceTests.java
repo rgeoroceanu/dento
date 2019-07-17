@@ -42,7 +42,6 @@ public class ReportServiceTests {
 		order.setDeliveryDate(LocalDateTime.now());
 		order.setDescription("Test Description here text");
 		order.setPatient("Gheorghe Ion");
-		order.setClinic(clinic);
 		final Doctor doctor = new Doctor();
 		doctor.setFirstName("Dr. Raul");
 		doctor.setLastName("Vasile");

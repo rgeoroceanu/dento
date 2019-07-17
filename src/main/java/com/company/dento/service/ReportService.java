@@ -117,7 +117,7 @@ public class ReportService {
         parameters.put("ADDRESS1", generalData.getAddress());
         parameters.put("ADDRESS2", String.format("%s, %s", generalData.getPostalCode(), generalData.getTown()));
         parameters.put("CONTACT", String.format("%s, %s",generalData.getPhone(), generalData.getEmail()));
-        parameters.put("CLINIC", order.getClinic().getName());
+        parameters.put("CLINIC", order.getDoctor().getClinic().getName());
         parameters.put("DOCTOR", order.getDoctor().toString());
         parameters.put("ORDER_NO", order.getId());
         parameters.put("COLOR", order.getToothColor().getName());

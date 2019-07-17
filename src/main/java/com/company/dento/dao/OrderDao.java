@@ -13,7 +13,7 @@ import java.util.Optional;
 
 @Repository
 public interface OrderDao extends PageableRepository<Order, Long> {
-    @EntityGraph(attributePaths = {"jobs", "jobs.teeth", "storedFiles", "jobs.samples", "jobs.executions", "jobs.materials"}, type = EntityGraph.EntityGraphType.LOAD)
+    @EntityGraph(attributePaths = {"jobs", "jobs.teeth", "storedFiles", "jobs.samples", "jobs.executions", "jobs.materials", "jobs.template.individualPrices"}, type = EntityGraph.EntityGraphType.LOAD)
     Optional<Order> findById(Long id);
 
     @EntityGraph(value = "order.jobs", attributePaths = {"jobs", "jobs.executions"}, type = EntityGraph.EntityGraphType.LOAD)
@@ -38,7 +38,7 @@ public interface OrderDao extends PageableRepository<Order, Long> {
             "AND (:paid IS NULL OR o.paid = :paid) " +
             "AND (:patient IS NULL OR :patient <> '' OR o.patient LIKE CONCAT('%', :patient, '%') " +
             "AND (:doctorId IS NULL OR o.doctor.id = :doctorId) " +
-            "AND (:clinicId IS NULL OR o.clinic.id = :clinicId)))")
+            "AND (:clinicId IS NULL OR o.doctor.clinic.id = :clinicId)))")
     double calculateJobsPriceTotal(final Long id, final LocalDateTime startDate, final LocalDateTime endDate,
                                    final String patient, final Long doctorId, final Long clinicId,
                                    final Boolean finalized, final Boolean paid);

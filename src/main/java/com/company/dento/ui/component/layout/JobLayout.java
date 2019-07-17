@@ -122,6 +122,7 @@ public class JobLayout extends FormLayout implements Localizable {
         timeField.setLocale(Locale.GERMAN);
 
         final FormLayout.FormItem fi1 = fl1.addFormItem(dateLayout, dateLabel);
+        final FormLayout.FormItem fi6 = fl1.addFormItem(priceField, priceLabel);
         final FormLayout.FormItem fi2 = fl1.addFormItem(sampleSelect, sampleSelectLabel);
         final FormLayout.FormItem fi3 = fl1.addFormItem(executionSelect, executionSelectLabel);
         final FormLayout.FormItem fi5 = fl2.addFormItem(materialsField, materialLabel);
@@ -131,6 +132,7 @@ public class JobLayout extends FormLayout implements Localizable {
         fi3.getStyle().set("align-items", "initial");
         fi4.getStyle().set("align-items", "initial");
         fi5.getStyle().set("align-items", "initial");
+        fi6.getStyle().set("align-items", "initial");
 
         final FormLayout.ResponsiveStep rs1 = new FormLayout.ResponsiveStep("0", 1, FormLayout.ResponsiveStep.LabelsPosition.TOP);
         final FormLayout.ResponsiveStep rs2 = new FormLayout.ResponsiveStep("500px", 1, FormLayout.ResponsiveStep.LabelsPosition.ASIDE);

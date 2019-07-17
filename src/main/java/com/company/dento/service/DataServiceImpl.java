@@ -130,7 +130,6 @@ public class DataServiceImpl implements DataService {
 			order.setDate(LocalDate.now());
 			order.setDoctor(doctor);
 			order.setPatient("Gheorghe");
-			order.setClinic(clinic);
 			order.setToothColor(toothColor);
 			order.setDeliveryDate(LocalDateTime.now());
 			saveEntity(order);
@@ -140,7 +139,6 @@ public class DataServiceImpl implements DataService {
 			order2.setDate(LocalDate.now());
 			order2.setDoctor(doctor);
 			order2.setPatient("Gheorghe");
-			order2.setClinic(clinic);
 			order2.setToothColor(toothColor);
 			order2.setDeliveryDate(LocalDateTime.now());
 			saveEntity(order2);
@@ -359,6 +357,42 @@ public class DataServiceImpl implements DataService {
 		final Long clinicId = spec.getClinic() != null ? spec.getClinic().getId() : null;
 		return orderDao.calculateJobsPriceTotal(spec.getId(), spec.getStartDate(), spec.getEndDate(),
 				spec.getPatient(), doctorId, clinicId, spec.getFinalized(), spec.getPaid());
+	}
+
+	@Override
+	@Transactional
+	public Order saveOrder(final Order order) {
+		Preconditions.checkNotNull(order, "Order cannot be null!");
+		log.info("Save order {}", order);
+
+		final Order saved = orderDao.save(order);
+		order.getJobs().forEach(j -> updateExecutionPrices(j.getExecutions()));
+		order.getJobs().forEach(j -> updateMaterialPrices(j.getMaterials()));
+		return saved;
+	}
+
+	private void updateExecutionPrices(final Set<Execution> executions) {
+		executions.forEach(execution -> {
+			final float price = execution.getTemplate().getIndividualPrices().stream()
+					.filter(p -> execution.getTechnician() != null && p.getTechnician() != null)
+					.filter(p -> p.getTechnician().getId().equals(execution.getTechnician().getId()))
+					.findFirst()
+					.map(ExecutionPrice::getPrice)
+					.orElse(execution.getTemplate().getStandardPrice());
+			execution.setPrice(price);
+		});
+	}
+
+	private void updateMaterialPrices(final Set<Material> materials) {
+		materials.forEach(material -> {
+			final float price = material.getTemplate().getIndividualPrices().stream()
+					.filter(p -> material.getJob() != null && p.getJobTemplate() != null)
+					.filter(p -> p.getJobTemplate().getId().equals(material.getJob().getTemplate().getId()))
+					.findFirst()
+					.map(MaterialPrice::getPrice)
+					.orElse(material.getTemplate().getPricePerUnit());
+			material.setPrice(price);
+		});
 	}
 
 	private List<Sort.Order> extractSortOrders(final Map<String, Boolean> sortOrder) {

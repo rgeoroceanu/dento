@@ -26,7 +26,7 @@ public class OrderDisplay {
         this.doctor = order.getDoctor() != null ? String.format("%s %s",
                 order.getDoctor().getFirstName(), order.getDoctor().getLastName()) : "";
 
-        this.clinic = order.getClinic() != null ? order.getClinic().getName() : "";
+        this.clinic = order.getDoctor() != null ? order.getDoctor().getClinic().getName() : "";
         this.pacient = order.getPatient();
         this.finalized = order.isFinalized() ? "Da" : "Nu";
         this.paid = order.isPaid() ? "Da" : "Nu";
