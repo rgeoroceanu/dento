@@ -13,7 +13,9 @@ import java.util.Optional;
 
 @Repository
 public interface OrderDao extends PageableRepository<Order, Long> {
-    @EntityGraph(attributePaths = {"jobs", "jobs.teeth", "storedFiles", "jobs.samples", "jobs.executions", "jobs.materials", "jobs.template.individualPrices"}, type = EntityGraph.EntityGraphType.LOAD)
+    @EntityGraph(attributePaths = {"jobs", "jobs.teeth", "storedFiles", "jobs.samples", "jobs.executions", "jobs.materials",
+            "jobs.template.individualPrices", "jobs.template.executionTemplates", "jobs.template.sampleTemplates",
+            "jobs.template.materials", "jobs.executions.template.individualPrices"}, type = EntityGraph.EntityGraphType.LOAD)
     Optional<Order> findById(Long id);
 
     @EntityGraph(value = "order.jobs", attributePaths = {"jobs", "jobs.executions"}, type = EntityGraph.EntityGraphType.LOAD)

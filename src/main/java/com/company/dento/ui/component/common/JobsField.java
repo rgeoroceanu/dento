@@ -1,6 +1,7 @@
 package com.company.dento.ui.component.common;
 
 import com.company.dento.model.business.*;
+import com.company.dento.model.type.SelectionType;
 import com.company.dento.ui.component.layout.JobLayout;
 import com.company.dento.ui.localization.Localizable;
 import com.company.dento.ui.localization.Localizer;
@@ -110,8 +111,8 @@ public class JobsField extends AbstractCompositeField<VerticalLayout, JobsField,
         jobLayout.setJob(job);
         jobLayout.localize();
         jobLayout.setTechnicians(technicians);
-        jobLayout.setTeethOptions(this.optionsColumn1, this.optionsColumn2);
-        jobLayout.addTeethSelectListener(e -> value.values().forEach(jl -> jl.updateTeeth(this.getValue())));
+        jobLayout.setTeethOptions(this.optionsColumn1, this.optionsColumn2, SelectionType.GROUP.equals(job.getTemplate().getSelectionType()));
+        jobLayout.addTeethSelectListener(e -> handleTeethSelect(e, job));
         jobLayout.setMaterialTemplates(materialTemplates);
         jobLayout.setExecutionTemplates(executionTemplates);
         jobLayout.setSampleTemplates(sampleTemplates);
@@ -119,6 +120,29 @@ public class JobsField extends AbstractCompositeField<VerticalLayout, JobsField,
         accordion.add(panel);
         this.value.put(job, jobLayout);
         setModelValue(new HashSet<>(value.keySet()), true);
+    }
+
+    private void handleTeethSelect(final AbstractField.ComponentValueChangeEvent<TeethSelect, Set<Tooth>> event,
+                                   final Job job) {
+
+        value.values().forEach(jl -> jl.updateTeeth(this.getValue()));
+
+        // update job dependent options => add job from option
+        if (event.isFromClient()) {
+            event.getValue().stream()
+                    .filter(v -> v.getOption1() != null && v.getOption2() != null)
+                    .filter(v -> v.getOption1().getSpecificJob() != null || v.getOption2().getSpecificJob() != null)
+                    .filter(v -> !v.getOption1().getSpecificJob().getId().equals(job.getId()))
+                    .forEach(tooth -> {
+                        if (tooth.getOption1().getSpecificJob() != null) {
+                            this.addJob(createJob(tooth.getOption1().getSpecificJob()));
+                        }
+
+                        if (tooth.getOption2().getSpecificJob() != null) {
+                            this.addJob(createJob(tooth.getOption2().getSpecificJob()));
+                        }
+                    });
+        }
     }
 
     private Component createSummary(final Job job, final AccordionPanel panel) {

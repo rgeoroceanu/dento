@@ -48,8 +48,8 @@ public class JobLayout extends FormLayout implements Localizable {
         bindFields();
     }
 
-    public void setTeethOptions(final List<ToothOption> optionsColumn1, final List<ToothOption> optionsColumn2) {
-        teethSelect.setTeethOptions(optionsColumn1, optionsColumn2);
+    public void setTeethOptions(final List<ToothOption> optionsColumn1, final List<ToothOption> optionsColumn2, final boolean group) {
+        teethSelect.setTeethOptions(optionsColumn1, optionsColumn2, group);
     }
 
     public void setTechnicians(final List<User> technicians) {
@@ -122,10 +122,10 @@ public class JobLayout extends FormLayout implements Localizable {
         timeField.setLocale(Locale.GERMAN);
 
         final FormLayout.FormItem fi1 = fl1.addFormItem(dateLayout, dateLabel);
-        final FormLayout.FormItem fi6 = fl1.addFormItem(priceField, priceLabel);
+        final FormLayout.FormItem fi5 = fl1.addFormItem(materialsField, materialLabel);
         final FormLayout.FormItem fi2 = fl1.addFormItem(sampleSelect, sampleSelectLabel);
         final FormLayout.FormItem fi3 = fl1.addFormItem(executionSelect, executionSelectLabel);
-        final FormLayout.FormItem fi5 = fl2.addFormItem(materialsField, materialLabel);
+        final FormLayout.FormItem fi6 = fl2.addFormItem(priceField, priceLabel);
         final FormLayout.FormItem fi4 = fl2.addFormItem(teethSelect, teethSelectLabel);
         fi1.getStyle().set("align-items", "initial");
         fi2.getStyle().set("align-items", "initial");
@@ -147,6 +147,7 @@ public class JobLayout extends FormLayout implements Localizable {
         this.addClassName("dento-form-layout");
         fl1.addClassName("dento-form-layout");
         fl2.addClassName("dento-form-layout");
+        priceField.addClassName("dento-form-field");
         this.setSizeFull();
         this.getStyle().set("margin", "0px");
     }

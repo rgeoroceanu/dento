@@ -28,7 +28,7 @@ public class MaterialTemplate extends Base implements SoftDelete {
 	@Basic
 	private boolean perJob;
 
-	@ElementCollection(fetch = FetchType.LAZY)
+	@ElementCollection(fetch = FetchType.EAGER)
 	private Set<MaterialPrice> individualPrices = new HashSet<>();
 
 	@Basic

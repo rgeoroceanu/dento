@@ -29,7 +29,7 @@ public class ExecutionTemplate extends Base implements SoftDelete {
 	@Basic
 	private boolean active = true;
 
-	@ElementCollection(fetch = FetchType.LAZY)
+	@ElementCollection(fetch = FetchType.EAGER)
 	private Set<ExecutionPrice> individualPrices  = new HashSet<>();
 
 	@Basic
