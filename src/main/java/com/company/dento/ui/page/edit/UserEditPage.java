@@ -1,8 +1,10 @@
 package com.company.dento.ui.page.edit;
 
+import com.company.dento.model.business.Order;
 import com.company.dento.model.business.User;
 import com.company.dento.model.type.Role;
 import com.company.dento.service.DataService;
+import com.company.dento.ui.component.common.DentoNotification;
 import com.company.dento.ui.localization.Localizer;
 import com.company.dento.ui.page.list.UsersPage;
 import com.vaadin.flow.component.UI;
@@ -12,6 +14,8 @@ import com.vaadin.flow.component.html.Label;
 import com.vaadin.flow.component.notification.Notification;
 import com.vaadin.flow.component.textfield.PasswordField;
 import com.vaadin.flow.component.textfield.TextField;
+import com.vaadin.flow.data.binder.BinderValidationStatus;
+import com.vaadin.flow.data.binder.ValidationResult;
 import com.vaadin.flow.data.validator.StringLengthValidator;
 import com.vaadin.flow.router.AfterNavigationEvent;
 import com.vaadin.flow.router.BeforeEvent;
@@ -23,6 +27,7 @@ import org.springframework.stereotype.Component;
 import org.vaadin.gatanaso.MultiselectComboBox;
 
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @UIScope
 @Component
@@ -117,40 +122,43 @@ public class UserEditPage extends EditPage<User> {
 
     protected void bindFields() {
         binder.forField(firstNameField)
-                .asRequired(Localizer.getLocalizedString("requiredValidation"))
+                .asRequired("Introduceți prenume!")
                 .bind(User::getFirstName, User::setFirstName);
 
         binder.forField(lastNameField)
-                .asRequired(Localizer.getLocalizedString("requiredValidation"))
+                .asRequired("Introduceți nume!")
                 .bind(User::getLastName, User::setLastName);
 
         binder.forField(rolesField)
-                .asRequired(Localizer.getLocalizedString("requiredValidation"))
+                .asRequired("Alegeți cel puțin un rol!")
                 .bind(User::getRoles, User::setRoles);
 
         binder.forField(activeField)
                 .bind(User::isActive, User::setActive);
 
         binder.forField(usernameField)
-                .asRequired(Localizer.getLocalizedString("requiredValidation"))
-                .withValidator(new StringLengthValidator("Minimum 8, maxim 16 caractere!", 8, 16))
+                .asRequired("Introduceți nume de utiliyator")
+                .withValidator(new StringLengthValidator("Nume utlilizator: Minimum 8, maxim 16 caractere!", 8, 16))
                 .bind(User::getUsername, User::setUsername);
 
         binder.forField(passwordField)
-                .asRequired(Localizer.getLocalizedString("requiredValidation"))
-                .withValidator(new StringLengthValidator("Minimum 8, maxim 16 caractere!", 8, 16))
+                .asRequired("Introduceți parola!")
+                .withValidator(new StringLengthValidator("Parola: Minimum 8, maxim 16 caractere!", 8, 16))
                 .bind(User::getPassword, User::setPassword);
 
     }
 
     protected void save() {
-        if (binder.isValid()) {
+        final BinderValidationStatus<User> status = binder.validate();
+
+        if (!status.hasErrors()) {
             final User item = binder.getBean();
             dataService.saveUserAndEncodePassword(item);
+            DentoNotification.success("Utilizatorul s-a salvat!");
             UI.getCurrent().navigate(UsersPage.class);
         } else {
-            Notification.show(Localizer.getLocalizedString("validationError"),
-                    5000, Notification.Position.BOTTOM_CENTER);
+            DentoNotification.error("Date invalide!",
+                    status.getValidationErrors().stream().map(ValidationResult::getErrorMessage).collect(Collectors.toList()));
         }
     }
 

@@ -4,8 +4,8 @@ import com.company.dento.dao.*;
 import com.company.dento.dao.specification.MaterialSpecification;
 import com.company.dento.dao.specification.OrderSpecification;
 import com.company.dento.model.business.*;
-import com.company.dento.model.type.MeasurementUnit;
 import com.company.dento.model.type.Role;
+import com.company.dento.model.type.SelectionType;
 import com.company.dento.service.exception.DataDoesNotExistException;
 import com.company.dento.service.exception.InvalidDataTypeException;
 import com.google.common.base.Preconditions;
@@ -23,7 +23,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.PostConstruct;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -78,128 +77,7 @@ public class DataServiceImpl implements DataService {
 
 	@PostConstruct
 	public void init() throws InvalidDataTypeException {
-		// add initial user
-		if (userDao.findAll().isEmpty()) {
-			User user = new User();
-			user.setFirstName("Admin");
-			user.setLastName("Admin");
-			user.setUsername("admin");
-			user.setPassword("admin");
-			user.setRoles(new HashSet<>(Arrays.asList(Role.USER, Role.ADMIN)));
-			saveUserAndEncodePassword(user);
-			
-			// TODO remove this
-			JobTemplate jobTemplate1 = new JobTemplate();
-			jobTemplate1.setName("Executie Ceramica");
-			JobTemplate jobTemplate2 = new JobTemplate();
-			jobTemplate2.setName("Executie CAD");
-			saveEntity(jobTemplate1);
-			saveEntity(jobTemplate2);
-			
-			ExecutionTemplate executionTemplate1 = new ExecutionTemplate();
-			executionTemplate1.setName("Executie Ceramica");
-            ExecutionTemplate executionTemplate2 = new ExecutionTemplate();
-			executionTemplate2.setName("Executie CAD");
-			saveEntity(executionTemplate1);
-			saveEntity(executionTemplate2);
-			
-			SampleTemplate sampleTemplate1 = new SampleTemplate();
-			sampleTemplate1.setName("Proba Ceramica");
-			saveEntity(sampleTemplate1);
-			
-			MaterialTemplate materialTemplate = new MaterialTemplate();
-			materialTemplate.setName("MaterialTemplate 1");
-			materialTemplate.setMeasurementUnit(MeasurementUnit.CM);
-			materialTemplate.setPerJob(true);
-			materialTemplate.setPricePerUnit(100);
-			saveEntity(materialTemplate);
-			
-			Clinic clinic = new Clinic();
-			clinic.setName("Clinic 1");
-			clinic.setEmail("clinic@mail.com");
-			saveEntity(clinic);
-			
-			Doctor doctor = new Doctor();
-			doctor.setFirstName("Dr.");
-			doctor.setLastName("Doctor");
-			doctor.setEmail("test@test");
-			doctor.setClinic(clinic);
-			saveEntity(doctor);
-
-			final ToothColor toothColor = new ToothColor();
-			toothColor.setName("A2");
-			saveEntity(toothColor);
-
-			Order order = new Order();
-			order.setDate(LocalDate.now());
-			order.setDoctor(doctor);
-			order.setPatient("Gheorghe");
-			order.setToothColor(toothColor);
-			order.setDeliveryDate(LocalDateTime.now());
-			saveEntity(order);
-
-
-			Order order2 = new Order();
-			order2.setDate(LocalDate.now());
-			order2.setDoctor(doctor);
-			order2.setPatient("Gheorghe");
-			order2.setToothColor(toothColor);
-			order2.setDeliveryDate(LocalDateTime.now());
-			saveEntity(order2);
-
-			Execution execution1 = new Execution();
-			execution1.setCount(1);
-			execution1.setPrice(executionTemplate1.getStandardPrice());
-			execution1.setTemplate(executionTemplate1);
-			execution1.setTechnician(user);
-
-			Execution execution2 = new Execution();
-			execution2.setCount(2);
-			execution2.setPrice(executionTemplate2.getStandardPrice());
-			execution2.setTemplate(executionTemplate2);
-			execution2.setTechnician(user);
-
-			for (int i=0; i<200; i++) {
-				Execution execution3 = new Execution();
-				execution3.setCount(1);
-				execution3.setPrice(executionTemplate2.getStandardPrice());
-				execution3.setTemplate(executionTemplate2);
-				execution3.setTechnician(user);
-			}
-
-			Sample sample = new Sample();
-			sample.setTemplate(sampleTemplate1);
-
-			Job job1 = new Job();
-			job1.setTemplate(jobTemplate1);
-			job1.setOrder(order);
-			job1.setPrice(100);
-			job1.setExecutions(Collections.singleton(execution1));
-			execution1.setJob(job1);
-
-			sample.setJob(job1);
-
-			job1.getSamples().add(sample);
-            saveEntity(job1);
-			
-			Job job2 = new Job();
-			job2.setTemplate(jobTemplate1);
-			job2.setOrder(order);
-			job2.setPrice(150);
-			job2.setExecutions(Collections.singleton(execution2));
-			execution2.setJob(job2);
-            saveEntity(job2);
-			
-			Job job3 = new Job();
-
-			job3.setTemplate(jobTemplate1);
-			job3.setOrder(order2);
-			job3.setPrice(200);
-
-            saveEntity(job3);
-			
-			saveEntity(order);
-		}
+		createInitialData();
 	}
 	
 	@SuppressWarnings("unchecked")
@@ -384,12 +262,12 @@ public class DataServiceImpl implements DataService {
 		log.info("Save order {}", order);
 
 		final Order saved = orderDao.save(order);
-		order.getJobs().forEach(j -> updateExecutionPrices(j.getExecutions()));
-		order.getJobs().forEach(j -> updateMaterialPrices(j.getMaterials()));
+		order.getJobs().forEach(j -> updateExecutions(j.getExecutions()));
+		order.getJobs().forEach(j -> updateMaterials(j.getMaterials()));
 		return saved;
 	}
 
-	private void updateExecutionPrices(final Set<Execution> executions) {
+	private void updateExecutions(final Set<Execution> executions) {
 		executions.forEach(execution -> {
 			final float price = execution.getTemplate().getIndividualPrices().stream()
 					.filter(p -> execution.getTechnician() != null && p.getTechnician() != null)
@@ -398,10 +276,15 @@ public class DataServiceImpl implements DataService {
 					.map(ExecutionPrice::getPrice)
 					.orElse(execution.getTemplate().getStandardPrice());
 			execution.setPrice(price);
+
+			final int count = SelectionType.SIMPLE.equals(execution.getJob().getTemplate().getSelectionType()) ?
+                    execution.getJob().getTeeth().size() : 1;
+
+			execution.setCount(count);
 		});
 	}
 
-	private void updateMaterialPrices(final Set<Material> materials) {
+	private void updateMaterials(final Set<Material> materials) {
 		materials.forEach(material -> {
 			final float price = material.getTemplate().getIndividualPrices().stream()
 					.filter(p -> material.getJob() != null && p.getJobTemplate() != null)
@@ -409,7 +292,11 @@ public class DataServiceImpl implements DataService {
 					.findFirst()
 					.map(MaterialPrice::getPrice)
 					.orElse(material.getTemplate().getPricePerUnit());
+
+			final int count = material.getTemplate().isPerJob() ? 1 : material.getJob().getTeeth().size();
+
 			material.setPrice(price);
+			material.setQuantity(material.getQuantity() * count);
 		});
 	}
 
@@ -460,4 +347,17 @@ public class DataServiceImpl implements DataService {
 		log.warn("Invalid entity type " + entityClass.getSimpleName());
 		throw new InvalidDataTypeException("Invalid data type " + entityClass.getName());
 	}
+
+	private void createInitialData() {
+        // add initial user
+        if (userDao.findAll().isEmpty()) {
+            final User user = new User();
+            user.setFirstName("A.");
+            user.setLastName("Administrator");
+            user.setUsername("dento");
+            user.setPassword("dentoadmin");
+            user.setRoles(new HashSet<>(Arrays.asList(Role.USER, Role.ADMIN, Role.TECHNICIAN)));
+            saveUserAndEncodePassword(user);
+        }
+    }
 }

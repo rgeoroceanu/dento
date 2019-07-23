@@ -6,7 +6,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 import javax.persistence.*;
-import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.Set;
 
 @Getter
@@ -17,7 +17,7 @@ import java.util.Set;
 public class User extends Base implements SoftDelete {
 	
 	@ElementCollection(fetch = FetchType.EAGER)
-	private Set<Role> roles = new HashSet<>();
+	private Set<Role> roles = new LinkedHashSet<>();
 
 	@Column(unique = true, nullable = false)
 	private String username;

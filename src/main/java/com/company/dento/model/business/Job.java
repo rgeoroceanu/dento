@@ -9,6 +9,7 @@ import javax.persistence.*;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.Set;
 
 /**
@@ -36,19 +37,22 @@ public class Job extends Base {
 	private int count = 1;
 
 	@OneToMany(fetch = FetchType.LAZY, mappedBy = "job", orphanRemoval = true, cascade = CascadeType.ALL)
-	private Set<Execution> executions = new HashSet<>();
+	@OrderBy(value = "id")
+	private Set<Execution> executions = new LinkedHashSet<>();
 
 	@OneToMany(fetch = FetchType.LAZY, mappedBy = "job", orphanRemoval = true, cascade = CascadeType.ALL)
-	private Set<Sample> samples = new HashSet<>();
+	@OrderBy(value = "id")
+	private Set<Sample> samples = new LinkedHashSet<>();
 
 	@OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
 	private CalendarEvent deliveryEvent;
 
 	@ElementCollection(fetch = FetchType.LAZY)
-	private Set<Tooth> teeth = new HashSet<>();
+	private Set<Tooth> teeth = new LinkedHashSet<>();
 
 	@OneToMany(fetch = FetchType.LAZY, mappedBy = "job", orphanRemoval = true, cascade = CascadeType.ALL)
-	private Set<Material> materials = new HashSet<>();
+	@OrderBy(value = "id")
+	private Set<Material> materials = new LinkedHashSet<>();
 
 	public String toString() {
 		if (template != null && order != null) {

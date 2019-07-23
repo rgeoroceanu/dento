@@ -31,13 +31,16 @@ public class TeethSelect extends AbstractCompositeField<Div, TeethSelect, Set<To
         final Div line = new Div();
         line.addClassName("dento-teeth-select-line");
         this.getContent().add(line);
+
+        IntStream.range(11, 19).forEach(this::addTooth);
+        IntStream.range(21, 29).forEach(this::addTooth);
+        IntStream.range(31, 39).forEach(this::addTooth);
+        IntStream.range(41, 49).forEach(this::addTooth);
     }
 
     public void setTeethOptions(final List<ToothOption> optionsColumn1, final List<ToothOption> optionsColumn2, final boolean group) {
-        IntStream.range(11, 19).forEach(val -> this.addTooth(val, optionsColumn1, optionsColumn2, !group));
-        IntStream.range(21, 29).forEach(val -> this.addTooth(val, optionsColumn1, optionsColumn2, !group));
-        IntStream.range(31, 39).forEach(val -> this.addTooth(val, optionsColumn1, optionsColumn2, !group));
-        IntStream.range(41, 49).forEach(val -> this.addTooth(val, optionsColumn1, optionsColumn2, !group));
+        items.values().forEach(i -> i.setOptions(optionsColumn1, optionsColumn2));
+        items.values().forEach(i -> i.setSelectable(!group));
 
         if (group) {
             final Checkbox topSelect = new Checkbox();
@@ -52,8 +55,8 @@ public class TeethSelect extends AbstractCompositeField<Div, TeethSelect, Set<To
         }
     }
 
-    private void addTooth(int toothNumber, final List<ToothOption> column1, final List<ToothOption> column2, final boolean selectable) {
-        final ToothItem tooth = new ToothItem(toothNumber, column1, column2, selectable);
+    private void addTooth(int toothNumber) {
+        final ToothItem tooth = new ToothItem(toothNumber);
         tooth.addValueChangeListener(e -> this.setModelValue(getValue(), true));
         items.put(toothNumber, tooth);
         this.getContent().add(tooth);
@@ -122,17 +125,15 @@ public class TeethSelect extends AbstractCompositeField<Div, TeethSelect, Set<To
         private boolean active = false;
         private Tooth value;
 
-        ToothItem(final int toothNumber, final List<ToothOption> column1, final List<ToothOption> column2,
-                  final boolean selectable) {
+        ToothItem(final int toothNumber) {
 
             super(null);
 
             button = new Button();
             icon = new Icon(VaadinIcon.TOOTH);
             select = new Dialog();
-            toothPropertySelect = new ToothPropertySelect(column1, column2);
+            toothPropertySelect = new ToothPropertySelect();
 
-            if (selectable) toothPropertySelect.addSelectionListener(this::handleSelection);
             select.add(toothPropertySelect);
             toothPropertyDisplay = new ToothPropertyDisplay();
             toothPropertyDisplay.setVisible(false);
@@ -141,13 +142,23 @@ public class TeethSelect extends AbstractCompositeField<Div, TeethSelect, Set<To
             icon.setSize("1.8em");
             button.setIcon(icon);
             button.addClassNames("dento-teeth-select-tooth-button", String.format("tooth%d-elem", toothNumber));
-            if (selectable) button.addClickListener(e -> selectProperties());
             text = new Label(String.valueOf(toothNumber));
             this.getContent().add(toothPropertyDisplay, button, text);
             this.getContent().addClassNames(String.format("tooth%d", toothNumber), "dento-teeth-select-tooth");
             text.addClassNames("tooth-text", String.format("tooth%d-elem", toothNumber));
 
             this.toothNumber = toothNumber;
+        }
+
+        public void setOptions(final List<ToothOption> col1, final List<ToothOption> col2) {
+            toothPropertySelect.setOptions(col1, col2);
+        }
+
+        public void setSelectable(final boolean selectable) {
+            if (selectable) {
+                toothPropertySelect.addSelectionListener(this::handleSelection);
+                button.addClickListener(e -> selectProperties());
+            }
         }
 
         @Override
@@ -235,22 +246,18 @@ public class TeethSelect extends AbstractCompositeField<Div, TeethSelect, Set<To
         private final RadioButtonGroup<ToothOption> g1;
         private final RadioButtonGroup<ToothOption> g2;
         private SelectionListener selectionListener;
-        private final List<ToothOption> col1;
-        private final List<ToothOption> col2;
+        private final List<ToothOption> col1 = new ArrayList<>();
+        private final List<ToothOption> col2 = new ArrayList<>();
 
         private interface SelectionListener {
             void selected(ToothOption t1, ToothOption t2);
         }
 
-        ToothPropertySelect(final List<ToothOption> col1, final List<ToothOption> col2) {
-            this.col1 = col1;
-            this.col2 = col2;
+        ToothPropertySelect() {
             g1 = new RadioButtonGroup<>();
             g2 = new RadioButtonGroup<>();
             g1.addClassName("dento-teeth-select-radio-group");
             g2.addClassName("dento-teeth-select-radio-group");
-            g1.setItems(col1);
-            g2.setItems(col2);
             g1.addValueChangeListener(e -> itemSelected());
             g2.addValueChangeListener(e -> itemSelected());
             g1.setRenderer(new TextRenderer<>(ToothOption::getAbbreviation));
@@ -261,6 +268,15 @@ public class TeethSelect extends AbstractCompositeField<Div, TeethSelect, Set<To
 
         void addSelectionListener(final SelectionListener selectionListener) {
             this.selectionListener = selectionListener;
+        }
+
+        void setOptions(final List<ToothOption> col1, final List<ToothOption> col2) {
+            this.col1.clear();
+            this.col2.clear();
+            this.col1.addAll(col1);
+            this.col2.addAll(col2);
+            g1.setItems(col1);
+            g2.setItems(col2);
         }
 
         void clear() {

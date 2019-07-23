@@ -7,6 +7,7 @@ import lombok.Setter;
 
 import javax.persistence.*;
 import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.Set;
 
 @Getter
@@ -40,11 +41,13 @@ public class JobTemplate extends Base implements SoftDelete {
 
 	@ManyToMany(fetch = FetchType.LAZY)
 	@JoinTable(name="job_templates_samples", joinColumns=@JoinColumn(name="job_template_id"), inverseJoinColumns=@JoinColumn(name="sample_template_id"))
-	private Set<SampleTemplate> sampleTemplates = new HashSet<>();
+	@OrderBy(value = "id")
+	private Set<SampleTemplate> sampleTemplates = new LinkedHashSet<>();
 
 	@ManyToMany(fetch = FetchType.LAZY)
 	@JoinTable(name="job_templates_executions", joinColumns=@JoinColumn(name="job_template_id"), inverseJoinColumns=@JoinColumn(name="execution_template_id"))
-	private Set<ExecutionTemplate> executionTemplates = new HashSet<>();
+	@OrderBy(value = "id")
+	private Set<ExecutionTemplate> executionTemplates = new LinkedHashSet<>();
 
 	@Basic
 	private boolean deleted;

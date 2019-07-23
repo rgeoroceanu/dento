@@ -7,6 +7,7 @@ import lombok.Setter;
 
 import javax.persistence.*;
 import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.Set;
 
 @Getter
@@ -29,7 +30,7 @@ public class MaterialTemplate extends Base implements SoftDelete {
 	private boolean perJob;
 
 	@ElementCollection(fetch = FetchType.EAGER)
-	private Set<MaterialPrice> individualPrices = new HashSet<>();
+	private Set<MaterialPrice> individualPrices = new LinkedHashSet<>();
 
 	@Basic
 	private boolean active = true;

@@ -132,7 +132,7 @@ public class JobsField extends AbstractCompositeField<VerticalLayout, JobsField,
             event.getValue().stream()
                     .filter(v -> v.getOption1() != null && v.getOption2() != null)
                     .filter(v -> v.getOption1().getSpecificJob() != null || v.getOption2().getSpecificJob() != null)
-                    .filter(v -> !v.getOption1().getSpecificJob().getId().equals(job.getId()))
+                    .filter(v -> !v.getOption1().getSpecificJob().getId().equals(job.getTemplate().getId()))
                     .forEach(tooth -> {
                         if (tooth.getOption1().getSpecificJob() != null) {
                             this.addJob(createJob(tooth.getOption1().getSpecificJob()));

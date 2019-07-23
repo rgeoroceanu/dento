@@ -3,6 +3,7 @@ package com.company.dento.ui.page.edit;
 import com.company.dento.model.business.*;
 import com.company.dento.model.type.ToothOptionColumn;
 import com.company.dento.service.DataService;
+import com.company.dento.ui.component.common.DentoNotification;
 import com.company.dento.ui.component.common.JobsField;
 import com.company.dento.ui.component.common.UploadField;
 import com.company.dento.ui.localization.Localizer;
@@ -13,11 +14,12 @@ import com.vaadin.flow.component.combobox.ComboBox;
 import com.vaadin.flow.component.datepicker.DatePicker;
 import com.vaadin.flow.component.formlayout.FormLayout;
 import com.vaadin.flow.component.html.Label;
-import com.vaadin.flow.component.notification.Notification;
 import com.vaadin.flow.component.tabs.Tab;
 import com.vaadin.flow.component.tabs.Tabs;
 import com.vaadin.flow.component.textfield.TextArea;
 import com.vaadin.flow.component.textfield.TextField;
+import com.vaadin.flow.data.binder.BinderValidationStatus;
+import com.vaadin.flow.data.binder.ValidationResult;
 import com.vaadin.flow.data.converter.StringToIntegerConverter;
 import com.vaadin.flow.data.validator.IntegerRangeValidator;
 import com.vaadin.flow.data.validator.StringLengthValidator;
@@ -29,7 +31,9 @@ import com.vaadin.flow.spring.annotation.UIScope;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Component;
 
+import java.util.Collection;
 import java.util.Optional;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @UIScope
@@ -180,17 +184,16 @@ public class OrderEditPage extends EditPage<Order> {
 
     protected void bindFields() {
         binder.forField(doctorField)
-                .asRequired(Localizer.getLocalizedString("requiredValidation"))
+                .asRequired("Alegeți doctorul!")
                 .bind(Order::getDoctor, Order::setDoctor);
 
         binder.forField(patientField)
-                .asRequired(Localizer.getLocalizedString("requiredValidation"))
-                .withValidator(new StringLengthValidator(String.format(Localizer
-                        .getLocalizedString("stringLengthValidation"), 5, 255), 5, 255))
+                .asRequired("Introduceți numele pacientului!")
+                .withValidator(new StringLengthValidator("Pacient: minim 5, maxim 255 caractere", 5, 255))
                 .bind(Order::getPatient, Order::setPatient);
 
         binder.forField(dateField)
-                .asRequired(Localizer.getLocalizedString("requiredValidation"))
+                .asRequired("Introduceți data comenzii!")
                 .bind(Order::getDate, Order::setDate);
 
         binder.forField(colorField)
@@ -198,15 +201,14 @@ public class OrderEditPage extends EditPage<Order> {
 
         binder.forField(partialSumField)
                 .withConverter(new StringToIntegerConverter(Localizer.getLocalizedString("integerRangeValidation")))
-                .withValidator(new IntegerRangeValidator("integerRangeValidation", 0, 100000))
+                .withValidator(new IntegerRangeValidator("Suma parțială: valoare între 0 și 100000", 0, 100000))
                 .bind(Order::getPartialSum, Order::setPartialSum);
 
         binder.forField(paidField)
                 .bind(Order::isPaid, Order::setPaid);
 
         binder.forField(observationsField)
-                .withValidator(new StringLengthValidator(String.format(Localizer
-                        .getLocalizedString("stringLengthValidation"), 0, 4000), 0, 4000))
+                .withValidator(new StringLengthValidator("Observatii: maxim 4000 de caractere!", 0, 4000))
                 .bind(Order::getDescription, Order::setDescription);
 
         binder.forField(uploadField)
@@ -214,8 +216,28 @@ public class OrderEditPage extends EditPage<Order> {
                 .bind(Order::getStoredFiles, Order::setStoredFiles);
 
         binder.forField(jobsField)
+                .withValidator((jobs,c) -> areJobExecutionsValid(jobs))
+                .withValidator((jobs,c) -> areJobDatesValid(jobs))
                 .bind(Order::getJobs, Order::setJobs);
 
+    }
+
+    private ValidationResult areJobExecutionsValid(final Set<Job> jobs) {
+        return jobs.stream()
+                .map(Job::getExecutions)
+                .flatMap(Collection::stream)
+                .filter(e -> e.getTechnician() == null)
+                .findAny()
+                .map(e -> ValidationResult.error("Vă rugăm să alegeți tehnicianul pentru manopeă!"))
+                .orElse(ValidationResult.ok());
+    }
+
+    private ValidationResult areJobDatesValid(final Set<Job> jobs) {
+        return jobs.stream()
+                .filter(j -> j.getDeliveryDate() == null)
+                .findAny()
+                .map(e -> ValidationResult.error("Vă rugăm să alegeți data de predare a lucrării!"))
+                .orElse(ValidationResult.ok());
     }
 
     private void toggleTabSelection(final int index) {
@@ -244,14 +266,17 @@ public class OrderEditPage extends EditPage<Order> {
     }
 
     protected void save() {
-        if (binder.isValid()) {
+        final BinderValidationStatus<Order> status = binder.validate();
+
+        if (!status.hasErrors()) {
             final Order item = binder.getBean();
             item.getJobs().forEach(job -> job.setOrder(item));
             dataService.saveOrder(item);
+            DentoNotification.success("Comanda salvată!");
             UI.getCurrent().navigate(OrdersPage.class);
         } else {
-            Notification.show(Localizer.getLocalizedString("validationError"),
-                    5000, Notification.Position.BOTTOM_CENTER);
+            DentoNotification.error("Date invalide!",
+                    status.getValidationErrors().stream().map(ValidationResult::getErrorMessage).collect(Collectors.toList()));
         }
     }
 

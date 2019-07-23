@@ -7,7 +7,7 @@ import lombok.Setter;
 import javax.persistence.*;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.Set;
 
 @Getter
@@ -31,10 +31,11 @@ public class Order extends Base {
 	private LocalDate date;
 
 	@OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY, mappedBy = "order")
-	private Set<Job> jobs = new HashSet<>();
+    @OrderBy(value = "id")
+	private Set<Job> jobs = new LinkedHashSet<>();
 
 	@ElementCollection(fetch = FetchType.LAZY)
-	private Set<StoredFile> storedFiles = new HashSet<>();
+	private Set<StoredFile> storedFiles = new LinkedHashSet<>();
 
 	@Basic
 	private boolean finalized;

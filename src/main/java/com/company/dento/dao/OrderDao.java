@@ -21,7 +21,7 @@ public interface OrderDao extends PageableRepository<Order, Long> {
     @EntityGraph(value = "order.jobs", attributePaths = {"jobs", "jobs.executions"}, type = EntityGraph.EntityGraphType.LOAD)
     List<Order> findAll(Specification<Order> spec, int offset, int limit, Sort sort);
 
-    @Query("SELECT SUM(e.count * e.price) FROM Execution e " +
+    @Query("SELECT COALESCE(SUM(e.count * e.price), 0) FROM Execution e " +
             "WHERE e.job.id IN (SELECT j.id FROM Job j " +
             "WHERE j.order.id IN (SELECT o.id FROM Order o " +
             "WHERE (:startDate IS NULL OR o.date >= :startDate) " +
@@ -31,7 +31,7 @@ public interface OrderDao extends PageableRepository<Order, Long> {
     double calculateExecutionsPriceTotal(final Long technicianId, final Boolean finalized,
                                          final LocalDateTime startDate, final LocalDateTime endDate);
 
-    @Query("SELECT SUM(j.count * j.price) FROM Job j " +
+    @Query("SELECT COALESCE(SUM(j.count * j.price), 0) FROM Job j " +
             "WHERE j.order.id IN (SELECT o.id FROM Order o " +
             "WHERE (:id IS NULL OR o.id = :id) " +
             "AND (:startDate IS NULL OR o.date >= :startDate) " +
