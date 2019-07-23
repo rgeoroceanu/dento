@@ -33,7 +33,7 @@ public class UserDetailsServiceImpl implements UserDetailsService {
 		    throw new UsernameNotFoundException("User is not active anymore!");
         }
 
-        Set<GrantedAuthority> grantedAuthorities = new HashSet<>();
+        final Set<GrantedAuthority> grantedAuthorities = new HashSet<>();
         for (Role role : user.getRoles()){
             grantedAuthorities.add(new SimpleGrantedAuthority(role.toString()));
         }

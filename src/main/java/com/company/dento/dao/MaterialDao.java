@@ -15,7 +15,7 @@ import java.util.Optional;
 @Repository
 public interface MaterialDao extends PageableRepository<Material, Long> {
 
-    @Query("SELECT SUM(m.quantity * m.price) FROM Material m " +
+    @Query("SELECT COALESCE(SUM(m.quantity * m.price), 0) FROM Material m " +
             "WHERE (:startDate IS NULL OR m.job.order.date >= :startDate) " +
             "AND (:endDate IS NULL OR m.job.order.date <= :endDate) " +
             "AND (:templateId IS NULL OR m.template.id = :templateId) " +

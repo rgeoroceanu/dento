@@ -3,6 +3,7 @@ package com.company.dento.ui.page.edit;
 import com.company.dento.model.business.*;
 import com.company.dento.model.type.SelectionType;
 import com.company.dento.service.DataService;
+import com.company.dento.ui.component.common.DentoNotification;
 import com.company.dento.ui.component.common.MaterialField;
 import com.company.dento.ui.component.common.PriceField;
 import com.company.dento.ui.localization.Localizer;
@@ -12,8 +13,9 @@ import com.vaadin.flow.component.checkbox.Checkbox;
 import com.vaadin.flow.component.combobox.ComboBox;
 import com.vaadin.flow.component.formlayout.FormLayout;
 import com.vaadin.flow.component.html.Label;
-import com.vaadin.flow.component.notification.Notification;
 import com.vaadin.flow.component.textfield.TextField;
+import com.vaadin.flow.data.binder.BinderValidationStatus;
+import com.vaadin.flow.data.binder.ValidationResult;
 import com.vaadin.flow.data.converter.StringToFloatConverter;
 import com.vaadin.flow.data.validator.FloatRangeValidator;
 import com.vaadin.flow.router.AfterNavigationEvent;
@@ -138,16 +140,16 @@ public class JobTemplateEditPage extends EditPage<JobTemplate> {
 
     protected void bindFields() {
         binder.forField(nameField)
-                .asRequired(Localizer.getLocalizedString("requiredValidation"))
+                .asRequired("Introduceți nume!")
                 .bind(JobTemplate::getName, JobTemplate::setName);
 
         binder.forField(selectionTypeField)
-                .asRequired(Localizer.getLocalizedString("requiredValidation"))
+                .asRequired("Alegeți tip selecție!")
                 .bind(JobTemplate::getSelectionType, JobTemplate::setSelectionType);
 
         binder.forField(standardPriceField)
-                .withConverter(new StringToFloatConverter(Localizer.getLocalizedString("integerRangeValidation")))
-                .withValidator(new FloatRangeValidator("integerRangeValidation", 0f, 100000f))
+                .withConverter(new StringToFloatConverter("Introduceți preț!"))
+                .withValidator(new FloatRangeValidator("Introduceți valoare preț între 0 și 100000!", 0f, 100000f))
                 .bind(JobTemplate::getStandardPrice, JobTemplate::setStandardPrice);
 
         binder.forField(activeField)
@@ -173,13 +175,16 @@ public class JobTemplateEditPage extends EditPage<JobTemplate> {
     }
 
     protected void save() {
-        if (binder.isValid()) {
+        final BinderValidationStatus<JobTemplate> status = binder.validate();
+
+        if (!status.hasErrors()) {
             final JobTemplate item = binder.getBean();
             dataService.saveEntity(item);
+            DentoNotification.success("Datele s-au salvat cu success!");
             UI.getCurrent().navigate(JobTemplatesPage.class);
         } else {
-            Notification.show(Localizer.getLocalizedString("validationError"),
-                    5000, Notification.Position.BOTTOM_CENTER);
+            DentoNotification.error("Date invalide!",
+                    status.getValidationErrors().stream().map(ValidationResult::getErrorMessage).collect(Collectors.toList()));
         }
     }
 

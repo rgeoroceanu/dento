@@ -137,13 +137,13 @@ public class UserEditPage extends EditPage<User> {
                 .bind(User::isActive, User::setActive);
 
         binder.forField(usernameField)
-                .asRequired("Introduceți nume de utiliyator")
-                .withValidator(new StringLengthValidator("Nume utlilizator: Minimum 8, maxim 16 caractere!", 8, 16))
+                .asRequired("Introduceți nume de utilizator")
+                .withValidator(new StringLengthValidator("Nume utlilizator: Minimum 5, maxim 16 caractere!", 5, 16))
                 .bind(User::getUsername, User::setUsername);
 
         binder.forField(passwordField)
                 .asRequired("Introduceți parola!")
-                .withValidator(new StringLengthValidator("Parola: Minimum 8, maxim 16 caractere!", 8, 16))
+                .withValidator(new StringLengthValidator("Parola: Minimum 8, maxim 100 caractere!", 8, 100))
                 .bind(User::getPassword, User::setPassword);
 
     }

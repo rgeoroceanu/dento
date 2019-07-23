@@ -4,14 +4,16 @@ import com.company.dento.model.business.JobTemplate;
 import com.company.dento.model.business.ToothOption;
 import com.company.dento.model.type.ToothOptionColumn;
 import com.company.dento.service.DataService;
+import com.company.dento.ui.component.common.DentoNotification;
 import com.company.dento.ui.localization.Localizer;
 import com.company.dento.ui.page.list.ToothOptionsPage;
 import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.combobox.ComboBox;
 import com.vaadin.flow.component.formlayout.FormLayout;
 import com.vaadin.flow.component.html.Label;
-import com.vaadin.flow.component.notification.Notification;
 import com.vaadin.flow.component.textfield.TextField;
+import com.vaadin.flow.data.binder.BinderValidationStatus;
+import com.vaadin.flow.data.binder.ValidationResult;
 import com.vaadin.flow.router.AfterNavigationEvent;
 import com.vaadin.flow.router.BeforeEvent;
 import com.vaadin.flow.router.OptionalParameter;
@@ -107,15 +109,15 @@ public class ToothOptionEditPage extends EditPage<ToothOption> {
 
     protected void bindFields() {
         binder.forField(nameField)
-                .asRequired(Localizer.getLocalizedString("requiredValidation"))
+                .asRequired("Introduceți nume!")
                 .bind(ToothOption::getName, ToothOption::setName);
 
         binder.forField(abbreviationField)
-                .asRequired(Localizer.getLocalizedString("requiredValidation"))
+                .asRequired("Introduceți abreviere!")
                 .bind(ToothOption::getAbbreviation, ToothOption::setAbbreviation);
 
         binder.forField(columnField)
-                .asRequired(Localizer.getLocalizedString("requiredValidation"))
+                .asRequired("Alegeți coloana!")
                 .bind(ToothOption::getDisplayColumn, ToothOption::setDisplayColumn);
 
         binder.forField(specificJobField)
@@ -124,13 +126,16 @@ public class ToothOptionEditPage extends EditPage<ToothOption> {
     }
 
     protected void save() {
-        if (binder.isValid()) {
+        final BinderValidationStatus<ToothOption> status = binder.validate();
+
+        if (!status.hasErrors()) {
             final ToothOption item = binder.getBean();
             dataService.saveEntity(item);
+            DentoNotification.success("Datele s-au salvat cu success!");
             UI.getCurrent().navigate(ToothOptionsPage.class);
         } else {
-            Notification.show(Localizer.getLocalizedString("validationError"),
-                    5000, Notification.Position.BOTTOM_CENTER);
+            DentoNotification.error("Date invalide!",
+                    status.getValidationErrors().stream().map(ValidationResult::getErrorMessage).collect(Collectors.toList()));
         }
     }
 

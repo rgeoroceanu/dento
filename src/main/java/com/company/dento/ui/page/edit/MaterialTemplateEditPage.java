@@ -5,6 +5,7 @@ import com.company.dento.model.business.MaterialPrice;
 import com.company.dento.model.business.MaterialTemplate;
 import com.company.dento.model.type.MeasurementUnit;
 import com.company.dento.service.DataService;
+import com.company.dento.ui.component.common.DentoNotification;
 import com.company.dento.ui.component.common.PriceField;
 import com.company.dento.ui.localization.Localizer;
 import com.company.dento.ui.page.list.MaterialTemplatesPage;
@@ -13,8 +14,9 @@ import com.vaadin.flow.component.checkbox.Checkbox;
 import com.vaadin.flow.component.combobox.ComboBox;
 import com.vaadin.flow.component.formlayout.FormLayout;
 import com.vaadin.flow.component.html.Label;
-import com.vaadin.flow.component.notification.Notification;
 import com.vaadin.flow.component.textfield.TextField;
+import com.vaadin.flow.data.binder.BinderValidationStatus;
+import com.vaadin.flow.data.binder.ValidationResult;
 import com.vaadin.flow.data.converter.StringToFloatConverter;
 import com.vaadin.flow.data.validator.FloatRangeValidator;
 import com.vaadin.flow.router.AfterNavigationEvent;
@@ -121,16 +123,16 @@ public class MaterialTemplateEditPage extends EditPage<MaterialTemplate> {
 
     protected void bindFields() {
         binder.forField(nameField)
-                .asRequired(Localizer.getLocalizedString("requiredValidation"))
+                .asRequired("Introduceți nume!")
                 .bind(MaterialTemplate::getName, MaterialTemplate::setName);
 
         binder.forField(measurementUnitField)
-                .asRequired(Localizer.getLocalizedString("requiredValidation"))
+                .asRequired("Introduceți unitate de măsură!")
                 .bind(MaterialTemplate::getMeasurementUnit, MaterialTemplate::setMeasurementUnit);
 
         binder.forField(pricePerUnitField)
-                .withConverter(new StringToFloatConverter(Localizer.getLocalizedString("integerRangeValidation")))
-                .withValidator(new FloatRangeValidator("integerRangeValidation", 0f, 100000f))
+                .withConverter(new StringToFloatConverter("Introduceți o valoare!"))
+                .withValidator(new FloatRangeValidator("Introduceți o valoare între 0 și 100000!", 0f, 100000f))
                 .bind(MaterialTemplate::getPricePerUnit, MaterialTemplate::setPricePerUnit);
 
         binder.forField(activeField)
@@ -145,13 +147,16 @@ public class MaterialTemplateEditPage extends EditPage<MaterialTemplate> {
     }
 
     protected void save() {
-        if (binder.isValid()) {
+        final BinderValidationStatus<MaterialTemplate> status = binder.validate();
+
+        if (!status.hasErrors()) {
             final MaterialTemplate item = binder.getBean();
             dataService.saveEntity(item);
+            DentoNotification.success("Datele s-au salvat cu success!");
             UI.getCurrent().navigate(MaterialTemplatesPage.class);
         } else {
-            Notification.show(Localizer.getLocalizedString("validationError"),
-                    5000, Notification.Position.BOTTOM_CENTER);
+            DentoNotification.error("Date invalide!",
+                    status.getValidationErrors().stream().map(ValidationResult::getErrorMessage).collect(Collectors.toList()));
         }
     }
 

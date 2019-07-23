@@ -1,8 +1,10 @@
 package com.company.dento.ui.page.edit;
 
+import com.company.dento.model.business.ExecutionTemplate;
 import com.company.dento.model.business.GeneralData;
 import com.company.dento.model.type.Currency;
 import com.company.dento.service.DataService;
+import com.company.dento.ui.component.common.DentoNotification;
 import com.company.dento.ui.component.common.UploadField;
 import com.company.dento.ui.localization.Localizer;
 import com.vaadin.flow.component.combobox.ComboBox;
@@ -11,6 +13,8 @@ import com.vaadin.flow.component.html.Label;
 import com.vaadin.flow.component.notification.Notification;
 import com.vaadin.flow.component.textfield.TextArea;
 import com.vaadin.flow.component.textfield.TextField;
+import com.vaadin.flow.data.binder.BinderValidationStatus;
+import com.vaadin.flow.data.binder.ValidationResult;
 import com.vaadin.flow.data.validator.EmailValidator;
 import com.vaadin.flow.router.AfterNavigationEvent;
 import com.vaadin.flow.router.BeforeEvent;
@@ -22,6 +26,7 @@ import org.springframework.stereotype.Component;
 
 import java.util.Collections;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @UIScope
 @Component
@@ -130,18 +135,18 @@ public class GeneralDataEditPage extends EditPage<GeneralData> {
 
     protected void bindFields() {
         binder.forField(laboratoryNameField)
-                .asRequired(Localizer.getLocalizedString("requiredValidation"))
+                .asRequired("Introduceți nume!")
                 .bind(GeneralData::getLaboratoryName, GeneralData::setLaboratoryName);
 
         binder.forField(townField)
-                .asRequired(Localizer.getLocalizedString("requiredValidation"))
+                .asRequired("Introduceți oraș!")
                 .bind(GeneralData::getTown, GeneralData::setTown);
 
         binder.forField(addressField)
                 .bind(GeneralData::getAddress, GeneralData::setAddress);
 
         binder.forField(emailField)
-                .asRequired(Localizer.getLocalizedString("requiredValidation"))
+                .asRequired("Introduceți email!")
                 .withValidator(new EmailValidator("Email invalid!"))
                 .bind(GeneralData::getEmail, GeneralData::setEmail);
 
@@ -156,18 +161,20 @@ public class GeneralDataEditPage extends EditPage<GeneralData> {
                         (gd, value) -> gd.setLogo(value.stream().findFirst().orElse(null)));
 
         binder.forField(currencyField)
-                .asRequired(Localizer.getLocalizedString("requiredValidation"))
+                .asRequired("Alegeți moneda!")
                 .bind(GeneralData::getCurrency, GeneralData::setCurrency);
     }
 
     protected void save() {
-        if (binder.isValid()) {
+        final BinderValidationStatus<GeneralData> status = binder.validate();
+
+        if (!status.hasErrors()) {
             final GeneralData item = binder.getBean();
             dataService.saveGeneralData(item);
-            Notification.show("Datele s-au salvat cu success!", 5000, Notification.Position.BOTTOM_CENTER);
+            DentoNotification.success("Datele s-au salvat cu success!");
         } else {
-            Notification.show(Localizer.getLocalizedString("validationError"),
-                    5000, Notification.Position.BOTTOM_CENTER);
+            DentoNotification.error("Date invalide!",
+                    status.getValidationErrors().stream().map(ValidationResult::getErrorMessage).collect(Collectors.toList()));
         }
     }
 

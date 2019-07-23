@@ -1,9 +1,11 @@
 package com.company.dento.ui.page.edit;
 
+import com.company.dento.model.business.Doctor;
 import com.company.dento.model.business.ExecutionPrice;
 import com.company.dento.model.business.ExecutionTemplate;
 import com.company.dento.model.business.User;
 import com.company.dento.service.DataService;
+import com.company.dento.ui.component.common.DentoNotification;
 import com.company.dento.ui.component.common.PriceField;
 import com.company.dento.ui.localization.Localizer;
 import com.company.dento.ui.page.list.ExecutionTemplatesPage;
@@ -13,6 +15,8 @@ import com.vaadin.flow.component.formlayout.FormLayout;
 import com.vaadin.flow.component.html.Label;
 import com.vaadin.flow.component.notification.Notification;
 import com.vaadin.flow.component.textfield.TextField;
+import com.vaadin.flow.data.binder.BinderValidationStatus;
+import com.vaadin.flow.data.binder.ValidationResult;
 import com.vaadin.flow.data.converter.StringToFloatConverter;
 import com.vaadin.flow.data.converter.StringToIntegerConverter;
 import com.vaadin.flow.data.validator.FloatRangeValidator;
@@ -109,12 +113,12 @@ public class ExecutionTemplateEditPage extends EditPage<ExecutionTemplate> {
 
     protected void bindFields() {
         binder.forField(nameField)
-                .asRequired(Localizer.getLocalizedString("requiredValidation"))
+                .asRequired("Introduceți nume!")
                 .bind(ExecutionTemplate::getName, ExecutionTemplate::setName);
 
         binder.forField(standardPriceField)
                 .withConverter(new StringToFloatConverter(Localizer.getLocalizedString("integerRangeValidation")))
-                .withValidator(new FloatRangeValidator("integerRangeValidation", 0f, 100000f))
+                .withValidator(new FloatRangeValidator("Introduceți prețul standard!", 0f, 100000f))
                 .bind(ExecutionTemplate::getStandardPrice, ExecutionTemplate::setStandardPrice);
 
         binder.forField(activeField)
@@ -127,13 +131,16 @@ public class ExecutionTemplateEditPage extends EditPage<ExecutionTemplate> {
     }
 
     protected void save() {
-        if (binder.isValid()) {
+        final BinderValidationStatus<ExecutionTemplate> status = binder.validate();
+
+        if (!status.hasErrors()) {
             final ExecutionTemplate item = binder.getBean();
             dataService.saveEntity(item);
+            DentoNotification.success("Datele s-au salvat cu success!!");
             UI.getCurrent().navigate(ExecutionTemplatesPage.class);
         } else {
-            Notification.show(Localizer.getLocalizedString("validationError"),
-                    5000, Notification.Position.BOTTOM_CENTER);
+            DentoNotification.error("Date invalide!",
+                    status.getValidationErrors().stream().map(ValidationResult::getErrorMessage).collect(Collectors.toList()));
         }
     }
 

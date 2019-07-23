@@ -3,6 +3,7 @@ package com.company.dento.ui.page.edit;
 import com.company.dento.model.business.Clinic;
 import com.company.dento.model.business.Doctor;
 import com.company.dento.service.DataService;
+import com.company.dento.ui.component.common.DentoNotification;
 import com.company.dento.ui.localization.Localizer;
 import com.company.dento.ui.page.list.ClinicsPage;
 import com.company.dento.ui.page.list.DoctorsPage;
@@ -12,6 +13,8 @@ import com.vaadin.flow.component.formlayout.FormLayout;
 import com.vaadin.flow.component.html.Label;
 import com.vaadin.flow.component.notification.Notification;
 import com.vaadin.flow.component.textfield.TextField;
+import com.vaadin.flow.data.binder.BinderValidationStatus;
+import com.vaadin.flow.data.binder.ValidationResult;
 import com.vaadin.flow.data.validator.EmailValidator;
 import com.vaadin.flow.router.AfterNavigationEvent;
 import com.vaadin.flow.router.BeforeEvent;
@@ -22,6 +25,7 @@ import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Component;
 
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @UIScope
 @Component
@@ -113,19 +117,19 @@ public class DoctorEditPage extends EditPage<Doctor> {
 
     protected void bindFields() {
         binder.forField(firstNameField)
-                .asRequired(Localizer.getLocalizedString("requiredValidation"))
+                .asRequired("Introduceți prenume!")
                 .bind(Doctor::getFirstName, Doctor::setFirstName);
 
         binder.forField(lastNameField)
-                .asRequired(Localizer.getLocalizedString("requiredValidation"))
+                .asRequired("Introduceți nume!")
                 .bind(Doctor::getLastName, Doctor::setLastName);
 
         binder.forField(clinicField)
-                .asRequired(Localizer.getLocalizedString("requiredValidation"))
+                .asRequired("Alegeți clinica!")
                 .bind(Doctor::getClinic, Doctor::setClinic);
 
         binder.forField(emailField)
-                .asRequired(Localizer.getLocalizedString("requiredValidation"))
+                .asRequired("Introduceți email!")
                 .withValidator(new EmailValidator("Email invalid!"))
                 .bind(Doctor::getEmail, Doctor::setEmail);
 
@@ -134,13 +138,16 @@ public class DoctorEditPage extends EditPage<Doctor> {
     }
 
     protected void save() {
-        if (binder.isValid()) {
+        final BinderValidationStatus<Doctor> status = binder.validate();
+
+        if (!status.hasErrors()) {
             final Doctor item = binder.getBean();
             dataService.saveEntity(item);
+            DentoNotification.success("Datele s-au salvat cu success!");
             UI.getCurrent().navigate(DoctorsPage.class);
         } else {
-            Notification.show(Localizer.getLocalizedString("validationError"),
-                    5000, Notification.Position.BOTTOM_CENTER);
+            DentoNotification.error("Date invalide!",
+                    status.getValidationErrors().stream().map(ValidationResult::getErrorMessage).collect(Collectors.toList()));
         }
     }
 
