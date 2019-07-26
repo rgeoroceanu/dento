@@ -293,16 +293,7 @@ public class DataServiceImpl implements DataService {
 
     private void updateMaterials(final Set<Material> materials) {
         materials.forEach(material -> {
-            final float price = material.getTemplate().getIndividualPrices().stream()
-                    .filter(p -> material.getJob() != null && p.getJobTemplate() != null)
-                    .filter(p -> p.getJobTemplate().getId().equals(material.getJob().getTemplate().getId()))
-                    .findFirst()
-                    .map(MaterialPrice::getPrice)
-                    .orElse(material.getTemplate().getPricePerUnit());
-
             final int count = material.getTemplate().isPerJob() ? 1 : material.getJob().getTeeth().size();
-
-            material.setPrice(price);
             material.setQuantity(material.getQuantity() * count);
         });
     }

@@ -201,6 +201,8 @@ public class JobsField extends AbstractCompositeField<VerticalLayout, JobsField,
         job.setPrice(extractDefaultPrice(jobTemplate, order));
 
         jobTemplate.getSampleTemplates().stream()
+                .filter(SampleTemplate::isActive)
+                .filter(st -> !st.isDeleted())
                 .map(template -> {
                     final Sample sample = new Sample();
                     sample.setJob(job);
@@ -209,6 +211,8 @@ public class JobsField extends AbstractCompositeField<VerticalLayout, JobsField,
                 }).forEach(sample -> job.getSamples().add(sample));
 
         jobTemplate.getExecutionTemplates().stream()
+                .filter(ExecutionTemplate::isActive)
+                .filter(et -> !et.isDeleted())
                 .map(template -> {
                     final Execution execution = new Execution();
                     execution.setTemplate(template);
@@ -217,6 +221,8 @@ public class JobsField extends AbstractCompositeField<VerticalLayout, JobsField,
                 }).forEach(execution -> job.getExecutions().add(execution));
 
         jobTemplate.getMaterials().stream()
+                .filter(m -> m.getTemplate().isActive())
+                .filter(m -> !m.getTemplate().isDeleted())
                 .map(defaultMaterial -> {
                     final Material material = new Material();
                     material.setTemplate(defaultMaterial.getTemplate());

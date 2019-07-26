@@ -14,7 +14,7 @@ import java.util.Set;
 @Setter
 @Entity
 @Table(name = "material_templates")
-@EqualsAndHashCode(callSuper = true, exclude = "individualPrices")
+@EqualsAndHashCode(callSuper = true)
 public class MaterialTemplate extends Base implements SoftDelete {
 	
 	@Column(unique = true, nullable = false)
@@ -23,14 +23,11 @@ public class MaterialTemplate extends Base implements SoftDelete {
 	@Enumerated(EnumType.STRING)
 	private MeasurementUnit measurementUnit;
 
-	@Basic
+	@Column(precision=8, scale=2)
 	private float pricePerUnit;
 
 	@Basic
 	private boolean perJob;
-
-	@ElementCollection(fetch = FetchType.EAGER)
-	private Set<MaterialPrice> individualPrices = new LinkedHashSet<>();
 
 	@Basic
 	private boolean active = true;

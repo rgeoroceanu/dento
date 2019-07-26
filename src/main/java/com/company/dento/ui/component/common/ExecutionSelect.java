@@ -63,6 +63,7 @@ public class ExecutionSelect extends ListSelectField<Execution, ExecutionTemplat
         technician.setPreventInvalidInput(true);
         technician.setAllowCustomValue(false);
         technician.addClassName("dento-grid-filter-small");
+        technician.addValueChangeListener(v -> setModelValue(value, true));
         return technician;
     }
 

@@ -50,6 +50,7 @@ public class SampleSelect extends ListSelectField<Sample, SampleTemplate> {
         datePicker.addValueChangeListener(e -> sample.setDate(e.getValue()));
         datePicker.setWidth("100%");
         datePicker.addClassNames("dento-grid-filter-small", "dento-grid-date-picker");
+        datePicker.addValueChangeListener(v -> setModelValue(value, true));
         return datePicker;
     }
 
@@ -59,6 +60,7 @@ public class SampleSelect extends ListSelectField<Sample, SampleTemplate> {
         timePicker.addValueChangeListener(e -> sample.setTime(e.getValue()));
         timePicker.addClassName("dento-grid-filter-small");
         timePicker.setWidth("100%");
+        timePicker.addValueChangeListener(v -> setModelValue(value, true));
         return timePicker;
     }
 }

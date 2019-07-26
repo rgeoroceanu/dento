@@ -27,17 +27,17 @@ public class JobTemplate extends Base implements SoftDelete {
 	@Basic
 	private String color;
 
-	@Basic
+	@Column(precision=8, scale=2)
 	private float standardPrice;
 
 	@Basic
 	private boolean active = true;
 
 	@ElementCollection(fetch = FetchType.LAZY)
-	private Set<JobPrice> individualPrices = new HashSet<>();
+	private Set<JobPrice> individualPrices = new LinkedHashSet<>();
 
 	@ElementCollection(fetch = FetchType.LAZY)
-	private Set<DefaultMaterial> materials = new HashSet<>();
+	private Set<DefaultMaterial> materials = new LinkedHashSet<>();
 
 	@ManyToMany(fetch = FetchType.LAZY)
 	@JoinTable(name="job_templates_samples", joinColumns=@JoinColumn(name="job_template_id"), inverseJoinColumns=@JoinColumn(name="sample_template_id"))

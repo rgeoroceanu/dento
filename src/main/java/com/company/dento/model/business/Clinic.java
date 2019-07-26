@@ -14,7 +14,7 @@ import javax.persistence.Table;
 @Entity
 @Table(name = "clinics")
 @EqualsAndHashCode(callSuper = true)
-public class Clinic extends Base implements SoftDelete{
+public class Clinic extends Base implements SoftDelete {
 
 	@Column(unique = true, nullable = false)
 	private String name;

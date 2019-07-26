@@ -3,8 +3,8 @@ package com.company.dento.ui.page.edit;
 import com.company.dento.model.business.*;
 import com.company.dento.model.type.SelectionType;
 import com.company.dento.service.DataService;
+import com.company.dento.ui.component.common.DefaultMaterialField;
 import com.company.dento.ui.component.common.DentoNotification;
-import com.company.dento.ui.component.common.MaterialField;
 import com.company.dento.ui.component.common.PriceField;
 import com.company.dento.ui.localization.Localizer;
 import com.company.dento.ui.page.list.JobTemplatesPage;
@@ -43,7 +43,7 @@ public class JobTemplateEditPage extends EditPage<JobTemplate> {
     private final TextField standardPriceField = new TextField();
     private final MultiselectComboBox<SampleTemplate> sampleTemplatesField = new MultiselectComboBox<>();
     private final MultiselectComboBox<ExecutionTemplate> executionTemplatesField = new MultiselectComboBox<>();
-    private final MaterialField materialsField = new MaterialField();
+    private final DefaultMaterialField materialsField = new DefaultMaterialField();
     private final PriceField<JobPrice, Clinic> individualPricesField = new PriceField<>(JobPrice.class);
 
     private final Label nameLabel = new Label();
@@ -118,8 +118,8 @@ public class JobTemplateEditPage extends EditPage<JobTemplate> {
         generalLayout.addFormItem(nameField, nameLabel).getStyle();
         generalLayout.addFormItem(activeField, activeLabel);
         generalLayout.addFormItem(selectionTypeField, selectionTypeLabel);
-        generalLayout.addFormItem(sampleTemplatesField, sampleTemplatesLabel).getStyle().set("align-items", "end");
-        generalLayout.addFormItem(executionTemplatesField, executionTemplatesLabel).getStyle().set("align-items", "end");
+        generalLayout.addFormItem(sampleTemplatesField, sampleTemplatesLabel).getStyle().set("align-items", "end").set("margin-bottom", "25px");
+        generalLayout.addFormItem(executionTemplatesField, executionTemplatesLabel).getStyle().set("align-items", "end").set("margin-bottom", "25px");;
         generalLayout.addFormItem(standardPriceField, standardPriceLabel);
         generalLayout.addFormItem(individualPricesField, individualPricesLabel).getStyle().set("align-items", "end");
         generalLayout.addFormItem(materialsField, materialsLabel).getStyle().set("align-items", "end");
@@ -162,12 +162,7 @@ public class JobTemplateEditPage extends EditPage<JobTemplate> {
                 .bind(JobTemplate::getExecutionTemplates, JobTemplate::setExecutionTemplates);
 
         binder.forField(materialsField)
-                .bind(jt -> jt.getMaterials().stream()
-                                .map(mat -> new Material(mat.getTemplate(), null, 0f, mat.getQuantity()))
-                                .collect(Collectors.toSet()),
-                        (jt, materials) -> jt.setMaterials(materials.stream()
-                                .map(m -> new DefaultMaterial(m.getTemplate(), m.getQuantity()))
-                                .collect(Collectors.toSet())));
+                .bind(JobTemplate::getMaterials, JobTemplate::setMaterials);
 
         binder.forField(individualPricesField)
                 .bind(JobTemplate::getIndividualPrices, JobTemplate::setIndividualPrices);

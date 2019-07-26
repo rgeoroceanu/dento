@@ -12,9 +12,9 @@ import javax.persistence.*;
 @NoArgsConstructor
 public class DefaultMaterial {
 
-	@ManyToOne(optional = false)
+	@ManyToOne(fetch = FetchType.EAGER, optional = false)
 	private MaterialTemplate template;
 
-	@Basic
+	@Column(precision=8, scale=2)
 	private float quantity;
 }

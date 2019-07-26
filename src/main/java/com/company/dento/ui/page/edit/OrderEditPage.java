@@ -208,7 +208,7 @@ public class OrderEditPage extends EditPage<Order> {
                 .bind(Order::isPaid, Order::setPaid);
 
         binder.forField(observationsField)
-                .withValidator(new StringLengthValidator("Observatii: maxim 4000 de caractere!", 0, 4000))
+                .withValidator(new StringLengthValidator("Observații: maxim 4000 de caractere!", 0, 4000))
                 .bind(Order::getDescription, Order::setDescription);
 
         binder.forField(uploadField)

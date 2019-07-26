@@ -19,8 +19,8 @@ import java.util.stream.Collectors;
 
 public abstract class ListSelectField<T, S extends Base> extends AbstractCompositeField<VerticalLayout, ListSelectField<T, S>, Set<T>> implements Localizable {
 
+    protected final Set<T> value = new HashSet<>();
     private final ComboBox<S> optionsSelect;
-    private final Set<T> value = new HashSet<>();
     protected final Grid<T> grid;
     private List<S> options = new ArrayList<>();
     private final Label emptyText = new Label("Niciun element!");
@@ -72,8 +72,8 @@ public abstract class ListSelectField<T, S extends Base> extends AbstractComposi
     }
 
     @Override
-    public Set<T> getValue() {
-        return new HashSet<>(value);
+    protected boolean valueEquals(Set<T> value1, Set<T> value2) {
+        return false;
     }
 
     @Override

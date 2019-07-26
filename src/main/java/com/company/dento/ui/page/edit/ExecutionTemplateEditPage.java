@@ -124,7 +124,6 @@ public class ExecutionTemplateEditPage extends EditPage<ExecutionTemplate> {
         binder.forField(activeField)
                 .bind(ExecutionTemplate::isActive, ExecutionTemplate::setActive);
 
-
         binder.forField(individualPricesField)
                 .bind(ExecutionTemplate::getIndividualPrices, ExecutionTemplate::setIndividualPrices);
 

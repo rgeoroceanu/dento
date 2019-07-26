@@ -10,9 +10,7 @@ import java.util.Optional;
 
 @Repository
 public interface MaterialTemplatesDao extends PageableRepository<MaterialTemplate, Long> {
-    @EntityGraph(attributePaths = {"individualPrices"}, type = EntityGraph.EntityGraphType.LOAD)
-    Optional<MaterialTemplate> findById(final Long id);
 
-    @EntityGraph(attributePaths = {"individualPrices"}, type = EntityGraph.EntityGraphType.LOAD)
+    Optional<MaterialTemplate> findById(final Long id);
     List<MaterialTemplate> findAll();
 }

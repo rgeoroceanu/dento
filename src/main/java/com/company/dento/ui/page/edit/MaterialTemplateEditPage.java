@@ -1,12 +1,9 @@
 package com.company.dento.ui.page.edit;
 
-import com.company.dento.model.business.JobTemplate;
-import com.company.dento.model.business.MaterialPrice;
 import com.company.dento.model.business.MaterialTemplate;
 import com.company.dento.model.type.MeasurementUnit;
 import com.company.dento.service.DataService;
 import com.company.dento.ui.component.common.DentoNotification;
-import com.company.dento.ui.component.common.PriceField;
 import com.company.dento.ui.localization.Localizer;
 import com.company.dento.ui.page.list.MaterialTemplatesPage;
 import com.vaadin.flow.component.UI;
@@ -42,14 +39,12 @@ public class MaterialTemplateEditPage extends EditPage<MaterialTemplate> {
     private final Checkbox activeField = new Checkbox();
     private final Checkbox perJobField = new Checkbox();
     private final TextField pricePerUnitField = new TextField();
-    private final PriceField<MaterialPrice, JobTemplate> individualPricesField = new PriceField<>(MaterialPrice.class);
 
     private final Label nameLabel = new Label();
     private final Label measurementUnitLabel = new Label();
     private final Label pricePerUnitLabel = new Label();
     private final Label activeLabel = new Label();
     private final Label perJobLabel = new Label();
-    private final Label individualPricesLabel = new Label();
 
     public MaterialTemplateEditPage(final DataService dataService) {
         super(dataService, "Editare Material");
@@ -93,13 +88,10 @@ public class MaterialTemplateEditPage extends EditPage<MaterialTemplate> {
         pricePerUnitLabel.setText(Localizer.getLocalizedString("pricePerUnit"));
         activeLabel.setText(Localizer.getLocalizedString("active"));
         perJobLabel.setText(Localizer.getLocalizedString("isPerJob"));
-        individualPricesLabel.setText(Localizer.getLocalizedString("individualPrices"));
     }
 
     protected void reload() {
         measurementUnitField.setItems(MeasurementUnit.values());
-        individualPricesField.setOptions(dataService.getAll(JobTemplate.class)
-                .stream().filter(JobTemplate::isActive).collect(Collectors.toList()));
     }
 
     private void initGeneralLayout() {
@@ -107,7 +99,6 @@ public class MaterialTemplateEditPage extends EditPage<MaterialTemplate> {
         generalLayout.addFormItem(activeField, activeLabel);
         generalLayout.addFormItem(measurementUnitField, measurementUnitLabel);
         generalLayout.addFormItem(perJobField, perJobLabel);
-        generalLayout.addFormItem(individualPricesField, individualPricesLabel).getStyle().set("align-items", "end");
         generalLayout.addFormItem(pricePerUnitField, pricePerUnitLabel);
         generalLayout.addClassName("dento-form-layout");
         nameField.addClassName("dento-form-field");
@@ -140,9 +131,6 @@ public class MaterialTemplateEditPage extends EditPage<MaterialTemplate> {
 
         binder.forField(perJobField)
                 .bind(MaterialTemplate::isPerJob, MaterialTemplate::setPerJob);
-
-        binder.forField(individualPricesField)
-                .bind(MaterialTemplate::getIndividualPrices, MaterialTemplate::setIndividualPrices);
 
     }
 

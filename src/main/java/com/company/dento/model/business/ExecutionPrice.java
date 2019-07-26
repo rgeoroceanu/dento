@@ -1,25 +1,23 @@
 package com.company.dento.model.business;
 
-import javax.persistence.Basic;
-import javax.persistence.Entity;
-import javax.persistence.OneToOne;
-import javax.persistence.Table;
-
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
 
+import javax.persistence.*;
+
 @Getter
 @Setter
 @ToString
-@Entity
-@Table(name = "execution_prices")
-public class ExecutionPrice extends Base implements Price<User> {
-	
-	@OneToOne
+@Embeddable
+@EqualsAndHashCode(doNotUseGetters = true)
+public class ExecutionPrice implements Price<User> {
+
+	@ManyToOne(fetch = FetchType.EAGER, optional = false)
 	private User technician;
 
-	@Basic
+	@Column(precision=8, scale=2)
 	private float price;
 
 	@Override

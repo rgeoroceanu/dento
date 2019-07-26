@@ -24,7 +24,7 @@ public class ExecutionTemplate extends Base implements SoftDelete {
 	@Column(unique = true, nullable = false)
 	private String name;
 
-	@Basic
+	@Column(precision=8, scale=2)
 	private float standardPrice;
 
 	@Basic

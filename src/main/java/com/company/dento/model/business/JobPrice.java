@@ -5,21 +5,19 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
 
-import javax.persistence.Basic;
-import javax.persistence.Embeddable;
-import javax.persistence.OneToOne;
+import javax.persistence.*;
 
 @Getter
 @Setter
 @ToString
 @Embeddable
-@EqualsAndHashCode
+@EqualsAndHashCode(doNotUseGetters = true)
 public class JobPrice implements Price<Clinic> {
 	
-	@OneToOne
+	@ManyToOne(fetch = FetchType.EAGER, optional = false)
 	private Clinic clinic;
 
-	@Basic
+	@Column(precision=8, scale=2)
 	private float price;
 
 	@Override

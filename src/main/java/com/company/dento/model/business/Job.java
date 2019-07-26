@@ -30,7 +30,7 @@ public class Job extends Base {
 	@ManyToOne(fetch = FetchType.EAGER, optional = false)
 	private Order order;
 
-	@Basic
+	@Column(precision=8, scale=2)
 	private float price;
 
 	@Basic
