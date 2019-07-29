@@ -96,7 +96,7 @@ public class MenuLayout extends Div implements Localizable {
 	private void init() {
 		// Add items
 		final HorizontalLayout sidebarLogo = new HorizontalLayout();
-		final Icon sidebarImage = new Icon(VaadinIcon.TOOTH);
+		final Image sidebarImage = new Image("frontend/images/logo.png", "");
 		final Div sidebarTitle = new Div();
 		final Div navContainer = new Div();
 		final Div sidebarContent = new Div();
@@ -105,7 +105,7 @@ public class MenuLayout extends Div implements Localizable {
 		this.setClassName("app-sidebar");
 		sidebarLogo.setClassName("logo");
 		sidebarTitle.setClassName("logo-text");
-		sidebarImage.setClassName("logo-img");
+		sidebarImage.addClassNames("logo-img", "dento-logo");
 		sidebarBackground.setClassName("sidebar-background");
 		sidebarContent.setClassName("sidebar-content");
 		navContainer.setClassName("nav-container");
