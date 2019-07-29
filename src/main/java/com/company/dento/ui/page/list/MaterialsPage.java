@@ -23,6 +23,7 @@ import org.apache.commons.io.FileUtils;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.LinkedHashMap;
@@ -62,7 +63,7 @@ public class MaterialsPage extends ListPage<Material, MaterialSpecification> imp
         grid.addColumn("template.name");
         grid.addColumn("quantity");
         grid.addColumn("price");
-        grid.addColumn(m -> m.getQuantity() * m.getPrice()).setKey("totalPrice");
+        grid.addColumn(this::addTotalPriceColumn).setKey("totalPrice");
 
         this.addPrintButton("raport_consum_materiale");
 
@@ -163,5 +164,10 @@ public class MaterialsPage extends ListPage<Material, MaterialSpecification> imp
     private void updateTotal(final MaterialSpecification criteria) {
         final Double total = dataService.getMaterialPriceTotal(criteria);
         totalSumLabel.setText(String.format(Localizer.getCurrentLocale(), "Total: %.2f", total));
+    }
+
+    private String addTotalPriceColumn(final Material material) {
+        final BigDecimal totalPrice = BigDecimal.valueOf(material.getQuantity()).multiply(BigDecimal.valueOf(material.getPrice()));
+        return String.format("%.2f", totalPrice);
     }
 }
