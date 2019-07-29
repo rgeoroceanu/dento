@@ -4,6 +4,7 @@ import com.company.dento.model.business.Sample;
 import com.company.dento.model.business.SampleTemplate;
 import com.company.dento.ui.localization.Localizer;
 import com.vaadin.flow.component.ItemLabelGenerator;
+import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.datepicker.DatePicker;
 import com.vaadin.flow.component.timepicker.TimePicker;
 
@@ -46,23 +47,31 @@ public class SampleSelect extends ListSelectField<Sample, SampleTemplate> {
 
     private DatePicker addDatePickerColumn(final Sample sample) {
         final DatePicker datePicker = new DatePicker();
-        datePicker.setValue(sample.getDate());
-        datePicker.addValueChangeListener(e -> sample.setDate(e.getValue()));
+        datePicker.addValueChangeListener(e -> {
+            if (e.isFromClient()) sample.setDate(e.getValue());
+        });
         datePicker.setWidth("100%");
         datePicker.addClassNames("dento-grid-filter-small", "dento-grid-date-picker");
-        datePicker.addValueChangeListener(v -> setModelValue(value, true));
+        datePicker.addValueChangeListener(v -> {
+            if (v.isFromClient()) setModelValue(value, true);
+        });
         datePicker.setLocale(Localizer.getCurrentLocale());
+        datePicker.setValue(sample.getDate());
         return datePicker;
     }
 
     private TimePicker addTimePickerColumn(final Sample sample) {
         final TimePicker timePicker = new TimePicker();
-        timePicker.setValue(sample.getTime());
-        timePicker.addValueChangeListener(e -> sample.setTime(e.getValue()));
+        timePicker.addValueChangeListener(e -> {
+            if (e.isFromClient()) sample.setTime(e.getValue());
+        });
         timePicker.addClassName("dento-grid-filter-small");
         timePicker.setWidth("100%");
-        timePicker.addValueChangeListener(v -> setModelValue(value, true));
+        timePicker.addValueChangeListener(v -> {
+            if (v.isFromClient()) setModelValue(value, true);
+        });
         timePicker.setLocale(Localizer.getCurrentLocale());
+        UI.getCurrent().access(() -> timePicker.setValue(sample.getTime()));
         return timePicker;
     }
 }

@@ -268,10 +268,9 @@ public class DataServiceImpl implements DataService {
         Preconditions.checkNotNull(order, "Order cannot be null!");
         log.info("Save order {}", order);
 
-        final Order saved = orderDao.save(order);
         order.getJobs().forEach(j -> updateExecutions(j.getExecutions()));
         order.getJobs().forEach(j -> updateMaterials(j.getMaterials()));
-        return saved;
+        return orderDao.save(order);
     }
 
     private void updateExecutions(final Set<Execution> executions) {
