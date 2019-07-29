@@ -36,7 +36,6 @@ public abstract class ListSelectField<T, S extends Base> extends AbstractComposi
         addRemoveColumn();
 
         grid.addClassName("dento-grid");
-        grid.setHeightByRows(true);
         grid.getStyle().set("margin-top", "0px");
 
         final Button addButton = new Button();
@@ -80,8 +79,7 @@ public abstract class ListSelectField<T, S extends Base> extends AbstractComposi
     protected void setPresentationValue(final Set<T> value) {
         this.value.clear();
         this.value.addAll(value);
-        grid.setItems(value);
-        emptyText.setVisible(value.isEmpty());
+        setGridItems(value);
     }
 
     @Override
@@ -115,17 +113,15 @@ public abstract class ListSelectField<T, S extends Base> extends AbstractComposi
                 .ifPresent(v -> {
                     final T item = createNewItem(v);
                     value.add(item);
-                    grid.setItems(value);
+                    setGridItems(value);
                     setModelValue(value, true);
-                    emptyText.setVisible(value.isEmpty());
                 });
     }
 
     private void remove(final T item) {
         value.remove(item);
-        grid.setItems(value);
+        setGridItems(value);
         setModelValue(value, true);
-        emptyText.setVisible(value.isEmpty());
     }
 
     private void addRemoveColumn() {
@@ -139,5 +135,16 @@ public abstract class ListSelectField<T, S extends Base> extends AbstractComposi
             removeButton.setIcon(icon);
             return removeButton;
         }).setFlexGrow(0);
+    }
+
+    private void setGridItems(final Set<T> items) {
+        grid.setItems(items);
+        emptyText.setVisible(items.isEmpty());
+        if (items.size() < 6) {
+            grid.setHeightByRows(true);
+        } else {
+            grid.setHeight("380px");
+        }
+
     }
 }

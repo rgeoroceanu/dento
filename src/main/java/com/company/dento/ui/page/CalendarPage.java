@@ -14,7 +14,6 @@ import com.vaadin.flow.router.AfterNavigationEvent;
 import com.vaadin.flow.router.AfterNavigationObserver;
 import com.vaadin.flow.router.Route;
 import com.vaadin.flow.spring.annotation.UIScope;
-import org.springframework.security.access.annotation.Secured;
 import org.springframework.stereotype.Component;
 import org.vaadin.stefan.fullcalendar.CalendarViewImpl;
 import org.vaadin.stefan.fullcalendar.Entry;
@@ -25,9 +24,6 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
 import java.util.stream.Collectors;
 
 /**
@@ -76,7 +72,7 @@ public class CalendarPage extends Page implements AfterNavigationObserver {
 		next.addClickListener(e -> calendar.next());
 
 		calendar.getStyle().set("margin-top", "-40px");
-		calendar.addViewRenderedListener(e -> updateEntries(e.getStart(), e.getEnd()));
+		calendar.addViewRenderedListener(e -> updateEntries(e.getIntervalStart(), e.getIntervalEnd()));
 
 		content.setSizeFull();
 		content.getStyle().set("overflow-y", "auto");
@@ -104,17 +100,21 @@ public class CalendarPage extends Page implements AfterNavigationObserver {
 
 	private Entry createEntry(final CalendarEvent event) {
 		final Entry entry = new Entry();
-		entry.setTitle(event.getType().getTitle());
+		final String text = event.getText() != null ? event.getText() : "";
+		entry.setTitle(String.format("%s%s%s", event.getType().getTitle(), System.lineSeparator(), text));
+		entry.setDescription(event.getText());
+
 		final LocalDateTime dateTime = event.getDate().atTime(event.getTime() != null ? event.getTime() : LocalTime.of(8, 0));
 		entry.setStart(dateTime);
 		entry.setColor(getEventColor(event.getType()));
 		entry.setEditable(false);
+
 		return entry;
 	}
 
 	private String getEventColor(final CalendarEventType type) {
 		switch (type) {
-			case JOB_DELIVERY:
+			case ORDER_DELIVERY:
 				return "red";
 			case SAMPLE:
 				return "green";

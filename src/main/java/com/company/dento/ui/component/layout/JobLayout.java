@@ -26,9 +26,7 @@ import java.util.stream.Collectors;
 
 public class JobLayout extends FormLayout implements Localizable {
 
-    private final DatePicker dateField = new DatePicker();
     private final TextField priceField = new TextField();
-    private final TimePicker timeField = new TimePicker();
     private final TeethSelect teethSelect = new TeethSelect();
     private final SampleSelect sampleSelect = new SampleSelect();
     private final ExecutionSelect executionSelect = new ExecutionSelect();
@@ -110,24 +108,12 @@ public class JobLayout extends FormLayout implements Localizable {
     private void initLayout() {
         final FormLayout fl1 = new FormLayout();
         final FormLayout fl2 = new FormLayout();
-        final HorizontalLayout dateLayout = new HorizontalLayout();
-        dateLayout.add(dateField, timeField);
-        dateLayout.setWidth("90%");
-        dateField.setWidth("49%");
-        timeField.setWidth("49%");
-        dateField.setMaxWidth("11em");
-        timeField.setMaxWidth("11em");
-        dateLayout.getStyle().set("max-width", "650px");
-        dateField.setLocale(Locale.GERMAN);
-        timeField.setLocale(Locale.GERMAN);
 
-        final FormLayout.FormItem fi1 = fl1.addFormItem(dateLayout, dateLabel);
         final FormLayout.FormItem fi5 = fl1.addFormItem(materialsField, materialLabel);
         final FormLayout.FormItem fi2 = fl1.addFormItem(sampleSelect, sampleSelectLabel);
         final FormLayout.FormItem fi3 = fl1.addFormItem(executionSelect, executionSelectLabel);
         final FormLayout.FormItem fi6 = fl2.addFormItem(priceField, priceLabel);
         final FormLayout.FormItem fi4 = fl2.addFormItem(teethSelect, teethSelectLabel);
-        fi1.getStyle().set("align-items", "initial");
         fi2.getStyle().set("align-items", "initial");
         fi3.getStyle().set("align-items", "initial");
         fi4.getStyle().set("align-items", "initial");
@@ -153,12 +139,6 @@ public class JobLayout extends FormLayout implements Localizable {
     }
 
     private void bindFields() {
-        binder.forField(dateField)
-                .bind(Job::getDeliveryDate, Job::setDeliveryDate);
-
-        binder.forField(timeField)
-                .bind(Job::getDeliveryTime, Job::setDeliveryTime);
-
         binder.forField(teethSelect)
                 //.asRequired(Localizer.getLocalizedString("requiredValidation"))
                 .bind(Job::getTeeth, Job::setTeeth);

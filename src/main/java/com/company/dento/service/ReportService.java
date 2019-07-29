@@ -174,7 +174,9 @@ public class ReportService {
         parameters.put("DOCTOR", order.getDoctor().toString());
         parameters.put("ORDER_NO", order.getId());
         parameters.put("COLOR", order.getToothColor().getName());
-        parameters.put("DELIVERY_DATE", dateFormatter.format(order.getDeliveryDate()));
+        final String date = order.getDeliveryDate() != null ? DateTimeFormatter.ofPattern("dd.MM.yyyy").format(order.getDeliveryDate()) : "";
+        final String time = order.getDeliveryTime() != null ? DateTimeFormatter.ofPattern("HH:mm").format(order.getDeliveryTime()) : "";
+        parameters.put("DELIVERY_DATE", String.format("%s %s", date, time));
         parameters.put("JOBS", constructJobsParameter(order));
         parameters.put("ORDER_DATE", dateFormatter.format(order.getDate()));
 
@@ -276,8 +278,8 @@ public class ReportService {
 
         final Stream<Integer> sortedStream = reversed ? stream.sorted(Comparator.reverseOrder()) : stream;
 
-        return sortedStream.map(num -> selectedTeeth.containsKey(num) ? selectedTeeth.get(num) : new Tooth(num))
-                .map(ToothDisplay::new)
+        return sortedStream.map(num -> selectedTeeth.containsKey(num) ?
+                new ToothDisplay(selectedTeeth.get(num), true) : new ToothDisplay(new Tooth(num), false))
                 .collect(Collectors.toList());
     }
 

@@ -14,10 +14,12 @@ import com.vaadin.flow.component.combobox.ComboBox;
 import com.vaadin.flow.component.datepicker.DatePicker;
 import com.vaadin.flow.component.formlayout.FormLayout;
 import com.vaadin.flow.component.html.Label;
+import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.tabs.Tab;
 import com.vaadin.flow.component.tabs.Tabs;
 import com.vaadin.flow.component.textfield.TextArea;
 import com.vaadin.flow.component.textfield.TextField;
+import com.vaadin.flow.component.timepicker.TimePicker;
 import com.vaadin.flow.data.binder.BinderValidationStatus;
 import com.vaadin.flow.data.binder.ValidationResult;
 import com.vaadin.flow.data.converter.StringToIntegerConverter;
@@ -32,6 +34,7 @@ import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Component;
 
 import java.util.Collection;
+import java.util.Locale;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -51,6 +54,8 @@ public class OrderEditPage extends EditPage<Order> {
     private final ComboBox<ToothColor> colorField = new ComboBox<>();
     private final TextArea observationsField = new TextArea();
     private final DatePicker dateField = new DatePicker();
+    private final DatePicker deliveryDateField = new DatePicker();
+    private final TimePicker deliveryTimeField = new TimePicker();
     private final UploadField uploadField = new UploadField();
     private final Checkbox paidField = new Checkbox();
     private final TextField partialSumField = new TextField();
@@ -159,8 +164,20 @@ public class OrderEditPage extends EditPage<Order> {
         doctorField.addValueChangeListener(e -> {
             if (e.isFromClient()) updateJobPrices(binder.getBean(), e.getValue());
         });
+
+        final HorizontalLayout dateLayout = new HorizontalLayout();
+        dateLayout.add(deliveryDateField, deliveryTimeField);
+        dateLayout.setWidth("90%");
+        deliveryDateField.setWidth("49%");
+        deliveryTimeField.setWidth("49%");
+        deliveryDateField.setMaxWidth("11em");
+        deliveryTimeField.setMaxWidth("11em");
+        deliveryDateField.getStyle().set("max-width", "650px");
+        deliveryDateField.setLocale(Locale.GERMAN);
+        deliveryTimeField.setLocale(Locale.GERMAN);
+
         generalLayout.addFormItem(doctorField, doctorLabel);
-        generalLayout.addFormItem(dateField, dateLabel);
+        generalLayout.addFormItem(dateLayout, dateLabel);
         generalLayout.addFormItem(patientField, patientLabel);
         generalLayout.addFormItem(colorField, colorLabel);
         generalLayout.addFormItem(partialSumField, partialSumLabel);
@@ -196,6 +213,13 @@ public class OrderEditPage extends EditPage<Order> {
                 .asRequired("Introduceți data comenzii!")
                 .bind(Order::getDate, Order::setDate);
 
+        binder.forField(deliveryDateField)
+                .asRequired("Introduceți data predării!")
+                .bind(Order::getDeliveryDate, Order::setDeliveryDate);
+
+        binder.forField(deliveryTimeField)
+                .bind(Order::getDeliveryTime, Order::setDeliveryTime);
+
         binder.forField(colorField)
                 .bind(Order::getToothColor, Order::setToothColor);
 
@@ -212,12 +236,10 @@ public class OrderEditPage extends EditPage<Order> {
                 .bind(Order::getDescription, Order::setDescription);
 
         binder.forField(uploadField)
-                //.asRequired(Localizer.getLocalizedString("requiredValidation"))
                 .bind(Order::getStoredFiles, Order::setStoredFiles);
 
         binder.forField(jobsField)
                 .withValidator((jobs,c) -> areJobExecutionsValid(jobs))
-                .withValidator((jobs,c) -> areJobDatesValid(jobs))
                 .bind(Order::getJobs, Order::setJobs);
 
     }
@@ -229,14 +251,6 @@ public class OrderEditPage extends EditPage<Order> {
                 .filter(e -> e.getTechnician() == null)
                 .findAny()
                 .map(e -> ValidationResult.error("Vă rugăm să alegeți tehnicianul pentru manopeă!"))
-                .orElse(ValidationResult.ok());
-    }
-
-    private ValidationResult areJobDatesValid(final Set<Job> jobs) {
-        return jobs.stream()
-                .filter(j -> j.getDeliveryDate() == null)
-                .findAny()
-                .map(e -> ValidationResult.error("Vă rugăm să alegeți data de predare a lucrării!"))
                 .orElse(ValidationResult.ok());
     }
 

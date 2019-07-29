@@ -74,6 +74,8 @@ public class MaterialsPage extends ListPage<Material, MaterialSpecification> imp
         totalSumLabel.getStyle().set("text-align", "right");
         totalSumLabel.getStyle().set("font-weight", "bold");
 
+        addButton.setVisible(false);
+
         initFilters();
 	}
 	

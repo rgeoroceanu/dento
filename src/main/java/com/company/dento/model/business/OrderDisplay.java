@@ -11,6 +11,7 @@ import java.util.stream.Collectors;
 public class OrderDisplay {
 
     private String date;
+    private String deliveryDate;
     private Long id;
     private String pacient;
     private String doctor;
@@ -32,5 +33,8 @@ public class OrderDisplay {
         this.paid = order.isPaid() ? "Da" : "Nu";
         this.price = String.format(Localizer.getCurrentLocale(), "%.2f", order.getTotalPrice());
         this.jobs = order.getJobs().stream().map(JobDisplay::new).collect(Collectors.toList());
+        final String date = order.getDeliveryDate() != null ? DateTimeFormatter.ofPattern("dd.MM.yyyy").format(order.getDeliveryDate()) : "";
+        final String time = order.getDeliveryTime() != null ? DateTimeFormatter.ofPattern("HH:mm").format(order.getDeliveryTime()) : "";
+        this.deliveryDate = String.format("%s %s", date, time);
     }
 }

@@ -8,7 +8,6 @@ import lombok.Setter;
 import javax.persistence.*;
 import java.time.LocalDate;
 import java.time.LocalTime;
-import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
@@ -21,7 +20,7 @@ import java.util.Set;
 @Setter
 @Entity
 @Table(name = "jobs")
-@EqualsAndHashCode(callSuper = true, exclude = {"order", "executions", "samples", "teeth", "materials"})
+@EqualsAndHashCode(callSuper = true, exclude = {"order", "executions", "samples", "teeth", "materials"}, doNotUseGetters = true)
 public class Job extends Base {
 	
 	@ManyToOne(optional = false)
@@ -44,9 +43,6 @@ public class Job extends Base {
 	@OrderBy(value = "id")
 	private Set<Sample> samples = new LinkedHashSet<>();
 
-	@OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
-	private CalendarEvent deliveryEvent;
-
 	@ElementCollection(fetch = FetchType.LAZY)
 	private Set<Tooth> teeth = new LinkedHashSet<>();
 
@@ -59,32 +55,5 @@ public class Job extends Base {
 			return template.getName() + " : " + order.getId();
 		}
 		return super.toString();
-	}
-
-	public void setDeliveryDate(final LocalDate deliveryDate) {
-		if (deliveryDate == null) {
-			deliveryEvent = null;
-			return;
-		}
-
-		if (this.deliveryEvent == null) {
-			this.deliveryEvent = new CalendarEvent(CalendarEventType.JOB_DELIVERY);
-		}
-		this.deliveryEvent.setDate(deliveryDate);
-	}
-
-	public void setDeliveryTime(final LocalTime deliveryTime) {
-		if (deliveryEvent == null) {
-			return;
-		}
-		deliveryEvent.setTime(deliveryTime);
-	}
-
-	public LocalDate getDeliveryDate() {
-		return deliveryEvent != null ? deliveryEvent.getDate() : null;
-	}
-
-	public LocalTime getDeliveryTime() {
-		return deliveryEvent != null ? deliveryEvent.getTime() : null;
 	}
 }

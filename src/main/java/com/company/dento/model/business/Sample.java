@@ -13,7 +13,7 @@ import java.time.LocalTime;
 @Setter
 @Entity
 @Table(name = "samples")
-@EqualsAndHashCode(callSuper = true)
+@EqualsAndHashCode(callSuper = true, doNotUseGetters = true)
 public class Sample extends Base {
 	
 	@ManyToOne(optional = false)
@@ -40,6 +40,7 @@ public class Sample extends Base {
 
 		if (this.dateEvent == null) {
 			this.dateEvent = new CalendarEvent(CalendarEventType.SAMPLE);
+			this.dateEvent.setText(template.getName());
 		}
 		this.dateEvent.setDate(deliveryDate);
 	}

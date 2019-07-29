@@ -39,7 +39,7 @@ public class ReportServiceTests {
 		final Order order = new Order();
 		order.setId(1L);
 		order.setDate(LocalDate.now());
-		order.setDeliveryDate(LocalDateTime.now());
+		order.setDeliveryDate(LocalDate.now());
 		order.setDescription("Test Description here text");
 		order.setPatient("Gheorghe Ion");
 		final Doctor doctor = new Doctor();

@@ -3,13 +3,13 @@ package com.company.dento.model.type;
 import com.company.dento.ui.localization.Localizer;
 
 public enum CalendarEventType {
-    JOB_DELIVERY,
+    ORDER_DELIVERY,
     SAMPLE,
     OTHER;
 
     public String getTitle() {
         switch (this) {
-            case JOB_DELIVERY:
+            case ORDER_DELIVERY:
                 return Localizer.getLocalizedString("jobDeliveryEvent");
             case SAMPLE:
                 return Localizer.getLocalizedString("sampleEvent");

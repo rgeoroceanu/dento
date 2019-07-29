@@ -27,7 +27,7 @@ import java.util.*;
 
 public class JobsField extends AbstractCompositeField<VerticalLayout, JobsField, Set<Job>> implements Localizable {
 
-    private final Map<Job, JobLayout> value = new LinkedHashMap<>();
+    private final Map<Job, JobLayout> jobFields = new LinkedHashMap<>();
     private final ComboBox<JobTemplate> jobTemplatesField = new ComboBox<>();
     private final Button addButton = new Button();
     private final Button createButton = new Button();
@@ -88,23 +88,24 @@ public class JobsField extends AbstractCompositeField<VerticalLayout, JobsField,
     public void setPresentationValue(final Set<Job> value) {
         accordion.close();
         accordion.getChildren().forEach(accordion::remove);
-        this.value.clear();
-        value.forEach(this::addJob);
+        this.jobFields.clear();
+        value.forEach(v -> addJob(v, false));
         accordion.close();
     }
 
-    public Set<Job> getValue() {
-        return new HashSet<>(value.keySet());
+    @Override
+    protected boolean valueEquals(Set<Job> value1, Set<Job> value2) {
+        return false;
     }
 
     @Override
     public void localize() {
-        this.value.values().forEach(JobLayout::localize);
+        this.jobFields.values().forEach(JobLayout::localize);
         addButton.setText(Localizer.getLocalizedString("add"));
         createButton.setText(Localizer.getLocalizedString("create"));
     }
 
-    private void addJob(final Job job) {
+    private void addJob(final Job job, final boolean fromClient) {
         final AccordionPanel panel = new AccordionPanel();
         panel.setSummary(createSummary(job, panel));
         final JobLayout jobLayout = new JobLayout();
@@ -118,14 +119,19 @@ public class JobsField extends AbstractCompositeField<VerticalLayout, JobsField,
         jobLayout.setSampleTemplates(sampleTemplates);
         panel.setContent(jobLayout);
         accordion.add(panel);
-        this.value.put(job, jobLayout);
-        setModelValue(new HashSet<>(value.keySet()), true);
+        this.jobFields.put(job, jobLayout);
+
+        if (fromClient) {
+            final Set<Job> value = this.getValue();
+            value.add(job);
+            setModelValue(value, true);
+        }
     }
 
     private void handleTeethSelect(final AbstractField.ComponentValueChangeEvent<TeethSelect, Set<Tooth>> event,
                                    final Job job) {
 
-        value.values().forEach(jl -> jl.updateTeeth(this.getValue()));
+        jobFields.values().forEach(jl -> jl.updateTeeth(this.getValue()));
 
         // update job dependent options => add job from option
         if (event.isFromClient()) {
@@ -135,11 +141,11 @@ public class JobsField extends AbstractCompositeField<VerticalLayout, JobsField,
                     .filter(v -> !v.getOption1().getSpecificJob().getId().equals(job.getTemplate().getId()))
                     .forEach(tooth -> {
                         if (tooth.getOption1().getSpecificJob() != null) {
-                            this.addJob(createJob(tooth.getOption1().getSpecificJob()));
+                            this.addJob(createJob(tooth.getOption1().getSpecificJob()), true);
                         }
 
                         if (tooth.getOption2().getSpecificJob() != null) {
-                            this.addJob(createJob(tooth.getOption2().getSpecificJob()));
+                            this.addJob(createJob(tooth.getOption2().getSpecificJob()), true);
                         }
                     });
         }
@@ -160,13 +166,15 @@ public class JobsField extends AbstractCompositeField<VerticalLayout, JobsField,
     }
 
     private void remove(final Job item) {
-        accordion.remove(value.get(item));
+        accordion.remove(jobFields.get(item));
+        jobFields.remove(item);
+        final Set<Job> value = this.getValue();
         value.remove(item);
-        setModelValue(new HashSet<>(value.keySet()), true);
+        setModelValue(value, true);
     }
 
     private void handleValueChange(final AbstractField.ComponentValueChangeEvent<JobsField, Set<Job>> event) {
-        value.values().forEach(jobLayout -> jobLayout.updateTeeth(event.getValue()));
+        jobFields.values().forEach(jobLayout -> jobLayout.updateTeeth(event.getValue()));
     }
 
     private void initLayout() {
@@ -243,7 +251,7 @@ public class JobsField extends AbstractCompositeField<VerticalLayout, JobsField,
 
         jobTemplatesField.getOptionalValue()
                 .ifPresent(jobTemplate -> {
-                    this.addJob(createJob(jobTemplate));
+                    this.addJob(createJob(jobTemplate), true);
                     accordion.close();
                 });
     }

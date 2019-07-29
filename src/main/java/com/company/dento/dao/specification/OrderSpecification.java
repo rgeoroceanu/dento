@@ -53,11 +53,11 @@ public class OrderSpecification implements Specification<Order> {
         }
 
         if (startDate != null) {
-            predicates.add(builder.greaterThanOrEqualTo(root.get("date"), startDate));
+            predicates.add(builder.greaterThanOrEqualTo(root.get("date"), startDate.toLocalDate()));
         }
 
         if (endDate != null) {
-            predicates.add(builder.lessThanOrEqualTo(root.get("date"), endDate.toLocalDate().plusDays(1).atStartOfDay()));
+            predicates.add(builder.lessThanOrEqualTo(root.get("date"), endDate.toLocalDate().plusDays(1)));
         }
 
         if (finalized != null) {
@@ -68,17 +68,19 @@ public class OrderSpecification implements Specification<Order> {
             predicates.add(builder.equal(root.get("paid"), paid));
         }
 
-        final Join<Order, Job> jobs = root.join("jobs");
+        if (technician != null || withExecutions != null) {
+            final Join<Order, Job> jobs = root.join("jobs");
 
-        if (technician != null) {
-            final Join<Order, Execution> executions = jobs.join("executions");
-            predicates.add(builder.equal(executions.get("technician"), technician));
-        }
+            if (technician != null) {
+                final Join<Order, Execution> executions = jobs.join("executions");
+                predicates.add(builder.equal(executions.get("technician"), technician));
+            }
 
-        if (withExecutions != null && withExecutions) {
-            predicates.add(builder.and(
-                    builder.greaterThan(builder.size(root.get("jobs")), 0),
-                    builder.greaterThan(builder.size(jobs.get("executions")), 0)));
+            if (withExecutions != null && withExecutions) {
+                predicates.add(builder.and(
+                        builder.greaterThan(builder.size(root.get("jobs")), 0),
+                        builder.greaterThan(builder.size(jobs.get("executions")), 0)));
+            }
         }
 
         query.distinct(true);

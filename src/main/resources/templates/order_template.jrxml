@@ -7,6 +7,7 @@
 	<style name="Column header" forecolor="#666666" fontName="DejaVu Sans" fontSize="14" isBold="true"/>
 	<style name="Detail" mode="Transparent" fontName="DejaVu Sans"/>
 	<style name="toothActive" mode="Opaque" forecolor="#008B8B" isBold="true"/>
+	<style name="toothProperty" mode="Opaque" forecolor="#008B8B" fontSize="6" isBold="true"/>
 	<style name="Row" mode="Transparent" fontName="DejaVu Sans">
 		<conditionalStyle>
 			<conditionExpression><![CDATA[$V{REPORT_COUNT}%2 == 0]]></conditionExpression>
@@ -42,6 +43,7 @@
 		<field name="toothNumber" class="java.lang.String"/>
 		<field name="toothType" class="java.lang.String"/>
 		<field name="toothProperty" class="java.lang.String"/>
+		<field name="active" class="java.lang.Boolean"/>
 	</subDataset>
 	<subDataset name="samples" uuid="2914f7c6-c2d7-448b-b0c1-090970e18ed6">
 		<field name="name" class="java.lang.String"/>
@@ -75,7 +77,7 @@
 	<parameter name="ORDER_DATE" class="java.lang.String"/>
 	<parameter name="LOGO" class="java.awt.Image"/>
 	<detail>
-		<band height="595" splitType="Stretch">
+		<band height="615" splitType="Stretch">
 			<line>
 				<reportElement x="0" y="80" width="556" height="1" uuid="806ce5df-1219-4876-ae0c-ca7405b1f246">
 					<property name="local_mesure_unitheight" value="pixel"/>
@@ -178,65 +180,65 @@
 				<text><![CDATA[Detalii Comandă]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="0" y="290" width="60" height="15" uuid="41099350-c76e-4d64-be3d-ff9f7f355de6"/>
+				<reportElement x="0" y="310" width="60" height="15" uuid="41099350-c76e-4d64-be3d-ff9f7f355de6"/>
 				<textElement>
 					<font fontName="DejaVu Sans"/>
 				</textElement>
 				<text><![CDATA[Culoare:]]></text>
 			</staticText>
 			<textField isBlankWhenNull="true">
-				<reportElement x="60" y="290" width="170" height="15" uuid="9516bb64-b376-4199-ad62-7d93c7244234"/>
+				<reportElement x="60" y="310" width="170" height="15" uuid="9516bb64-b376-4199-ad62-7d93c7244234"/>
 				<textElement textAlignment="Right">
 					<font fontName="DejaVu Sans"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$P{COLOR}]]></textFieldExpression>
 			</textField>
 			<staticText>
-				<reportElement x="0" y="305" width="60" height="15" uuid="881b8a31-3b39-4059-ad3d-bccbbdbb36ff"/>
+				<reportElement x="0" y="325" width="60" height="15" uuid="881b8a31-3b39-4059-ad3d-bccbbdbb36ff"/>
 				<textElement>
 					<font fontName="DejaVu Sans"/>
 				</textElement>
 				<text><![CDATA[Predare:]]></text>
 			</staticText>
 			<textField isBlankWhenNull="true">
-				<reportElement x="60" y="305" width="170" height="15" uuid="66016bb6-9ea7-42bd-be1d-a63d6746a817"/>
+				<reportElement x="60" y="325" width="170" height="15" uuid="66016bb6-9ea7-42bd-be1d-a63d6746a817"/>
 				<textElement textAlignment="Right">
 					<font fontName="DejaVu Sans"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$P{DELIVERY_DATE}]]></textFieldExpression>
 			</textField>
 			<staticText>
-				<reportElement x="330" y="290" width="60" height="15" uuid="d18ff46b-bb5a-42d0-a568-adf9439f45e9"/>
+				<reportElement x="330" y="310" width="60" height="15" uuid="d18ff46b-bb5a-42d0-a568-adf9439f45e9"/>
 				<textElement>
 					<font fontName="DejaVu Sans"/>
 				</textElement>
 				<text><![CDATA[Observații:]]></text>
 			</staticText>
 			<textField isBlankWhenNull="true">
-				<reportElement x="390" y="290" width="159" height="60" uuid="1621fc09-c9f3-42e2-b8ce-b12c84f171ba"/>
+				<reportElement x="390" y="310" width="159" height="60" uuid="1621fc09-c9f3-42e2-b8ce-b12c84f171ba"/>
 				<textElement textAlignment="Left">
 					<font fontName="DejaVu Sans"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$P{OBSERVATIONS}]]></textFieldExpression>
 			</textField>
 			<staticText>
-				<reportElement x="0" y="320" width="60" height="15" uuid="6d6ec61a-9aff-4118-be32-eb7a9924eb72"/>
+				<reportElement x="0" y="340" width="60" height="15" uuid="6d6ec61a-9aff-4118-be32-eb7a9924eb72"/>
 				<textElement>
 					<font fontName="DejaVu Sans"/>
 				</textElement>
 				<text><![CDATA[Lucrări:]]></text>
 			</staticText>
 			<componentElement>
-				<reportElement x="60" y="320" width="170" height="30" uuid="07c1120c-bbcb-4d1d-94a8-37f05c413279">
+				<reportElement x="60" y="340" width="200" height="30" uuid="07c1120c-bbcb-4d1d-94a8-37f05c413279" stretchType="RelativeToBandHeight">
 					<property name="net.sf.jasperreports.export.headertoolbar.table.name" value=""/>
 				</reportElement>
 				<jr:list xmlns:jr="http://jasperreports.sourceforge.net/jasperreports/components" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports/components http://jasperreports.sourceforge.net/xsd/components.xsd" printOrder="Vertical">
 					<datasetRun subDataset="JOBS" uuid="2e4f6988-6bae-4492-b9b6-1aa4bc1268e6">
 						<dataSourceExpression><![CDATA[new net.sf.jasperreports.engine.data.JRBeanCollectionDataSource($P{JOBS})]]></dataSourceExpression>
 					</datasetRun>
-					<jr:listContents height="20" width="170">
+					<jr:listContents height="20" width="200">
 						<textField>
-							<reportElement x="0" y="0" width="100" height="20" uuid="1b92d8c3-1651-4640-b150-d795fb4bd812"/>
+							<reportElement x="0" y="0" width="200" height="20" uuid="1b92d8c3-1651-4640-b150-d795fb4bd812"/>
 							<textFieldExpression><![CDATA[$F{name}]]></textFieldExpression>
 						</textField>
 					</jr:listContents>
@@ -271,13 +273,13 @@
 				<textFieldExpression><![CDATA[$P{CONTACT}]]></textFieldExpression>
 			</textField>
 			<line>
-				<reportElement x="280" y="210" width="1" height="70" backcolor="#00C792" uuid="bc331821-9123-453f-892c-cd9950a6bbeb"/>
+				<reportElement x="280" y="210" width="1" height="80" backcolor="#00C792" uuid="bc331821-9123-453f-892c-cd9950a6bbeb"/>
 			</line>
 			<line>
-				<reportElement x="0" y="240" width="556" height="1" backcolor="#00C792" uuid="cb76730d-0e19-4178-b5fe-36e27c042515"/>
+				<reportElement x="0" y="250" width="556" height="1" backcolor="#00C792" uuid="cb76730d-0e19-4178-b5fe-36e27c042515"/>
 			</line>
 			<componentElement>
-				<reportElement x="1" y="380" width="554" height="89" isPrintInFirstWholeBand="true" uuid="74b1f5cc-53ef-4d25-8c6a-986d34fb33e6">
+				<reportElement x="1" y="400" width="554" height="89" isPrintInFirstWholeBand="true" uuid="74b1f5cc-53ef-4d25-8c6a-986d34fb33e6">
 					<property name="com.jaspersoft.studio.layout" value="com.jaspersoft.studio.editor.layout.VerticalRowLayout"/>
 					<property name="com.jaspersoft.studio.table.style.table_header" value="Table 1_TH"/>
 					<property name="com.jaspersoft.studio.table.style.column_header" value="Table 1_CH"/>
@@ -311,7 +313,7 @@
 								</staticText>
 							</jr:columnHeader>
 							<jr:detailCell style="Table 1_TD" height="20">
-								<textField>
+								<textField isStretchWithOverflow="true">
 									<reportElement x="10" y="0" width="175" height="20" uuid="f1de366a-b36f-4200-9b1e-7a0009be5373"/>
 									<textElement textAlignment="Left" verticalAlignment="Middle" markup="none"/>
 									<textFieldExpression><![CDATA[$F{name}]]></textFieldExpression>
@@ -330,7 +332,7 @@
 								</staticText>
 							</jr:columnHeader>
 							<jr:detailCell style="Table 1_TD" height="20">
-								<textField>
+								<textField isStretchWithOverflow="true">
 									<reportElement x="10" y="0" width="175" height="20" uuid="f1de366a-b36f-4200-9b1e-7a0009be5373"/>
 									<textElement textAlignment="Left" verticalAlignment="Middle" markup="none"/>
 									<textFieldExpression><![CDATA[$F{job}]]></textFieldExpression>
@@ -379,7 +381,7 @@
 				</jr:table>
 			</componentElement>
 			<componentElement>
-				<reportElement x="1" y="490" width="554" height="89" isPrintInFirstWholeBand="true" uuid="74b1f5cc-53ef-4d25-8c6a-986d34fb33e7">
+				<reportElement x="1" y="510" width="554" height="89" isPrintInFirstWholeBand="true" uuid="74b1f5cc-53ef-4d25-8c6a-986d34fb33e7" positionType="Float">
 					<property name="com.jaspersoft.studio.layout" value="com.jaspersoft.studio.editor.layout.VerticalRowLayout"/>
 					<property name="com.jaspersoft.studio.table.style.table_header" value="Table 1_TH"/>
 					<property name="com.jaspersoft.studio.table.style.column_header" value="Table 1_CH"/>
@@ -413,7 +415,7 @@
 								</staticText>
 							</jr:columnHeader>
 							<jr:detailCell style="Table 1_TD" height="20">
-								<textField>
+								<textField isStretchWithOverflow="true">
 									<reportElement x="10" y="0" width="175" height="20" uuid="f1de366a-b36f-4200-9b1e-7a0009be5373"/>
 									<textElement textAlignment="Left" verticalAlignment="Middle" markup="none"/>
 									<textFieldExpression><![CDATA[$F{name}]]></textFieldExpression>
@@ -424,7 +426,7 @@
 							<property name="com.jaspersoft.studio.components.table.model.column.name" value="Column2"/>
 							<jr:columnHeader style="Table 1_CH" height="20" rowSpan="1">
 								<staticText>
-									<reportElement x="10" y="0" width="175" height="20" uuid="f60d1675-6fb6-4569-93ca-de32b3a8e862"/>
+									<reportElement x="10" y="0" width="175" height="20" uuid="f60d1675-6fb6-4569-93ca-de32b3a8e862" />
 									<textElement textAlignment="Left" verticalAlignment="Middle" markup="none">
 										<font fontName="DejaVu Sans" isBold="true"/>
 									</textElement>
@@ -432,7 +434,7 @@
 								</staticText>
 							</jr:columnHeader>
 							<jr:detailCell style="Table 1_TD" height="20">
-								<textField>
+								<textField isStretchWithOverflow="true">
 									<reportElement x="10" y="0" width="175" height="20" uuid="f1de366a-b36f-4200-9b1e-7a0009be5373"/>
 									<textElement textAlignment="Left" verticalAlignment="Middle" markup="none"/>
 									<textFieldExpression><![CDATA[$F{job}]]></textFieldExpression>
@@ -462,73 +464,105 @@
 				</jr:table>
 			</componentElement>
 			<componentElement>
-				<reportElement x="22" y="208" width="240" height="30" uuid="de98bdaf-cbea-47f2-a7be-eb863812645b"/>
+				<reportElement x="22" y="210" width="240" height="40" uuid="de98bdaf-cbea-47f2-a7be-eb863812645b"/>
 				<jr:list xmlns:jr="http://jasperreports.sourceforge.net/jasperreports/components" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports/components http://jasperreports.sourceforge.net/xsd/components.xsd" printOrder="Horizontal">
 					<datasetRun subDataset="teeth1" uuid="b0468669-a06a-4b9b-bd34-211e93e284af">
 						<dataSourceExpression><![CDATA[new net.sf.jasperreports.engine.data.JRBeanCollectionDataSource($P{TEETH1})]]></dataSourceExpression>
 					</datasetRun>
-					<jr:listContents height="30" width="30">
+					<jr:listContents height="40" width="30">
 						<textField isBlankWhenNull="true">
-							<reportElement style="toothActive" x="0" y="10" width="30" height="20" uuid="1b92d8c3-1651-4640-b150-d795fb4bd813"/>
-							<textFieldExpression><![CDATA[($F{toothType}.length() > 0 || $F{toothProperty}.length() > 0 ? $F{toothNumber} : null)]]></textFieldExpression>
+							<reportElement style="toothActive" x="0" y="20" width="30" height="20" uuid="1b92d8c3-1651-4640-b150-d795fb4bd813"/>
+							<textFieldExpression><![CDATA[($F{active} == true ? $F{toothNumber} : null)]]></textFieldExpression>
 						</textField>
 						<textField isBlankWhenNull="true">
-							<reportElement x="0" y="10" width="30" height="20" uuid="1b92d8c3-1651-4640-b150-d795fb4bd813"/>
-							<textFieldExpression><![CDATA[($F{toothType}.length() == 0 && $F{toothProperty} .length() == 0 ? $F{toothNumber} : null)]]></textFieldExpression>
+							<reportElement x="0" y="20" width="30" height="20" uuid="1b92d8c3-1651-4640-b150-d795fb4bd813"/>
+							<textFieldExpression><![CDATA[($F{active} == false ? $F{toothNumber} : null)]]></textFieldExpression>
+						</textField>
+						<textField>
+							<reportElement style="toothProperty" x="0" y="0" width="30" height="10" uuid="1b92d8c3-1651-4640-b150-d795fb4bd913"/>
+							<textFieldExpression><![CDATA[$F{toothType}]]></textFieldExpression>
+						</textField>
+						<textField>
+							<reportElement style="toothProperty" x="0" y="10" width="30" height="10" uuid="1b92d8c3-1651-4640-b150-d795fb4bd913"/>
+							<textFieldExpression><![CDATA[$F{toothProperty}]]></textFieldExpression>
 						</textField>
 					</jr:listContents>
 				</jr:list>
 			</componentElement>
 			<componentElement>
-				<reportElement x="317" y="208" width="240" height="30" uuid="de98bdaf-cbea-47f2-a7be-eb863812645c"/>
+				<reportElement x="317" y="210" width="240" height="40" uuid="de98bdaf-cbea-47f2-a7be-eb863812645c"/>
 				<jr:list xmlns:jr="http://jasperreports.sourceforge.net/jasperreports/components" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports/components http://jasperreports.sourceforge.net/xsd/components.xsd" printOrder="Horizontal">
 					<datasetRun subDataset="teeth1" uuid="b0468669-a06a-4b9b-bd34-211e93e284af">
 						<dataSourceExpression><![CDATA[new net.sf.jasperreports.engine.data.JRBeanCollectionDataSource($P{TEETH2})]]></dataSourceExpression>
 					</datasetRun>
-					<jr:listContents height="30" width="30">
+					<jr:listContents height="40" width="30">
 						<textField isBlankWhenNull="true">
-							<reportElement style="toothActive" x="0" y="10" width="30" height="20" uuid="1b92d8c3-1651-4640-b150-d795fb4bd813"/>
-							<textFieldExpression><![CDATA[($F{toothType}.length() > 0 || $F{toothProperty}.length() > 0 ? $F{toothNumber} : null)]]></textFieldExpression>
+							<reportElement style="toothActive" x="0" y="20" width="30" height="20" uuid="1b92d8c3-1651-4640-b150-d795fb4bd813"/>
+							<textFieldExpression><![CDATA[($F{active} == true ? $F{toothNumber} : null)]]></textFieldExpression>
 						</textField>
 						<textField isBlankWhenNull="true">
-							<reportElement x="0" y="10" width="30" height="20" uuid="1b92d8c3-1651-4640-b150-d795fb4bd813"/>
-							<textFieldExpression><![CDATA[($F{toothType}.length() == 0 && $F{toothProperty} .length() == 0 ? $F{toothNumber} : null)]]></textFieldExpression>
+							<reportElement x="0" y="20" width="30" height="20" uuid="1b92d8c3-1651-4640-b150-d795fb4bd813"/>
+							<textFieldExpression><![CDATA[($F{active} == false ? $F{toothNumber} : null)]]></textFieldExpression>
+						</textField>
+						<textField>
+							<reportElement style="toothProperty" x="0" y="0" width="30" height="10" uuid="1b92d8c3-1651-4640-b150-d795fb4bd913"/>
+							<textFieldExpression><![CDATA[$F{toothType}]]></textFieldExpression>
+						</textField>
+						<textField>
+							<reportElement style="toothProperty" x="0" y="10" width="30" height="10" uuid="1b92d8c3-1651-4640-b150-d795fb4bd913"/>
+							<textFieldExpression><![CDATA[$F{toothProperty}]]></textFieldExpression>
 						</textField>
 					</jr:listContents>
 				</jr:list>
 			</componentElement>
 			<componentElement>
-				<reportElement x="22" y="243" width="240" height="30" uuid="de98bdaf-cbea-47f2-a7be-eb863812645d"/>
+				<reportElement x="22" y="250" width="240" height="40" uuid="de98bdaf-cbea-47f2-a7be-eb863812645d"/>
 				<jr:list xmlns:jr="http://jasperreports.sourceforge.net/jasperreports/components" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports/components http://jasperreports.sourceforge.net/xsd/components.xsd" printOrder="Horizontal">
 					<datasetRun subDataset="teeth1" uuid="b0468669-a06a-4b9b-bd34-211e93e284af">
 						<dataSourceExpression><![CDATA[new net.sf.jasperreports.engine.data.JRBeanCollectionDataSource($P{TEETH4})]]></dataSourceExpression>
 					</datasetRun>
-					<jr:listContents height="30" width="30">
+					<jr:listContents height="40" width="30">
 						<textField isBlankWhenNull="true">
-							<reportElement style="toothActive" x="0" y="10" width="30" height="20" uuid="1b92d8c3-1651-4640-b150-d795fb4bd813"/>
-							<textFieldExpression><![CDATA[($F{toothType}.length() > 0 || $F{toothProperty}.length() > 0 ? $F{toothNumber} : null)]]></textFieldExpression>
+							<reportElement style="toothActive" x="0" y="9" width="30" height="15" uuid="1b92d8c3-1651-4640-b150-d795fb4bd813"/>
+							<textFieldExpression><![CDATA[($F{active} == true ? $F{toothNumber} : null)]]></textFieldExpression>
 						</textField>
 						<textField isBlankWhenNull="true">
-							<reportElement x="0" y="10" width="30" height="20" uuid="1b92d8c3-1651-4640-b150-d795fb4bd813"/>
-							<textFieldExpression><![CDATA[($F{toothType}.length() == 0 && $F{toothProperty} .length() == 0 ? $F{toothNumber} : null)]]></textFieldExpression>
+							<reportElement x="0" y="9" width="30" height="15" uuid="1b92d8c3-1651-4640-b150-d795fb4bd813"/>
+							<textFieldExpression><![CDATA[($F{active} == false ? $F{toothNumber} : null)]]></textFieldExpression>
+						</textField>
+						<textField>
+							<reportElement style="toothProperty" x="0" y="24" width="30" height="8" uuid="1b92d8c3-1651-4640-b150-d795fb4bd913"/>
+							<textFieldExpression><![CDATA[$F{toothType}]]></textFieldExpression>
+						</textField>
+						<textField>
+							<reportElement style="toothProperty" x="0" y="32" width="30" height="8" uuid="1b92d8c3-1651-4640-b150-d795fb4bd913"/>
+							<textFieldExpression><![CDATA[$F{toothProperty}]]></textFieldExpression>
 						</textField>
 					</jr:listContents>
 				</jr:list>
 			</componentElement>
 			<componentElement>
-				<reportElement x="317" y="243" width="240" height="30" uuid="de98bdaf-cbea-47f2-a7be-eb863812645e"/>
+				<reportElement x="317" y="250" width="240" height="40" uuid="de98bdaf-cbea-47f2-a7be-eb863812645e"/>
 				<jr:list xmlns:jr="http://jasperreports.sourceforge.net/jasperreports/components" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports/components http://jasperreports.sourceforge.net/xsd/components.xsd" printOrder="Horizontal">
 					<datasetRun subDataset="teeth1" uuid="b0468669-a06a-4b9b-bd34-211e93e284af">
 						<dataSourceExpression><![CDATA[new net.sf.jasperreports.engine.data.JRBeanCollectionDataSource($P{TEETH3})]]></dataSourceExpression>
 					</datasetRun>
-					<jr:listContents height="30" width="30">
+					<jr:listContents height="40" width="30">
 						<textField isBlankWhenNull="true">
-							<reportElement style="toothActive" x="0" y="10" width="30" height="20" uuid="1b92d8c3-1651-4640-b150-d795fb4bd813"/>
-							<textFieldExpression><![CDATA[($F{toothType}.length() > 0 || $F{toothProperty}.length() > 0 ? $F{toothNumber} : null)]]></textFieldExpression>
+							<reportElement style="toothActive" x="0" y="9" width="30" height="15" uuid="1b92d8c3-1651-4640-b150-d795fb4bd813"/>
+							<textFieldExpression><![CDATA[($F{active} == true ? $F{toothNumber} : null)]]></textFieldExpression>
 						</textField>
 						<textField isBlankWhenNull="true">
-							<reportElement x="0" y="10" width="30" height="20" uuid="1b92d8c3-1651-4640-b150-d795fb4bd813"/>
-							<textFieldExpression><![CDATA[($F{toothType}.length() == 0 && $F{toothProperty} .length() == 0 ? $F{toothNumber} : null)]]></textFieldExpression>
+							<reportElement x="0" y="9" width="30" height="15" uuid="1b92d8c3-1651-4640-b150-d795fb4bd813"/>
+							<textFieldExpression><![CDATA[($F{active} == false ? $F{toothNumber} : null)]]></textFieldExpression>
+						</textField>
+						<textField>
+							<reportElement style="toothProperty" x="0" y="24" width="30" height="8" uuid="1b92d8c3-1651-4640-b150-d795fb4bd913"/>
+							<textFieldExpression><![CDATA[$F{toothType}]]></textFieldExpression>
+						</textField>
+						<textField>
+							<reportElement style="toothProperty" x="0" y="32" width="30" height="8" uuid="1b92d8c3-1651-4640-b150-d795fb4bd913"/>
+							<textFieldExpression><![CDATA[$F{toothProperty}]]></textFieldExpression>
 						</textField>
 					</jr:listContents>
 				</jr:list>
