@@ -94,11 +94,11 @@ public class StartPage extends Page {
 		ordersWidget.addClickListener(e -> UI.getCurrent().navigate(OrdersPage.class));
 		ordersWidget.setContent(ordersGrid);
 		ordersGrid.removeAllColumns();
-		ordersGrid.addColumn("doctor").setWidth("30%");
+		ordersGrid.addColumn("doctor").setFlexGrow(0).setWidth("130px");
 		ordersGrid.addComponentColumn(item -> createCollectionColumn(item.getJobs().stream()
 				.map(job -> job.getTemplate().getName())
 				.collect(Collectors.toList())))
-				.setKey("job.template.name").setFlexGrow(1);
+				.setKey("job.template.name");
 
 		ordersGrid.getElement().setAttribute("theme", "no-border row-stripes");
 		ordersGrid.addClassName("dento-grid");
@@ -122,8 +122,8 @@ public class StartPage extends Page {
 		materialsWidget.addClickListener(e -> UI.getCurrent().navigate(MaterialsPage.class));
 		materialsWidget.setContent(materialsGrid);
 		materialsGrid.removeAllColumns();
-		materialsGrid.addColumn("template.name").setFlexGrow(1);
-		materialsGrid.addColumn("quantity").setWidth("30%");
+		materialsGrid.addColumn("template.name");
+		materialsGrid.addColumn("quantity").setFlexGrow(0).setWidth("120px");
 		materialsGrid.setSizeFull();
 		materialsGrid.getElement().setAttribute("theme", "no-border row-stripes");
 		materialsGrid.addClassName("dento-grid");
