@@ -20,7 +20,6 @@ import org.springframework.stereotype.Component;
 import org.springframework.util.NumberUtils;
 import org.vaadin.stefan.fullcalendar.*;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
@@ -72,7 +71,7 @@ public class CalendarPage extends Page implements AfterNavigationObserver {
 		next.addClickListener(e -> calendar.next());
 
 		calendar.getStyle().set("margin-top", "-40px");
-		calendar.addViewRenderedListener(e -> updateEntries(e));
+		calendar.addViewRenderedListener(this::updateEntries);
 		calendar.addEntryClickedListener(e -> handleEntryClicked(e.getEntry()));
 
 		content.setSizeFull();
