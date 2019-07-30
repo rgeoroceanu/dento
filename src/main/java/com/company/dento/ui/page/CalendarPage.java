@@ -4,6 +4,8 @@ import com.company.dento.model.business.CalendarEvent;
 import com.company.dento.model.type.CalendarEventType;
 import com.company.dento.service.DataService;
 import com.company.dento.ui.localization.Localizer;
+import com.company.dento.ui.page.edit.OrderEditPage;
+import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.html.Label;
 import com.vaadin.flow.component.icon.Icon;
@@ -15,6 +17,7 @@ import com.vaadin.flow.router.AfterNavigationObserver;
 import com.vaadin.flow.router.Route;
 import com.vaadin.flow.spring.annotation.UIScope;
 import org.springframework.stereotype.Component;
+import org.springframework.util.NumberUtils;
 import org.vaadin.stefan.fullcalendar.CalendarViewImpl;
 import org.vaadin.stefan.fullcalendar.Entry;
 import org.vaadin.stefan.fullcalendar.FullCalendar;
@@ -73,6 +76,7 @@ public class CalendarPage extends Page implements AfterNavigationObserver {
 
 		calendar.getStyle().set("margin-top", "-40px");
 		calendar.addViewRenderedListener(e -> updateEntries(e.getIntervalStart(), e.getIntervalEnd()));
+		calendar.addEntryClickedListener(e -> handleEntryClicked(e.getEntry()));
 
 		content.setSizeFull();
 		content.getStyle().set("overflow-y", "auto");
@@ -102,7 +106,8 @@ public class CalendarPage extends Page implements AfterNavigationObserver {
 		final Entry entry = new Entry();
 		final String text = event.getText() != null ? event.getText() : "";
 		entry.setTitle(String.format("%s%s%s", event.getType().getTitle(), System.lineSeparator(), text));
-		entry.setDescription(event.getText());
+		entry.setDescription(String.format("%s, %s", event.getType().name(),
+				event.getOrder() != null ? event.getOrder().getId() : event.getSample() != null ? event.getSample().getJob().getOrder().getId() : ""));
 
 		final LocalDateTime dateTime = event.getDate().atTime(event.getTime() != null ? event.getTime() : LocalTime.of(8, 0));
 		entry.setStart(dateTime);
@@ -120,6 +125,33 @@ public class CalendarPage extends Page implements AfterNavigationObserver {
 				return "green";
 			default:
 				return "yellow";
+		}
+	}
+
+	private void handleEntryClicked(final Entry entry) {
+		final String[] description = entry.getDescription().split(",");
+
+		if (description.length < 2) {
+			return;
+		}
+
+		final String type = description[0];
+		final Long id;
+		try {
+			id = NumberUtils.parseNumber(description[1], Long.class);
+		} catch (NumberFormatException e) {
+			return;
+		}
+
+		switch (type) {
+			case "ORDER_DELIVERY":
+				UI.getCurrent().navigate(OrderEditPage.class, id);
+				break;
+			case "SAMPLE":
+				UI.getCurrent().navigate(OrderEditPage.class, id);
+				break;
+			default:
+				break;
 		}
 	}
 }

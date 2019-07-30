@@ -27,6 +27,12 @@ public class CalendarEvent extends Base {
     @Column
     private String text;
 
+    @OneToOne(mappedBy = "deliveryEvent")
+    private Order order;
+
+    @OneToOne(mappedBy = "dateEvent")
+    private Sample sample;
+
     public CalendarEvent() { }
 
     public CalendarEvent(final CalendarEventType type) {

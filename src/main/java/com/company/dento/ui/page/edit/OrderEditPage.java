@@ -66,6 +66,7 @@ public class OrderEditPage extends EditPage<Order> {
     private final Label colorLabel = new Label();
     private final Label observationsLabel = new Label();
     private final Label dateLabel = new Label();
+    private final Label deliveryDateLabel = new Label();
     private final Label cadLabel = new Label();
     private final Label paidLabel = new Label();
     private final Label partialSumLabel = new Label();
@@ -125,6 +126,7 @@ public class OrderEditPage extends EditPage<Order> {
         colorLabel.setText(Localizer.getLocalizedString("color"));
         observationsLabel.setText(Localizer.getLocalizedString("observations"));
         dateLabel.setText(Localizer.getLocalizedString("date"));
+        deliveryDateLabel.setText(Localizer.getLocalizedString("deliveryDate"));
         cadLabel.setText(Localizer.getLocalizedString("cadData"));
         paidLabel.setText(Localizer.getLocalizedString("paidStatus"));
         partialSumLabel.setText(Localizer.getLocalizedString("partialSum"));
@@ -155,6 +157,10 @@ public class OrderEditPage extends EditPage<Order> {
 
         jobsField.setSampleTemplates(dataService.getAll(SampleTemplate.class)
                 .stream().filter(SampleTemplate::isActive).collect(Collectors.toList()));
+
+        deliveryDateField.setLocale(Locale.GERMAN);
+        deliveryTimeField.setLocale(Locale.GERMAN);
+        dateField.setLocale(Locale.GERMAN);
     }
 
     private void initGeneralTab() {
@@ -167,23 +173,22 @@ public class OrderEditPage extends EditPage<Order> {
 
         final HorizontalLayout dateLayout = new HorizontalLayout();
         dateLayout.add(deliveryDateField, deliveryTimeField);
-        dateLayout.setWidth("90%");
-        deliveryDateField.setWidth("49%");
-        deliveryTimeField.setWidth("49%");
-        deliveryDateField.setMaxWidth("11em");
-        deliveryTimeField.setMaxWidth("11em");
-        deliveryDateField.getStyle().set("max-width", "650px");
+        dateLayout.setMargin(false);
+        deliveryDateField.setWidth("70%");
         deliveryDateField.setLocale(Locale.GERMAN);
         deliveryTimeField.setLocale(Locale.GERMAN);
+        dateField.setLocale(Locale.GERMAN);
 
         generalLayout.addFormItem(doctorField, doctorLabel);
-        generalLayout.addFormItem(dateLayout, dateLabel);
+        generalLayout.addFormItem(dateField, dateLabel);
+        generalLayout.addFormItem(dateLayout, deliveryDateLabel).getStyle().set("align-items", "end");
         generalLayout.addFormItem(patientField, patientLabel);
         generalLayout.addFormItem(colorField, colorLabel);
         generalLayout.addFormItem(partialSumField, partialSumLabel);
         generalLayout.addFormItem(paidField, paidLabel);
         generalLayout.addFormItem(observationsField, observationsLabel);
         generalLayout.addFormItem(uploadField, cadLabel);
+        dateLayout.addClassName("dento-form-field");
         generalLayout.addClassName("dento-form-layout");
         doctorField.addClassName("dento-form-field");
         dateField.addClassName("dento-form-field");

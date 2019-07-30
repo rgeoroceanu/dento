@@ -2,6 +2,7 @@ package com.company.dento.ui.page;
 
 import com.company.dento.dao.specification.MaterialSpecification;
 import com.company.dento.dao.specification.OrderSpecification;
+import com.company.dento.model.business.CalendarEvent;
 import com.company.dento.model.business.Material;
 import com.company.dento.model.business.Order;
 import com.company.dento.service.DataService;
@@ -19,12 +20,12 @@ import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.router.AfterNavigationEvent;
 import com.vaadin.flow.router.Route;
 import com.vaadin.flow.spring.annotation.UIScope;
-import org.vaadin.stefan.fullcalendar.BusinessHours;
-import org.vaadin.stefan.fullcalendar.CalendarViewImpl;
-import org.vaadin.stefan.fullcalendar.FullCalendar;
-import org.vaadin.stefan.fullcalendar.FullCalendarBuilder;
+import org.vaadin.stefan.fullcalendar.*;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
@@ -77,13 +78,15 @@ public class StartPage extends Page {
 		super.localize();
 		ordersGrid.getColumns().get(0).setHeader("Doctor");
 		ordersGrid.getColumns().get(1).setHeader("Lucrări");
-		materialsGrid.getColumns().get(0).setHeader("Matereial");
+		materialsGrid.getColumns().get(0).setHeader("Material");
 		materialsGrid.getColumns().get(1).setHeader("Cantitate");
 	}
 
 	private void reload() {
 		ordersGrid.setItems(getLastOrders());
 		materialsGrid.setItems(getLastMaterials());
+		calendar.changeView(CalendarViewImpl.LIST_DAY);
+		calendar.setLocale(Localizer.getCurrentLocale());
 	}
 
 	private Widget createLastOrdersWidget() {
@@ -91,11 +94,11 @@ public class StartPage extends Page {
 		ordersWidget.addClickListener(e -> UI.getCurrent().navigate(OrdersPage.class));
 		ordersWidget.setContent(ordersGrid);
 		ordersGrid.removeAllColumns();
-		ordersGrid.addColumn("doctor");
+		ordersGrid.addColumn("doctor").setWidth("30%");
 		ordersGrid.addComponentColumn(item -> createCollectionColumn(item.getJobs().stream()
 				.map(job -> job.getTemplate().getName())
 				.collect(Collectors.toList())))
-				.setKey("job.template.name");
+				.setKey("job.template.name").setFlexGrow(1);
 
 		ordersGrid.getElement().setAttribute("theme", "no-border row-stripes");
 		ordersGrid.addClassName("dento-grid");
@@ -107,6 +110,7 @@ public class StartPage extends Page {
 		calendarWidget.addClickListener(e -> UI.getCurrent().navigate(CalendarPage.class));
 		calendar.changeView(CalendarViewImpl.LIST_DAY);
 		calendar.setLocale(Localizer.getCurrentLocale());
+		calendar.addViewRenderedListener(e -> updateCalendarEntries());
 		calendarWidget.setContent(calendar);
 		calendar.setSizeFull();
 		calendar.setBusinessHours(new BusinessHours(LocalTime.of(8, 0), LocalTime.of(20, 0),BusinessHours.DEFAULT_BUSINESS_WEEK));
@@ -118,7 +122,7 @@ public class StartPage extends Page {
 		materialsWidget.addClickListener(e -> UI.getCurrent().navigate(MaterialsPage.class));
 		materialsWidget.setContent(materialsGrid);
 		materialsGrid.removeAllColumns();
-		materialsGrid.addColumn("template.name");
+		materialsGrid.addColumn("template.name").setFlexGrow(1);
 		materialsGrid.addColumn("quantity").setWidth("30%");
 		materialsGrid.setSizeFull();
 		materialsGrid.getElement().setAttribute("theme", "no-border row-stripes");
@@ -134,6 +138,25 @@ public class StartPage extends Page {
 	private List<Material> getLastMaterials() {
 		final MaterialSpecification materialSpecification = new MaterialSpecification();
 		return dataService.getByCriteria(Material.class, materialSpecification, 0, 10, Collections.emptyMap());
+	}
+
+	private void updateCalendarEntries() {
+		calendar.removeAllEntries();
+		calendar.addEntries(dataService.getCalendarEvents(LocalDate.now(), LocalDate.now()).stream()
+				.map(this::createEntry)
+				.collect(Collectors.toList()));
+	}
+
+	private Entry createEntry(final CalendarEvent event) {
+		final Entry entry = new Entry();
+		final String text = event.getText() != null ? event.getText() : "";
+		entry.setTitle(String.format("%s%s%s", event.getType().getTitle(), System.lineSeparator(), text));
+
+		final LocalDateTime dateTime = event.getDate().atTime(event.getTime() != null ? event.getTime() : LocalTime.of(8, 0));
+		entry.setStart(dateTime);
+		entry.setEditable(false);
+
+		return entry;
 	}
 
 	private Component createCollectionColumn(final Collection<String> values) {

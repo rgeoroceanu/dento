@@ -24,7 +24,7 @@ public class Sample extends Base {
 
 	@OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
 	private CalendarEvent dateEvent;
-	
+
 	public String toString() {
 		if (template != null) {
 			return template.getName() + " : " + job.getId();
