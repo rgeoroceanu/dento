@@ -142,7 +142,7 @@ public class StartPage extends Page {
 
 	private void updateCalendarEntries() {
 		calendar.removeAllEntries();
-		calendar.addEntries(dataService.getCalendarEvents(LocalDate.now(), LocalDate.now()).stream()
+		calendar.addEntries(dataService.getCalendarEvents(LocalDate.now(), LocalDate.now().plusDays(1)).stream()
 				.map(this::createEntry)
 				.collect(Collectors.toList()));
 	}

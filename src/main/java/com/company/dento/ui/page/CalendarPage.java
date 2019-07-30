@@ -18,10 +18,7 @@ import com.vaadin.flow.router.Route;
 import com.vaadin.flow.spring.annotation.UIScope;
 import org.springframework.stereotype.Component;
 import org.springframework.util.NumberUtils;
-import org.vaadin.stefan.fullcalendar.CalendarViewImpl;
-import org.vaadin.stefan.fullcalendar.Entry;
-import org.vaadin.stefan.fullcalendar.FullCalendar;
-import org.vaadin.stefan.fullcalendar.FullCalendarBuilder;
+import org.vaadin.stefan.fullcalendar.*;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -75,7 +72,7 @@ public class CalendarPage extends Page implements AfterNavigationObserver {
 		next.addClickListener(e -> calendar.next());
 
 		calendar.getStyle().set("margin-top", "-40px");
-		calendar.addViewRenderedListener(e -> updateEntries(e.getIntervalStart(), e.getIntervalEnd()));
+		calendar.addViewRenderedListener(e -> updateEntries(e));
 		calendar.addEntryClickedListener(e -> handleEntryClicked(e.getEntry()));
 
 		content.setSizeFull();
@@ -92,12 +89,12 @@ public class CalendarPage extends Page implements AfterNavigationObserver {
 		this.setContent(content);
 	}
 
-	private void updateEntries(final LocalDate start, final LocalDate end) {
+	private void updateEntries(final ViewRenderedEvent event) {
 		dateLabel.setText(DateTimeFormatter.ofPattern("MMMM yyyy",
-				Localizer.getCurrentLocale()).format(start));
+				Localizer.getCurrentLocale()).format(event.getIntervalStart()));
 
 		calendar.removeAllEntries();
-		calendar.addEntries(dataService.getCalendarEvents(start, end).stream()
+		calendar.addEntries(dataService.getCalendarEvents(event.getStart(), event.getEnd()).stream()
 				.map(this::createEntry)
 				.collect(Collectors.toList()));
 	}
