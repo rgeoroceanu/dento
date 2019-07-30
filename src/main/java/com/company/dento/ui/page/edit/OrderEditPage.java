@@ -58,6 +58,7 @@ public class OrderEditPage extends EditPage<Order> {
     private final TimePicker deliveryTimeField = new TimePicker();
     private final UploadField uploadField = new UploadField();
     private final Checkbox paidField = new Checkbox();
+    private final Checkbox finalizedField = new Checkbox();
     private final TextField partialSumField = new TextField();
     private final JobsField jobsField = new JobsField();
 
@@ -69,6 +70,7 @@ public class OrderEditPage extends EditPage<Order> {
     private final Label deliveryDateLabel = new Label();
     private final Label cadLabel = new Label();
     private final Label paidLabel = new Label();
+    private final Label finalizedLabel = new Label();
     private final Label partialSumLabel = new Label();
 
     private final FormLayout generalLayout = new FormLayout();
@@ -129,6 +131,7 @@ public class OrderEditPage extends EditPage<Order> {
         deliveryDateLabel.setText(Localizer.getLocalizedString("deliveryDate"));
         cadLabel.setText(Localizer.getLocalizedString("cadData"));
         paidLabel.setText(Localizer.getLocalizedString("paidStatus"));
+        finalizedLabel.setText(Localizer.getLocalizedString("finalized"));
         partialSumLabel.setText(Localizer.getLocalizedString("partialSum"));
         jobsField.localize();
     }
@@ -186,6 +189,7 @@ public class OrderEditPage extends EditPage<Order> {
         generalLayout.addFormItem(colorField, colorLabel);
         generalLayout.addFormItem(partialSumField, partialSumLabel);
         generalLayout.addFormItem(paidField, paidLabel);
+        generalLayout.addFormItem(finalizedField, finalizedLabel);
         generalLayout.addFormItem(observationsField, observationsLabel);
         generalLayout.addFormItem(uploadField, cadLabel);
         dateLayout.addClassName("dento-form-field");
@@ -196,6 +200,7 @@ public class OrderEditPage extends EditPage<Order> {
         colorField.addClassName("dento-form-field");
         partialSumField.addClassName("dento-form-field");
         paidField.addClassName("dento-form-field");
+        finalizedField.addClassName("dento-form-field");
         observationsField.addClassName("dento-form-field");
         observationsField.setHeight("6em");
         colorField.setItemLabelGenerator(ToothColor::getName);
@@ -235,6 +240,9 @@ public class OrderEditPage extends EditPage<Order> {
 
         binder.forField(paidField)
                 .bind(Order::isPaid, Order::setPaid);
+
+        binder.forField(finalizedField)
+                .bind(Order::isFinalized, Order::setFinalized);
 
         binder.forField(observationsField)
                 .withValidator(new StringLengthValidator("Observații: maxim 4000 de caractere!", 0, 4000))
