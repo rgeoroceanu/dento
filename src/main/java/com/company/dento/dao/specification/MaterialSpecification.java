@@ -1,12 +1,13 @@
 package com.company.dento.dao.specification;
 
-import com.company.dento.model.business.Order;
 import com.company.dento.model.business.*;
 import lombok.Data;
-import org.apache.commons.lang.StringUtils;
 import org.springframework.data.jpa.domain.Specification;
 
-import javax.persistence.criteria.*;
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Predicate;
+import javax.persistence.criteria.Root;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;

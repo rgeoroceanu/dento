@@ -29,8 +29,8 @@ public class SpringSecurityConfiguration extends WebSecurityConfigurerAdapter {
 		.anyRequest().authenticated()
 		.and()
 		.formLogin()
-		.usernameParameter("username")
-		.passwordParameter("password")
+			.usernameParameter("username")
+			.passwordParameter("password")
 		//.defaultSuccessUrl("/")
 		.loginProcessingUrl("/login")
 		.loginPage("/login.html")
@@ -56,10 +56,10 @@ public class SpringSecurityConfiguration extends WebSecurityConfigurerAdapter {
 	@Autowired
 	public void configureGlobal(final AuthenticationManagerBuilder auth) throws Exception {
 		auth
-				//.inMemoryAuthentication().passwordEncoder(new BCryptPasswordEncoder())
-				//.withUser("demouser").password("$2a$04$CBxD9.eUBMVCS2zGbBUDqOpkjsw/odYGe0Y4wEXbMnVjsGLSul0b2").roles("ADMIN", "USER");
-		.userDetailsService(userDetailsService)
-		.passwordEncoder(passwordEncoder());
+				.inMemoryAuthentication().passwordEncoder(new BCryptPasswordEncoder())
+				.withUser("demouser").password("$2a$04$CBxD9.eUBMVCS2zGbBUDqOpkjsw/odYGe0Y4wEXbMnVjsGLSul0b2").roles("ADMIN", "USER");
+		//.userDetailsService(userDetailsService)
+		//.passwordEncoder(passwordEncoder());
 	}
 
 	@Bean

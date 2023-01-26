@@ -3,7 +3,7 @@ package com.company.dento.dao.specification;
 import com.company.dento.model.business.Order;
 import com.company.dento.model.business.*;
 import lombok.Data;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.data.jpa.domain.Specification;
 
 import javax.persistence.criteria.*;
